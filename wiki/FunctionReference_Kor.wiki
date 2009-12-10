@@ -1,6 +1,6 @@
 #summary Quick function reference on NetworkFacade(Korean)
 
-= 초기화 관련 =
+= Initialize function =
 
   * 노트
     * 초기화 관련 메소드들은 thread-safe하지 않습니다. 초기화시만 호출해야 합니다.
@@ -33,7 +33,7 @@
   * 기능
     * 접속요청
   * 인자
-    * AddAcceptor 참조
+    * [FunctionReference_Kor#Initialize_function#AddAcceptor AddAcceptor] 참조
   * 노트
     * AddAcceptor와 달리 바로 접속을 요청합니다. 따라서 Open 메소드 호출후에 요청해야 합니다.
 

@@ -15,6 +15,6 @@ Add your content here.  Format your content with:
 == detail0 ==
   * item
 
-= 초기화 관련 =
+== Addacceptor ==
 
-[TestPage#detail0 link]  
+[TestPage#Addacceptor link]  

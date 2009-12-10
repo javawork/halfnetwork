@@ -123,11 +123,11 @@
 
   * 노트
     * 받기스트림만 종료합니다. closesocket(SD_RECEIVE) 입니다.
-    * 일반적으로 CloseStream만 호출하는 것을 추천합니다.
+    * 일반적으로 [FunctionReferenceKor#CloseStream CloseStream]을 호출하는 것을 추천합니다.
 
 == Pulse ==
 
   * 기능
-    * 대기하고 있는 PopMessage(혹은 PopAllMessage)에 신호를 주어서 깨웁니다.
+    * 대기하고 있는 [FunctionReferenceKor#PopMessage_/_PopAllMessage PopMessage / PopAllMessage]PopMessage에 신호를 주어서 깨웁니다.
   * 노트
     * 종료시에나 PopMessage를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.

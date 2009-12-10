@@ -17,4 +17,4 @@ Add your content here.  Format your content with:
 
 = 초기화 관련 =
 
-[TestPage#Details_aa#detail0 link]  
+[TestPage#detail0 link]  

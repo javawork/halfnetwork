@@ -12,7 +12,9 @@ Add your content here.  Format your content with:
   * Headings, paragraphs, and lists
   * Automatic links to other wiki pages
 
+== detail0 ==
+  * item
+
 = 초기화 관련 =
 
-[TestPage#Details_aa link]  
-[TestPage#초기화_관련 link]
+[TestPage#Details_aa#detail0 link]  

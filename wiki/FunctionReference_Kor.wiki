@@ -1,4 +1,4 @@
-# NetworkFacade 메소드에 대한 설명
+#summary NetworkFacade 메소드에 대한 설명
 
 = 초기화 관련 =
 
@@ -131,5 +131,3 @@
     * 대기하고 있는 PopMessage(혹은 PopAllMessage)에 신호를 주어서 깨웁니다.
   * 노트
     * 종료시에나 PopMessage를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.
-
-

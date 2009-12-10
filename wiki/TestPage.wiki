@@ -5,7 +5,7 @@
 Add your content here.
 
 
-= Details =
+= Details aa =
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
@@ -14,5 +14,5 @@ Add your content here.  Format your content with:
 
 = 초기화 관련 =
 
-[TestPage#Details link]
+[TestPage#Details_aa link]  
 [TestPage#초기화_관련 link]

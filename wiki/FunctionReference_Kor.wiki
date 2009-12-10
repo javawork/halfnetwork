@@ -1,4 +1,4 @@
-#summary NetworkFacade 메소드에 대한 설명
+#summary Quick function reference on NetworkFacade
 
 = 초기화 관련 =
 

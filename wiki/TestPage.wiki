@@ -15,6 +15,6 @@ Add your content here.  Format your content with:
 == detail0 ==
   * item
 
-== Addacceptor ==
+== AddAcceptor ==
 
-[TestPage#Addacceptor link]  
+[TestPage#AddAcceptor link]  

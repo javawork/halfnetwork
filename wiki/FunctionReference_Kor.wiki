@@ -1,4 +1,4 @@
-#summary Quick function reference on NetworkFacade
+#summary Quick function reference on NetworkFacade(Korean)
 
 = 초기화 관련 =
 

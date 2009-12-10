@@ -33,7 +33,7 @@
   * 기능
     * 접속요청
   * 인자
-    * AddAcceptor 참조
+    * [FunctionReference_Kor#초기화_관련#AddAcceptor] 참조
   * 노트
     * AddAcceptor와 달리 바로 접속을 요청합니다. 따라서 Open 메소드 호출후에 요청해야 합니다.
 

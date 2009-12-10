@@ -28,7 +28,6 @@ namespace HalfNetwork
 	};
 
 	class MessageQueueRepository;
-	//class MessageBlockPoolRepository;
 
 	class NetworkFacade
 	{

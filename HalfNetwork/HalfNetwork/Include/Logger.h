@@ -46,13 +46,4 @@ namespace HalfNetwork
 	LOGGER->Log(MSG, __VA_ARGS__) 
 #endif
 
-//#ifdef  NO_HALF_LOG
-//	#define	HALF_LOG(LOGGER, MSG) do {} while (0)
-//#else
-//	#define	HALF_LOG(LOGGER, MSG) \
-//		do { \
-//			LOGGER->Log MSG; \
-//		} while(0)
-//#endif
-
 #endif // __logger_h__

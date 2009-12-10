@@ -52,7 +52,7 @@
     * [FunctionReferenceKor#Create Create] 메소드를 호출해서 이벤트 모델(Proactor/Reactor)을 정한후에 호출해야 합니다.
 
 
-== PrepareMessageBlock ==
+== Prepare Message Block ==
 
   * 기능
     * MessageBlockPool 에 block을 미리 할당해둡니다.
@@ -67,7 +67,7 @@
 
   * 기능
     * MemoryObject에 메모리를 미리 할당해 둡니다.
-  * 인자 : [FunctionReferenceKor#PrepareMessageBlock PrepareMessageBlock] 참고
+  * 인자 : [FunctionReferenceKor#Prepare_Message_Block PrepareMessageBlock] 참고
   * 노트
     * MemoryObject를 상속받으면 MemoryPool을 사용할 수 있습니다. 이 MemoryPool에 메모리를 할당해두는 메소드입니다.
     * MessageBlockPool과 거의 같은 코드를 사용합니다.
@@ -78,7 +78,7 @@
   * 노트
     * 작동중 요청하는 메소드들은 모두 thread-safe합니다. 어느 스레드에서 호출해도 상관없습니다.
 
-== PopMessage ==
+== Pop Message ==
 
   * 기능
     * 패킷 혹은 accept, connect, close 신호를 받아옵니다.
@@ -88,14 +88,14 @@
     * timeout : 당장 받아올 메시지가 없을 경우 어느 정도 대기할 것일지를 설정합니다(millisecond).  -1일 경우 받아올 메세지가 생길때까지 대기 합니다.  성능에는 -1이 가장 이상적이기는 합니다만 그렇지 못할 경우라도 바쁜대기(busy wait)를 만들지 않을 정도의 ms를 넣어주는 것이 좋습니다.
   * 노트
     * Command block과 Payload block이 하나의 메세지를 이룹니다. Command의 내용을 파싱해서 Payload 를 어떻게 사용해야 할지 알수 있습니다. TestClient, TestServer 예제 참조. http://javawork.egloos.com/2439678 참조.
-    * 성능에는 [FunctionReferenceKor#PopAllMessage PopAllMessage]가 좋습니다. 대부분의 경우에 [FunctionReferenceKor#PopAllMessage PopAllMessage]의 사용을 추천합니다.
+    * 성능에는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]가 좋습니다. 대부분의 경우에 [FunctionReferenceKor#PopAllMessage PopAllMessage]의 사용을 추천합니다.
 
 == PopAllMessage ==
 
   * 기능
-    * [FunctionReferenceKor#PopMessage PopMessage]와 비슷하지만 현재 queue에 들어있는 모든 메세지를 linked list 형태로 가져옵니다.
+    * [FunctionReferenceKor#Pop_Message PopMessage]와 비슷하지만 현재 queue에 들어있는 모든 메세지를 linked list 형태로 가져옵니다.
   * 인자
-    * [FunctionReferenceKor#PopMessage PopMessage] 참조
+    * [FunctionReferenceKor#Pop_Message PopMessage] 참조
   * 노트
     * PopAllMessage는 현재 queue에 들어있는 모든 메세지를 링크드 리스트 형태로 다 가져옵니다. Payload block의 다음이 NULL일때까지 루프를 돌면서 처리를 해주어야 합니다.
     * 성능에는 PopAllMessage가 절대적으로 좋습니다. Context swiching을 줄여주기 때문입니다.
@@ -123,7 +123,7 @@
   * 노트
     * 일반 send와 같은 queue에 관리되기 때문에 일반 send가 너무 많아서 예약된 send가 delay되는 경우는 없습니다.
 
-== CloseStream ==
+== Close Stream ==
 
   * 노트
     * 나중에는 closesocket을 호출하게 되지만 중간 과정은 gracefull close를 구현하고 있습니다.
@@ -132,11 +132,11 @@
 
   * 노트
     * 받기스트림만 종료합니다. closesocket(SD_RECEIVE) 입니다.
-    * 일반적으로 [FunctionReferenceKor#CloseStream CloseStream]을 호출하는 것을 추천합니다.
+    * 일반적으로 [FunctionReferenceKor#Close_Stream CloseStream]을 호출하는 것을 추천합니다.
 
 == Pulse ==
 
   * 기능
-    * 대기하고 있는 [FunctionReferenceKor#PopMessage PopMessage]에 신호를 주어서 깨웁니다.
+    * 대기하고 있는 [FunctionReferenceKor#Pop_Message PopMessage]에 신호를 주어서 깨웁니다.
   * 노트
-    * 종료시에나 [FunctionReferenceKor#PopMessage PopMessage]를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.
+    * 종료시에나 [FunctionReferenceKor#Pop_Message PopMessage]를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.

@@ -47,7 +47,7 @@
       * Worker_Thread_Count : WorkerThread 개수. 0으로 설정하면 cpu*2로 설정합니다.
       * Send_Mode : 바로 패킷을 보낼것인지(DIRECT_SEND), 모아서 보낼 것인지(INTERVAL_SEND)를 설정합니다. INTERVAL_SEND를 추천합니다.
       * Interval_Send_Term : 패킷 모아서 보내는 시간, 끊어짐 감지하는 시간을 설정합니다(millisecond). 20ms정도면 충분합니다.
-      * 넣어주지 않을 경우. NetworkFacade::_SetupDefaultConfig() 메소드에서 기본설정된 값을 사용합니다.
+      * 넣어주지 않을 경우. NetworkFacade::__SetupDefaultConfig() 메소드에서 기본설정된 값을 사용합니다.
   * 노트
     * Create 메소드를 호출해서 이벤트 모델(Proactor/Reactor)을 정한후에 호출해야 합니다.
 

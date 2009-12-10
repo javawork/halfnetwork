@@ -1,7 +1,5 @@
 #summary NetworkFacade 메소드에 대한 설명
 
-= test anchor =
-
 = 초기화 관련 =
 
   * 노트
@@ -35,7 +33,7 @@
   * 기능
     * 접속요청
   * 인자
-    * [test_anchor AddAcceptor] 참조 [test_anchor link]
+    * AddAcceptor 참조
   * 노트
     * AddAcceptor와 달리 바로 접속을 요청합니다. 따라서 Open 메소드 호출후에 요청해야 합니다.
 

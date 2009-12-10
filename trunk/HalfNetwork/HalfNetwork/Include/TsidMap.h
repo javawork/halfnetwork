@@ -95,7 +95,7 @@ namespace HalfNetwork
 		void UnRegister(uint32 id)
 		{
 			T* t = NULL;
-			if ( m_activeIdMap.find(id, t) != Invalid_ID )
+			if (-1 != m_activeIdMap.find(id, t))
 			{
 				m_activeIdMap.unbind(id);
 				m_idleIdQueue.Push(id);
@@ -105,7 +105,7 @@ namespace HalfNetwork
 		T* Get(uint32 id)
 		{
 			T* t = NULL;
-			if ( m_activeIdMap.find(id, t) == Invalid_ID )
+			if (-1 == m_activeIdMap.find(id, t))
 				return NULL;
 			return t;
 		}
@@ -140,7 +140,7 @@ namespace HalfNetwork
 		void UnRegister(uint32 id)
 		{
 			T* t = NULL;
-			if ( m_container.find(id, t) != Invalid_ID )
+			if (-1 != m_container.find(id, t))
 			{
 				m_container.unbind(id);
 			}
@@ -149,7 +149,7 @@ namespace HalfNetwork
 		T* Get(uint32 id)
 		{
 			T* t = NULL;
-			if ( m_container.find(id, t) == Invalid_ID )
+			if (-1 == m_container.find(id, t))
 				return NULL;
 			return t;
 		}

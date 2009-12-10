@@ -67,7 +67,7 @@ namespace HalfNetwork
 
 	void ReactorServiceAccessor::CloseService()
 	{
-		for (int i=0;i<Max_ReactorService; ++i)
+		for (uint32 i=0;i<Max_ReactorService; ++i)
 		{
 			ReactorService* service = ReactorServiceMap->Get(i);
 			if (NULL == service)
@@ -79,7 +79,6 @@ namespace HalfNetwork
 
 		ACE_Event wait_event;
 		ACE_Time_Value* wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, 100*1000));
-		int wait_count = 0;
 		while (0 != ReactorServiceMap->Size())
 		{
 			wait_event.wait(wait_time);

@@ -77,7 +77,7 @@ namespace HalfNetwork
 
 	bool SimpleConfig::Parse(const tstring& source)
 	{
-		if (-1 == source.find(ACE_TEXT("=")) || -1 == source.find(ACE_TEXT(";")))
+		if (-1 == (int)source.find(ACE_TEXT("=")) || -1 == (int)source.find(ACE_TEXT(";")))
 			return false;
 
 		tstring subSource = source;

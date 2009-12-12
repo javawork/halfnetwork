@@ -15,25 +15,25 @@
 http://i45.tinypic.com/x0yaz8.jpg
       
   * HalfNetwork 의 source에 있는 eclipse project의 구성을 import합니다.
-file > import 메뉴에서 아래와 같이 Existing Projects into Workspace를 선택합니다.
+  file > import 메뉴에서 아래와 같이 Existing Projects into Workspace를 선택합니다.
 http://i49.tinypic.com/140zrj5.png
 
   * HalfNetwork Source 내의 HalfNetwork/HalfNetwork 폴더를 지정하여 Project 설정을 import 합니다.
 http://i49.tinypic.com/2zj95i0.png
 
   * 마찬가지로 나머지 두개의 프로젝트 HalfNetwork/TestServer, HalfNetwork/TestClient 도 지정하여 Project설정을 import 합니다.
+http://i49.tinypic.com/244o1ua.png
+http://i47.tinypic.com/1533e5w.png
 
-      eclipse_4.jpg eclipse_5.jpg
   * 위와 같이 진행하면 다음과 같이 workspace 에 3개의 Project가 등록됩니다.
-
-       eclipse_6(1).jpg
+http://i46.tinypic.com/oqavip.png
 
 
 == Project 설정 변경 ==
 
   * 각 Project 의  ACE 설정 위치가 default로 /usr/src/ACE_wrappers  로 지정되어있습니다. 이 경로를 설치자의 환경에 맞추어 재지정하셔야합니다.
-      *Project Exlporer > 오른쪽 버튼 > Properties*
+  Project Exlporer > 오른쪽 버튼 > Properties
 
-      TestClient와 TestServer의 경우에는 ACE lib 의 위치를 지정해주셔야합니다.
-
- eclipse_7.jpg eclipse_8.jpg
+  TestClient와 TestServer의 경우에는 ACE lib 의 위치를 지정해주셔야합니다.
+http://i48.tinypic.com/f9eahc.jpg
+http://i48.tinypic.com/35jyn46.jpg

@@ -1,7 +1,7 @@
 #summary How to build on Windows MSVC
 
 
-이전에는 [HalfNetwork]을 build 하기 위해서는 필수적으로 ACE를 다운로드 받고 이것을 build 하고 관련 lib 파일을 [HalfNetwork]에 링크되도록 해야 하는 불편함이 있었습니다.
+이전에는 *HalfNetwork* 을 build 하기 위해서는 필수적으로 ACE를 다운로드 받고 이것을 build 하고 관련 lib 파일을 [HalfNetwork]에 링크되도록 해야 하는 불편함이 있었습니다.
 
 그러나 [HalfNetwork] 0.60에서는 소스를 받은 후 Visual Studio로 프로젝트를 연 후 바로 build 하는 것만으로 끝납니다.
 

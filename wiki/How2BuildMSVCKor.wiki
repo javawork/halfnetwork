@@ -15,10 +15,8 @@
 HalfNetwork 디렉터리 안에 이전과 다르게 ACE_wrappers가 포함 되어 있는 것을 볼 수 있습니다.
 
 
-HalfNetwork 0.60 에서는 소스를 다운로드 받은 후 HalfNetwork_vc9.sln(혹은 _vc8.sln) 솔루션을 연 후 build를 하는 것으로 모든 것이 끝입니다.
+HalfNetwork 0.60 에서는 소스를 다운로드 받은 후 HalfNetwork_vc9.sln(혹은 vc8.sln) 솔루션을 연 후 build를 하는 것으로 모든 것이 끝입니다.
 
 
 Build가 성공적으로 끝나면 HalfNetwork 디렉터리 안의 Bin32(혹은 Bin64) 디렉터리에 HalfNetwork.x86.debug.lib(디버그 모드로 build)과 HalfNetwork.x86.release.lib(릴리즈 모드로 build) 파일이 생깁니다.
-
-
 

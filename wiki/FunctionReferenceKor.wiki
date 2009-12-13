@@ -12,7 +12,7 @@
   * 노트
     * 예제에 있는 것처럼 윈도우에서는 Proactor를 리눅스에서는 Reactor를 사용하도록 해두는 것이 성능상 좋습니다.
 
-== AddAcceptor ==
+== Add Acceptor ==
 
   * 기능
     * Accept(Listen)를 위한 메소드

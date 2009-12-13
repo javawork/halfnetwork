@@ -5,7 +5,7 @@
   * ACE 설치.
   * JDK 1.5 이상 설치
   * Eclipse 3.5  + CDT (이 환경에서 테스트되었습니다.)
-  * HalfNetwork Source
+  * `HalfNetwork` Source
 
 
 == Workspace 구성 ==
@@ -14,14 +14,14 @@
 
 http://i45.tinypic.com/x0yaz8.jpg
       
-  * HalfNetwork 의 source에 있는 eclipse project의 구성을 import합니다.
+  * `HalfNetwork` 의 source에 있는 eclipse project의 구성을 import합니다.
   file > import 메뉴에서 아래와 같이 Existing Projects into Workspace를 선택합니다.
 http://i49.tinypic.com/140zrj5.png
 
-  * HalfNetwork Source 내의 HalfNetwork/HalfNetwork 폴더를 지정하여 Project 설정을 import 합니다.
+  * `HalfNetwork` Source 내의 `HalfNetwork` 폴더를 지정하여 Project 설정을 import 합니다.
 http://i49.tinypic.com/2zj95i0.png
 
-  * 마찬가지로 나머지 두개의 프로젝트 HalfNetwork/TestServer, HalfNetwork/TestClient 도 지정하여 Project설정을 import 합니다.
+  * 마찬가지로 나머지 두개의 프로젝트 `TestServer`, `TestClient` 도 지정하여 Project설정을 import 합니다.
 http://i49.tinypic.com/244o1ua.png
 http://i47.tinypic.com/1533e5w.png
 

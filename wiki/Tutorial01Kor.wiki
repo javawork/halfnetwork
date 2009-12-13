@@ -28,3 +28,4 @@ config.Interval_Send_Term = 30;
 config.Send_Mode = HalfNetwork::eSM_Interval;
 NetworkInstance->Open(&config);
 }}}
+인자에 대한 자세한 설명은 [FunctionReferenceKor#Open Open]를 참조하세요.

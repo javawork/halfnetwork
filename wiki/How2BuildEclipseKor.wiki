@@ -1,4 +1,4 @@
-#summary How to build on Eclipse
+#summary How to build on Eclipse(Korean)
 
 == Prerequirement ==
 

@@ -1,0 +1,30 @@
+#summary EchoServer Tutorial(Korean)
+
+이벤트 모델을 생성합니다. 
+{{{
+NetworkInstance->Create<HalfNetwork::ProactorFactory>();
+}}}
+혹은
+{{{
+NetworkInstance->Create<HalfNetwork::ReactorFactory>();
+}}}
+
+윈도우에서는 Proactor를, 리눅스라면 Reactor를 추천합니다.
+
+Listen할 포트와 Queue ID를 넣어줍니다.
+{{{
+int port = 25251;
+int queueID = 103;
+NetworkInstance->AddAcceptor(NULL, port, queueID);
+}}}
+첫번째 인자는 특정 ip에서만 접속을 받고 싶을때만 해당 ip를 넣어주면 됩니다. 사용하지 않을 경우에는 빈문자열이나 NULL를 넣어줍니다. 더 자세한 내용은 [FunctionReferenceKor#Add_Acceptor AddAcceptor]를 참조하세요.
+
+몇가지 설정값을 인자로 넣어주고 Listen를 시작합니다. 
+{{{
+HalfNetwork::SystemConfig config;
+config.Worker_Thread_Count = 0;
+config.Receive_Buffer_Len = 2048;
+config.Interval_Send_Term = 30;
+config.Send_Mode = HalfNetwork::eSM_Interval;
+NetworkInstance->Open(&config);
+}}}

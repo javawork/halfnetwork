@@ -1,0 +1,6 @@
+#summary about developers(Korean)
+
+== Javawork == 
+  * 소속 : Crytek
+  * 하는일 : 라이브러리 개발
+  * 사진 : 없음 

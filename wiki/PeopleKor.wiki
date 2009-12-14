@@ -1,5 +1,5 @@
 #summary about developers(Korean)
-
+= 한국어 =
 == Javawork == 
   * 소속 : Crytek
   * 하는일 : 라이브러리 개발
@@ -10,9 +10,22 @@
  * 하는일 : 온라인 게임 서버 개발
  * 사진 : 없음
 
-
-
 == jacking ==
  * 소속 : 마이에트 엔터테인먼트
  * 하는일 : Gunz2 서버 개발
  * 사진 : http://i45.tinypic.com/2u631j7.jpg
+
+
+
+= 日本語 =
+== Javawork == 
+ * 会社 : Crytek
+ * 職業 : ライブラリの開発
+
+== Kimbeast ==
+ * 会社 : KRG
+ * 職業 : オンラインゲームのサーバー開発
+
+== jacking ==
+ * 会社 : MAIET Entertainment
+ * 職業 : オンラインゲームのサーバー開発

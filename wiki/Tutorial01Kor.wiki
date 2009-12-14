@@ -19,18 +19,13 @@ NetworkInstance->AddAcceptor(NULL, port, queueID);
 }}}
 첫번째 인자는 특정 ip에서만 접속을 받고 싶을때만 해당 ip를 넣어주면 됩니다. 사용하지 않을 경우에는 빈문자열이나 NULL를 넣어줍니다. 더 자세한 내용은 [FunctionReferenceKor#Add_Acceptor AddAcceptor]를 참조하세요.
 
-몇가지 설정값을 인자로 넣어주고 Listen를 시작합니다. 
+Listen를 시작합니다. 
 {{{
-HalfNetwork::SystemConfig config;
-config.Worker_Thread_Count = 0;
-config.Receive_Buffer_Len = 2048;
-config.Interval_Send_Term = 30;
-config.Send_Mode = HalfNetwork::eSM_Interval;
-NetworkInstance->Open(&config);
+NetworkInstance->Open();
 }}}
-인자에 대한 자세한 설명은 [FunctionReferenceKor#Open Open]를 참조하세요.
+몇가지 설정값을 인자로 넣어줄 수도 있습니다. 자세한 설명은 [FunctionReferenceKor#Open Open]를 참조하세요.
 
-접속이 있거나 받은 패킷이 있는지 주기적으로 검사합니다.
+새로운 메세지가 있는지 주기적으로 검사합니다.
 {{{
 using namespace HalfNetwork;
 ACE_Message_Block* commandBlock = NULL;
@@ -57,3 +52,13 @@ case eMH_Close:
 commandBlock->release();
 }}}
 성능을 위해서는 [FunctionReferenceKor#Pop_Message PopMessage]보다는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]를 사용하는 것이 좋습니다.
+
+받은 패킷을 그대로 보내줍니다.
+{{{
+void OnRead(unsigned int streamID, char* buffer, unsigned int length)
+{
+	ACE_Message_Block* block = NetworkInstance->AllocateBlock(length);
+	block->copy(buffer, length);
+	NetworkInstance->SendRequest(streamID, block);
+}
+}}}

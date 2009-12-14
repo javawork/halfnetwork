@@ -1,4 +1,4 @@
-#summary Quick function reference on NetworkFacade(Korean)
+#summary Public function reference on NetworkFacade(Korean)
 
 = 초기화 관련 메소드 =
 

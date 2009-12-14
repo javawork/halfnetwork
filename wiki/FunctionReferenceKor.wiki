@@ -83,11 +83,11 @@
   * 기능
     * 패킷 혹은 accept, connect, close 신호를 받아옵니다.
   * 인자
-    * queueId : [FunctionReferenceKor#Add_Acceptor AddAcceptor] 혹은 [FunctionReferenceKor#Connect Connect] 메소드의 queueId 인자로 넣어준 값. queueId를 넣어주지 않는 PopMessage를 사용하게 되면 모든 메세지를 받아오게 되고 어느 queueId인지는 MessagePostee.queueId로 알수 있습니다.
+    * queueId : [FunctionReferenceKor#Add_Acceptor AddAcceptor] 혹은 [FunctionReferenceKor#Connect Connect] 메소드의 queueId 인자로 넣어준 값. queueId를 넣어주지 않는 `PopMessage`를 사용하게 되면 모든 메세지를 받아오게 되고 어느 queueId인지는 `MessagePostee.queueId`로 알수 있습니다.
     * block : 받아올 block  포인터. 할당받지 않은 block을 넣어야 합니다.
     * timeout : 당장 받아올 메시지가 없을 경우 어느 정도 대기할 것일지를 설정합니다(millisecond).  -1일 경우 받아올 메세지가 생길때까지 대기 합니다.  성능에는 -1이 가장 이상적이기는 합니다만 그렇지 못할 경우라도 바쁜대기(busy wait)를 만들지 않을 정도의 ms를 넣어주는 것이 좋습니다.
   * 노트
-    * Command block과 Payload block이 하나의 메세지를 이룹니다. Command의 내용을 파싱해서 Payload 를 어떻게 사용해야 할지 알수 있습니다. TestClient, TestServer 예제 참조. http://javawork.egloos.com/2439678 참조.
+    * Command block과 Payload block이 하나의 메세지를 이룹니다. Command의 내용을 파싱해서 Payload 를 어떻게 사용해야 할지 알수 있습니다. `TestClient`, `TestServer` 예제 참조. http://javawork.egloos.com/2439678 참조.
     * 성능에는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]가 좋습니다. 대부분의 경우에 [FunctionReferenceKor#PopAllMessage PopAllMessage]의 사용을 추천합니다.
 
 == Pop All Message ==
@@ -97,20 +97,20 @@
   * 인자
     * [FunctionReferenceKor#Pop_Message PopMessage] 참조
   * 노트
-    * PopAllMessage는 현재 queue에 들어있는 모든 메세지를 링크드 리스트 형태로 다 가져옵니다. Payload block의 다음이 NULL일때까지 루프를 돌면서 처리를 해주어야 합니다.
-    * 성능에는 PopAllMessage가 절대적으로 좋습니다. Context swiching을 줄여주기 때문입니다.
+    * 현재 queue에 들어있는 모든 메세지를 링크드 리스트 형태로 다 가져옵니다. Payload block의 다음이 NULL일때까지 루프를 돌면서 처리를 해주어야 합니다.
+    * 성능에는 `PopAllMessage`가 절대적으로 좋습니다. Context swiching을 줄여주기 때문입니다.
 
 == Allocate Block ==
 
   * 기능
-    * MessageBlockPool에서 block을 하나 할당 받습니다.
+    * `MessageBlockPool`에서 block을 하나 할당 받습니다.
 
 == Send Request ==
 
   * 기능
     * 패킷을 보냅니다.
   * 인자
-    * streamId : PopMessage에서 넘어온 MessagePostee.streamId 값을 넣어주면 됩니다.
+    * streamId : [FunctionReferenceKor#Pop_Message PopMessage]에서 넘어온 MessagePostee.streamId 값을 넣어주면 됩니다.
     * block 혹은 buffer, length : block 혹은 buffer를 선택적으로 사용할 수 있습니다.
     * copy_block : 인자로 넣어준 block을 라이브러리가 복사해서 사용할 것인지 설정해줍니다. false로 사용하는 것이 성능에는 좋습니다.
   * 노트

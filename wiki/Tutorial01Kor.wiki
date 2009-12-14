@@ -29,3 +29,31 @@ config.Send_Mode = HalfNetwork::eSM_Interval;
 NetworkInstance->Open(&config);
 }}}
 인자에 대한 자세한 설명은 [FunctionReferenceKor#Open Open]를 참조하세요.
+
+접속이 있거나 받은 패킷이 있는지 주기적으로 검사합니다.
+{{{
+using namespace HalfNetwork;
+ACE_Message_Block* commandBlock = NULL;
+bool receiveData = NetworkInstance->PopMessage(queueID, &commandBlock, -1);
+if (false == receiveData)
+	return;
+
+MessagePostee postee;
+memcpy(&postee, commandBlock->rd_ptr(), sizeof(MessagePostee));
+commandBlock->rd_ptr(sizeof(MessagePostee));
+ACE_Message_Block* payloadBlock = commandBlock->cont();
+switch(postee.command)
+{
+case eMH_Establish:
+	OnAccept(postee.stream_id, payloadBlock->rd_ptr());
+	break;
+case eMH_Read:
+	OnRead(postee.stream_id, payloadBlock->rd_ptr(), payloadBlock->length());
+	break;
+case eMH_Close:
+	OnClose(postee.stream_id);
+	break;
+}
+commandBlock->release();
+}}}
+성능을 위해서는 [FunctionReferenceKor#Pop_Message PopMessage]보다는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]를 사용하는 것이 좋습니다.

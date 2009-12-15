@@ -1,0 +1,20 @@
+#summary Introduce Half-Sync Half-Async pattern(Korean)
+
+Half-Sync Half-Async 패턴은 접속을 받거나 패킷을 받는등의 네트워크 처리는 Async방식으로 하여 Queue에 넣고 이 Queue에서 메세지를 받아서 처리하는 로직 스레드는 Sync방식으로 처리하는 식의 동시성 처리에 대한 해법을 제시하는 패턴입니다.
+
+그림으로 설명하면 아래와 같습니다. 
+
+http://i46.tinypic.com/70gefk.png
+
+그림에서는 네트워크 처리를 하는 Async레이어는 `HalfNetwork` library가 맡고있고 메세지를 받아서 처리하는 Sync레이어는 Application이 맡고 있습니다.
+
+이 패턴의 장점은 
+
+  * High-Level Task의 단순화
+  * Async Layer와 Sync Layer의 의존성(decouple) 감소
+  * Layer간의 comunication이 single point(Message Queue)로 단순화
+  * CPU의 성능이 늘어난다거나 코어의 개수가 늘어나면 Thread의 개수를 늘려서 성능의 향상을 꾀함
+
+`HalfNetwork`에서는 [FunctionReferenceKor#Pop_Message PopMessage]가 Queue에서 메세지를 꺼내서 처리를 하는 메소드 입니다. 사용자는 라이브러리 초기화 후에는 주기적으로 [FunctionReferenceKor#Pop_Message PopMessage]해서 나온 메세지를 처리해주는 것만으로 Sync레이어의 구현을 마칠수 있습니다.
+
+실제 구현에서는 [FunctionReferenceKor#Pop_Message PopMessage] 보다는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]를 추천합니다. 둘 사이의 차이점은 [FunctionReferenceKor#Pop_Message PopMessage]는 Queue에 있는 하나의 메세지만을 꺼내오고 [FunctionReferenceKor#Pop_All_Message PopAllMessage]는 Queue에 있는 모든 메세지를 Linked list 형식으로 꺼내오는 것입니다. 하나씩 꺼내와서 처리를 하는 방식은 Queue에 처리해야할 메세지가 남아있음에도 불구하고 다른 스레드에 양보를 하는 식의 잦은 context switching을 발생시킵니다. 한번에 다 꺼내와서 루프를 돌면서 처리를 해주게 되면 처리할 메세지가 있을때는 빠르게 처리를 하고 처리할 메세지가 없을때는 sleep에 빠져서 다른 스레드의 작업을 돕는 스레드 운영이 가능하게 됩니다. 

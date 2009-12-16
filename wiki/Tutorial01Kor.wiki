@@ -51,7 +51,7 @@ case eMH_Close:
 }
 commandBlock->release();
 }}}
-성능을 위해서는 [FunctionReferenceKor#Pop_Message PopMessage]보다는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]를 사용하는 것이 좋습니다.
+성능을 위해서는 [FunctionReferenceKor#Pop_Message PopMessage]보다는 [FunctionReferenceKor#Pop_All_Message PopAllMessage]를 사용하는 것이 좋습니다. [http://code.google.com/p/halfnetwork/wiki/HalfSyncHalfAsyncKor 이 문서]의 후반부에 이유가 나옵니다.
 
 받은 패킷을 그대로 보내줍니다.
 {{{

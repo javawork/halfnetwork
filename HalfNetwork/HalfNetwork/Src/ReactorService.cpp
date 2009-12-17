@@ -279,7 +279,8 @@ namespace HalfNetwork
 
 	void ReactorService::IntervalSend(ACE_Message_Block* block)
 	{
-		_PushQueue(block, 0);
+		//_PushQueue(block, 0);
+		_SmartSend(block);
 	}
 
 	void ReactorService::DirectSend(ACE_Message_Block* block)
@@ -307,11 +308,11 @@ namespace HalfNetwork
 
 	void ReactorService::_SmartSend(ACE_Message_Block* block)
 	{
-		if (false == _serviceImpl->AcquireSendLock())
-		{
-			_PushQueue(block, 0);
-			return;
-		}
+		//if (false == _serviceImpl->AcquireSendLock())
+		//{
+		//	_PushQueue(block, 0);
+		//	return;
+		//}
 		ssize_t send_cnt = _sock.send(block->rd_ptr(), block->length());
 		if (send_cnt < (ssize_t)block->length())
 		{
@@ -354,7 +355,7 @@ namespace HalfNetwork
 		//		ACE_ASSERT(false);
 		//	}
 		//}
-		_serviceImpl->ReleaseSendLock();
+		//_serviceImpl->ReleaseSendLock();
 	}
 
 	bool ReactorService::Send_MainThread(ACE_Message_Block* block)

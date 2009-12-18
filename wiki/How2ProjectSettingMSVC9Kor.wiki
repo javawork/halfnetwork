@@ -1,6 +1,6 @@
-VC++9에서 HalfNetwork 라이브러리를 사용하기 위한 프로젝트 설정
+VC++9에서 `HalfNetwork` 라이브러리를 사용하기 위한 프로젝트 설정
 
-이 글은 HalfNetwork 라이브러리를 사용하여 서버 애플리케이션을 만들 때 프로젝트 설정 하는 방법을 간단하게 설명합니다.
+이 글은 `HalfNetwork` 라이브러리를 사용하여 서버 애플리케이션을 만들 때 프로젝트 설정 하는 방법을 간단하게 설명합니다.
 ( 기반은 VC++9(Visual Studio 2008) 입니다. )
 
 1. 서버 애플리케이션 프로젝트를 생성합니다. 저는 ‘ProjectHF2’라는 만들었습니다.<br>
@@ -11,11 +11,11 @@ http://i45.tinypic.com/5zqxdh.png
 http://i49.tinypic.com/2evxg95.png
 <br><br>
 
-3. HalfNetwork 프로젝트를 추가합니다. <br>
+3. `HalfNetwork` 프로젝트를 추가합니다. <br>
 http://i49.tinypic.com/2m7iu10.png
 <br><br>
 
-추가를 하면 현재 솔루션에는 서버 애플리케이션 프로젝트와 HalfNetwork 프로젝트가 있습니다. <br>
+추가를 하면 현재 솔루션에는 서버 애플리케이션 프로젝트와 `HalfNetwork` 프로젝트가 있습니다. <br>
 http://i48.tinypic.com/2003680.png
 <br><br>
 
@@ -24,7 +24,7 @@ http://i49.tinypic.com/2uivwnk.png
 <br><br>
 
 5. 서버 애플리케이션 프로젝트의 속성에서
-구성 속성 -> C/C++의 ‘추가 포함 디렉터리’에 HalfNetwork 라이브러리의 소스 파일을 추가합니다. ( 그림을 참고하세요 ) <br>
+구성 속성 -> C/C++의 ‘추가 포함 디렉터리’에 `HalfNetwork` 라이브러리의 소스 파일을 추가합니다. ( 그림을 참고하세요 ) <br>
 http://i50.tinypic.com/15i6h7a.png
 <br><br>
 
@@ -32,5 +32,5 @@ http://i50.tinypic.com/15i6h7a.png
 http://i50.tinypic.com/30j4b5w.png
 <br><br>
 
-7. 이후에는 HalfNetwork 라이브러리의 Tutorial 프로젝트를 참고하여 header 파일을 추가하여 코딩 하면 됩니다.
+7. 이후에는 `HalfNetwork` 라이브러리의 Tutorial 프로젝트를 참고하여 header 파일을 추가하여 코딩 하면 됩니다.
 <br><br>

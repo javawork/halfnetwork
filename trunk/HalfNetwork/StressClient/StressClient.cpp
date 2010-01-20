@@ -1,4 +1,4 @@
-// TestServer.cpp : Defines the entry point for the console application.
+// StressClient.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
@@ -6,38 +6,43 @@
 #include <ace/ACE.h>
 #include "NetworkFacade.h"
 #ifdef WIN32
-	#include "ProactorFactory.h"
+#include "ProactorFactory.h"
 #else
-	#include "ReactorFactory.h"
+#include "ReactorFactory.h"
 #endif
-#include "MessageHeader.h"
 #include "SimpleConfig.h"
+#include "SendThread.h"
+#include "MessageHeader.h"
+#include "IOStatus.h"
 
-void OnAccept(unsigned int streamID, const char* ip);
-void OnRead(unsigned int streamID, char* buffer, unsigned int length);
-void OnClose(unsigned int streamID);
+IOStatus g_ioStatus;
+SendThread g_sendThread;
+int g_sendThreadCount = 0;
 
 bool NetworkInit(const HalfNetwork::SimpleConfig& configReader, unsigned char queueID)
 {
-	unsigned short port = configReader.GetValue<unsigned short>(ACE_TEXT("port"));
+	unsigned short port = configReader.GetValue<unsigned short>(ACE_TEXT("ServerPort"));
 	HalfNetwork::SystemConfig config;
-	config.Worker_Thread_Count = configReader.GetValue<unsigned char>(ACE_TEXT("workerthread"));
-	config.Receive_Buffer_Len = configReader.GetValue<unsigned int>(ACE_TEXT("receivebufferlength"));
-	config.Interval_Send_Term = configReader.GetValue<unsigned int>(ACE_TEXT("updateterm"));
+	config.Worker_Thread_Count = configReader.GetValue<unsigned char>(ACE_TEXT("WorkerThread"));
+	config.Receive_Buffer_Len = configReader.GetValue<unsigned int>(ACE_TEXT("ReceiveBufferLength"));
+	config.Interval_Send_Term = configReader.GetValue<unsigned int>(ACE_TEXT("UpdateTerm"));
 	config.Send_Mode = HalfNetwork::eSM_Direct;
-	
+	g_sendThreadCount = configReader.GetValue<int>(ACE_TEXT("SendThread"));
+	unsigned int aimSendByte = configReader.GetValue<unsigned int>(ACE_TEXT("AimSendByte"));
+	g_sendThread.SetAimSendByte(aimSendByte);
+
 	HALF_LOG(ConsoleLogger, ACE_TEXT("Port(%d)"), port);
 	HALF_LOG(ConsoleLogger, ACE_TEXT("WorkerThread Count(%d)"), config.Worker_Thread_Count);
+	HALF_LOG(ConsoleLogger, ACE_TEXT("SendThread Count(%d)"), g_sendThreadCount);
 	HALF_LOG(ConsoleLogger, ACE_TEXT("Receive buffer length(%d)"), config.Receive_Buffer_Len);
 	HALF_LOG(ConsoleLogger, ACE_TEXT("Update term(%d)"), config.Interval_Send_Term);
+	HALF_LOG(ConsoleLogger, ACE_TEXT("Aim SendByte(%d)"), aimSendByte);
 
 #ifdef WIN32
 	if (false == NetworkInstance->Create<HalfNetwork::ProactorFactory>())
 #else
 	if (false == NetworkInstance->Create<HalfNetwork::ReactorFactory>())
 #endif
-		return false;
-	if (false == NetworkInstance->AddAcceptor(NULL, port, queueID))
 		return false;
 	if (false == NetworkInstance->Open(&config))
 		return false;
@@ -52,13 +57,28 @@ void NetworkFini()
 	NetworkInstance->Destroy();
 }
 
-void NetworkUpdate(unsigned char queueID)
+void OnConnect(unsigned int streamID, const char* ip)
+{
+	g_sendThread.SetIoStatus(&g_ioStatus);
+	g_sendThread.Open(g_sendThreadCount);
+}
+
+void OnRead(unsigned int streamID, char* buffer, size_t length)
+{
+	g_ioStatus.AddRecvBytes((long)length);
+}
+
+void OnClose(unsigned int streamID)
+{
+}
+
+void ProcessRecvQueue(unsigned char queue_id)
 {
 	using namespace HalfNetwork;
 	ACE_Message_Block* headBlock = NULL;
 	ACE_Message_Block* commandBlock = NULL;
 
-	bool receiveData = NetworkInstance->PopAllMessage(queueID, &headBlock, -1);
+	bool receiveData = NetworkInstance->PopAllMessage(queue_id, &headBlock, -1);
 	if (false == receiveData)
 		return;
 
@@ -73,10 +93,10 @@ void NetworkUpdate(unsigned char queueID)
 		switch(postee.command)
 		{
 		case eMH_Establish:
-			OnAccept(postee.stream_id, payloadBlock->rd_ptr());
+			OnConnect(postee.stream_id, payloadBlock->rd_ptr());
 			break;
 		case eMH_Read:
-			OnRead(postee.stream_id, payloadBlock->rd_ptr(), (unsigned int)payloadBlock->length());
+			OnRead(postee.stream_id, payloadBlock->rd_ptr(), payloadBlock->length());
 			break;
 		case eMH_Close:
 			OnClose(postee.stream_id);
@@ -92,38 +112,22 @@ void NetworkUpdate(unsigned char queueID)
 	headBlock->release();
 }
 
-void OnAccept(unsigned int streamID, const char* ip)
+int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 {
-	//HALF_LOG (ConsoleLogger, ACE_TEXT("OnAccept(%d)."), streamID);
-}
-
-void OnRead(unsigned int streamID, char* buffer, unsigned int length)
-{
-	//HALF_LOG (ConsoleLogger, ACE_TEXT("OnRead(%d, %d)."), streamID, length);
-	ACE_Message_Block* block = NetworkInstance->AllocateBlock(length);
-	block->copy(buffer, length);
-	NetworkInstance->SendRequest(streamID, block);
-}
-
-void OnClose(unsigned int streamID)
-{
-	//HALF_LOG(ConsoleLogger, ACE_TEXT("OnClose(%d)."), streamID);
-}
-
-int ACE_TMAIN (int, ACE_TCHAR *[])
-{
+	srand((signed)time(NULL));
 	ACE::init();
+
+	const ACE_TCHAR* ConfigFilename = ACE_TEXT("StressClientConfig.txt");
+	HalfNetwork::SimpleConfig configReader;
+
 	ConsoleLogger->SetConsoleLog();
 	ConsoleLogger->AppendThreadId();
 
-	const ACE_TCHAR* ConfigFilename = ACE_TEXT("TestServerConfig.txt");
-	HalfNetwork::SimpleConfig configReader;
 	if (false == configReader.ReadFile(ConfigFilename))
 	{
 		HALF_LOG(ConsoleLogger, ACE_TEXT("Read config fail(%s)"), ConfigFilename);
 		return 0;
 	}
-
 	const unsigned char QueueID = 103;
 	if (false == NetworkInit(configReader, QueueID))
 	{
@@ -131,10 +135,16 @@ int ACE_TMAIN (int, ACE_TCHAR *[])
 		return 0;
 	}
 
+	unsigned int connectionCount = configReader.GetValue<unsigned int>(ACE_TEXT("ConnectionCount"));
+	unsigned short port = configReader.GetValue<unsigned short>(ACE_TEXT("ServerPort"));
+	tstring serverIp = configReader.GetValue<tstring>(ACE_TEXT("ServerIp"));
+	NetworkInstance->Connect(serverIp.c_str(), port, QueueID);
+
 	while(true)
-		NetworkUpdate(QueueID);
+		ProcessRecvQueue(QueueID);
 
 	NetworkFini();
+	g_sendThread.Close();
 	ACE::fini();
 	return 0;
 }

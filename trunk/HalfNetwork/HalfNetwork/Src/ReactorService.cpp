@@ -10,6 +10,7 @@
 #include "TimerUtil.h"
 #include "ServiceImpl.h"
 #include "InterlockedValue.h"
+#include "MessageBlockUtil.h"
 
 namespace HalfNetwork
 {
@@ -50,7 +51,6 @@ namespace HalfNetwork
 		_Register();
 		_OnEstablish();
 		_RegisterTimer();
-
 		return this->reactor()->register_handler(this, ACE_Event_Handler::READ_MASK);
 	}
 
@@ -80,17 +80,17 @@ namespace HalfNetwork
 		return 0;
 	}
 
+#if 0
 	int ReactorService::handle_output(ACE_HANDLE fd)
 	{
 		ACE_UNUSED_ARG(fd);
-		ACE_DEBUG((LM_DEBUG, "handle_output\n"));
+		//printf("handle_output\n");
 		ACE_Message_Block *mb = 0;
 		ACE_Time_Value nowait (ACE_OS::gettimeofday ());
 		while (-1 != this->getq (mb, &nowait))
 		{
 			ACE_DEBUG((LM_DEBUG, "handle_output send_length(%d)\n", mb->length ()));
-			ssize_t send_cnt =
-				_sock.send (mb->rd_ptr (), mb->length ());
+			ssize_t send_cnt = _sock.send (mb->rd_ptr(), mb->length());
 			
 			ACE_DEBUG((LM_DEBUG, "handle_output sent_cnt(%d)\n", send_cnt));
 			if (send_cnt == -1)
@@ -106,49 +106,9 @@ namespace HalfNetwork
 			}
 			mb->release ();
 		}
-		return (this->msg_queue()->is_empty ()) ? -1 : 0;
-		/*
-		
-		//ACE_ASSERT(false);
-		ACE_Message_Block* block = NULL;
-		if (-1 == this->getq(block))
-			return 0;
-		ssize_t sentByte = _sock.send(block->rd_ptr(), block->length());
-		if (sentByte < (ssize_t)block->length())
-		{
-			size_t s = block->length();
-			this->putq(block);
-			//this->reactor()->register_handler(this, ACE_Event_Handler::WRITE_MASK);
-		}
-		return 0;
-		
-		ACE_Message_Block *mb;
-		ACE_Time_Value nowait (ACE_OS::gettimeofday());
-		while (0 == this->_wait_queue.dequeue_head(mb, &nowait))
-		{
-			ssize_t send_cnt =
-				this->_sock.send (mb->rd_ptr(), mb->length ());
-			if (send_cnt == -1)
-			{
-				ACE_ERROR ((LM_ERROR,
-							ACE_TEXT ("(%P|%t) %p\n"),
-							ACE_TEXT ("send")));
-			}
-			else
-			{
-				mb->rd_ptr(static_cast<uint32> (send_cnt));
-			}
-
-			if (mb->length() > 0)
-			{
-				this->_wait_queue.enqueue_head(mb);
-				break;
-			}
-			mb->release();
-		}
-		return (this->_wait_queue.is_empty()) ? -1 : 0;
-		*/
+		return (this->msg_queue()->is_empty()) ? -1 : 0;
 	}
+#endif
 
 	int ReactorService::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask mask)
 	{
@@ -257,7 +217,6 @@ namespace HalfNetwork
 		_queue_id = id;
 	}
 
-
 	void ReactorService::ReceiveBufferSize( uint32 size )
 	{
 		_receive_buffer_size = size;
@@ -279,8 +238,8 @@ namespace HalfNetwork
 
 	void ReactorService::IntervalSend(ACE_Message_Block* block)
 	{
-		//_PushQueue(block, 0);
-		_SmartSend(block);
+		_PushQueue(block, 0);
+		//_SmartSend(block);
 	}
 
 	void ReactorService::DirectSend(ACE_Message_Block* block)
@@ -308,98 +267,31 @@ namespace HalfNetwork
 
 	void ReactorService::_SmartSend(ACE_Message_Block* block)
 	{
-		//if (false == _serviceImpl->AcquireSendLock())
-		//{
-		//	_PushQueue(block, 0);
-		//	return;
-		//}
+		if (false == _serviceImpl->AcquireSendLock())
+		{
+			_PushQueue(block, 0);
+			return;
+		}
 		ssize_t send_cnt = _sock.send(block->rd_ptr(), block->length());
 		if (send_cnt < (ssize_t)block->length())
 		{
-			ACE_DEBUG((LM_DEBUG, "_SmartSend fail(%d). register_handler\n", send_cnt));
+			// put the remain block
 			if (send_cnt == -1)
 				send_cnt = 0;
-			ACE_Message_Block *mb = 0;
-			size_t remaining =
-				static_cast<size_t> ((block->length() - send_cnt));
-			mb = _serviceImpl->AllocateBlock(remaining);
+			ACE_Message_Block *remainBlock = 0;
+			size_t remaining = static_cast<size_t> ((block->length() - send_cnt));
+			remainBlock = _serviceImpl->AllocateBlock(remaining);
 			block->rd_ptr(send_cnt);
-			mb->copy (block->rd_ptr(), remaining);
-			int output_off = this->msg_queue ()->is_empty ();
-			ACE_Time_Value nowait (ACE_OS::gettimeofday ());
-			if (this->putq (mb, &nowait) == -1)
-			{
-				ACE_ERROR ((LM_ERROR,
-					ACE_TEXT ("(%P|%t) %p; discarding data\n"),
-					ACE_TEXT ("enqueue failed")));
-				mb->release ();
-				return;
-			}
-			ACE_DEBUG((LM_DEBUG, "_SmartSend fail(%d). output_off(%d)\n", output_off));
-			if (output_off)
-				this->reactor ()->register_handler(this, ACE_Event_Handler::WRITE_MASK);
+			remainBlock->copy(block->rd_ptr(), remaining);
+			 _PushQueue(remainBlock, 0);
 		}
 		else
 		{
 			block->release();
 		}
 
-		//ssize_t retValue = _sock.send_n(block);
-		//if (-1 == retValue)
-		//{
-		//	ssize_t retValue0 = _sock.send_n(block);
-		//	if (retValue0 != block->total_length())
-		//	{
-		//		ACE_DEBUG ((LM_DEBUG, 
-		//			"return(%d), total_length(%d), length(%d)\n", retValue, block->total_length(), block->length()));
-		//		ACE_ASSERT(false);
-		//	}
-		//}
-		//_serviceImpl->ReleaseSendLock();
-	}
-
-	bool ReactorService::Send_MainThread(ACE_Message_Block* block)
-	{
-		size_t block_length = block->length();
-		size_t send_length =
-			this->_sock.send(block->rd_ptr(), block->length());
-		if (send_length == block_length)
-			return true;
-
-		if (send_length == -1 && ACE_OS::last_error () != EWOULDBLOCK)
-		{
-			ACE_ERROR_RETURN ((LM_ERROR,
-				ACE_TEXT ("(%P|%t) %p\n"),
-				ACE_TEXT ("send")),
-				0);
-		}
-
-		if (send_length == -1)
-			send_length = 0;
-
-		uint32 remaining =
-			static_cast<uint32> ((block_length - send_length));
-		ACE_Message_Block* mb = _serviceImpl->AllocateBlock(remaining);
-		mb->copy(block->rd_ptr()+send_length, remaining);
-
-		int output_off = this->_wait_queue.is_empty();
-		ACE_Time_Value nowait (ACE_OS::gettimeofday());
-		if (this->_wait_queue.enqueue_tail (mb, &nowait) == -1)
-		{
-			ACE_ERROR ((LM_ERROR,
-				ACE_TEXT ("(%P|%t) %p; discarding data\n"),
-				ACE_TEXT ("enqueue failed")));
-			mb->release ();
-			return false;
-		}
-
-		if (output_off)
-		{
-			this->reactor()->
-				register_handler(this, ACE_Event_Handler::WRITE_MASK);
-		}
-
-		return true;
+		_serviceImpl->ReleaseSendLock();
+		_SendQueuedBlock();
 	}
 
 	void ReactorService::_SendQueuedBlock()
@@ -409,11 +301,21 @@ namespace HalfNetwork
 		ACE_Message_Block* block = NULL;
 		if (false == _PopQueue(&block))
 			return;
-		_SmartSend(block);
+		//printf("_SendQueuedBlock(%d, %d)\n", block->length(), block->total_length());
+		if (NULL != block->cont())
+		{
+			ACE_Message_Block* mergedBlock = _serviceImpl->AllocateBlock(block->total_length());
+			MakeMergedBlock(block, mergedBlock);
+			block->release();
+			_SmartSend(mergedBlock);
+		}
+		else
+			_SmartSend(block);
 	}
 
 	void ReactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
 	{
+		//printf("_PushQueue(%d)\n", block->length());
 		_serviceImpl->PushQueue(block, tick);
 	}
 

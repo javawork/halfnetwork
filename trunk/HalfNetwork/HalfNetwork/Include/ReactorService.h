@@ -41,7 +41,7 @@ namespace HalfNetwork
 		// Description:
 		//   Called when output is possible.
 		////////////////////////////////////////////////////
-		virtual int		handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE);
+		//virtual int		handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE);
 
 		/////////////////////////////////////////////////////////////
 		// Description:
@@ -69,11 +69,6 @@ namespace HalfNetwork
 		void	_SmartSend(ACE_Message_Block* block);
 
 	public:
-		/////////////////////////////////
-		// Description:
-		//   For MainThread(not recommend)
-		/////////////////////////////////
-		bool	Send_MainThread(ACE_Message_Block* block);
 		void	ActiveClose();
 		void	ReceiveClose();
 		void	QueueID(uint8 id);

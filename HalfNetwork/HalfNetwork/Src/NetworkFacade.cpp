@@ -294,7 +294,10 @@ namespace HalfNetwork
 
 	ACE_Message_Block* NetworkFacade::AllocateBlock(const size_t bufferSize)
 	{
-		return _blockPool->Allocate(bufferSize);
+		ACE_Message_Block* block = _blockPool->Allocate(bufferSize);
+		if (NULL == block)
+			block = new ACE_Message_Block(bufferSize);
+		return block;
 	}
 
 	void NetworkFacade::PrepareMessageBlock( const size_t bufferSize, const uint32 count )

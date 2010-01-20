@@ -103,7 +103,7 @@ namespace HalfNetwork
 
 	bool ServiceImpl::AcquireSendLock()
 	{
-		return  _sendLock->Acquire();
+		return _sendLock->Acquire();
 	}
 
 	void ServiceImpl::ReleaseSendLock()

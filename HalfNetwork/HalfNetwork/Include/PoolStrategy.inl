@@ -116,7 +116,8 @@ ChunkType*	FlexibleSizePoolT<PoolType, ChunkType>::Allocate(const size_t bufferS
 	uint32 chunkSize = 0;
 	uint8 poolIndex = 0;
 	bool result = GetProperSize(bufferSize, chunkSize, poolIndex);
-	ACE_ASSERT(result);
+	if (false == result)
+		return NULL;
 	FixedSizePoolT<PoolType, ChunkType>* properPool = _pool[poolIndex];
 	//if (properPool == NULL)
 	//	return NULL;

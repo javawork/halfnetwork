@@ -76,8 +76,8 @@
     * [FunctionReferenceKor#Add_Acceptor AddAcceptor] 참조
   * 노트
     * [FunctionReferenceKor#Add_Acceptor AddAcceptor]와 달리 바로 접속을 요청합니다. 따라서 Open 메소드 호출후에 요청해야 합니다.
-    * 접속이 성공하면 PopMessage를 통해 eMH_Establish를 받게 됩니다.
-    * 해당 주소와 포트에서 listen하고 있지 않다면 아무 메시지도 받을수 없습니다. 즉, 실패한 결과는 알수 없습니다. listen하고 있는지 체크하고 싶다면 [FunctionReferenceKor#Try_Connect TryConnect] 메소드를 사용해야 합니다.
+    * 접속이 성공하면 [FunctionReferenceKor#Pop Message PopMessage]를 통해 eMH_Establish를 받게 됩니다.
+    * 해당 주소와 포트에서 listen하고 있지 않다면 아무 메시지도 받을수 없습니다. 즉, 실패한 결과는 알수 없습니다. listen하고 있는지 미리 체크하고 싶다면 [FunctionReferenceKor#Try_Connect TryConnect] 메소드를 사용해야 합니다.
 
 == Pop Message ==
 

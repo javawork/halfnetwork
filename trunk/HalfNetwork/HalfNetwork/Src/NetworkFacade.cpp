@@ -10,6 +10,7 @@
 #include "AbstractEventPool.h"
 #include "AbstractServiceAccessor.h"
 #include "MemoryObject.h"
+#include "SyncSocket.h"
 
 namespace HalfNetwork
 {
@@ -88,36 +89,32 @@ namespace HalfNetwork
 		SetupDefaultConfig();
 	}
 
-	bool NetworkFacade::AddAcceptor(const uint16 port, const uint8 queueId)
+	bool NetworkFacade::AddAcceptor(uint16 port, uint8 queueId)
 	{
 		return AddAcceptor(NULL, port, queueId, 0, 0);
 	}
 
-	bool NetworkFacade::AddAcceptor(const ACE_TCHAR* acceptIp, const uint16 port, const uint8 queueId)
+	bool NetworkFacade::AddAcceptor(const ACE_TCHAR* acceptIp, uint16 port, uint8 queueId)
 	{
 		return AddAcceptor(acceptIp, port, queueId, 0, 0);
 	}
 
-	bool NetworkFacade::AddAcceptor
-	(
+	bool NetworkFacade::AddAcceptor (	
 		const ACE_TCHAR* acceptIp, 
-		const uint16 port, 
-		const uint8 queueId, 
-		const uint32 receiveBufferSize
-	)
+		uint16 port, 
+		uint8 queueId, 
+		uint32 receiveBufferSize)
 	{
 		return AddAcceptor(acceptIp, port, queueId, receiveBufferSize, 0);
 	}
 
 
-	bool NetworkFacade::AddAcceptor
-	( 
+	bool NetworkFacade::AddAcceptor( 
 		const ACE_TCHAR* acceptIp, 
-		const uint16 port, 
-		const uint8 queueId, 
-		const uint32 receiveBufferSize, 
-		const uint32 initialAcceptCount 
-	)
+		uint16 port, 
+		uint8 queueId, 
+		uint32 receiveBufferSize, 
+		uint32 initialAcceptCount)
 	{
 		if (true == _queueRepository->ExistQueueID(queueId))
 			return false;
@@ -139,19 +136,25 @@ namespace HalfNetwork
 		return true;
 	}
 
-	bool NetworkFacade::Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queueId)
+	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId)
 	{
 		_queueRepository->CreateQueue(queueId);
 		return _connector->Connect(ip, port, queueId);
 	}
 
-	bool NetworkFacade::Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queueId, const uint32 receiveBufferSize)
+	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 receiveBufferSize)
 	{
 		_queueRepository->CreateQueue(queueId);
 		return _connector->Connect(ip, port, queueId, receiveBufferSize);
 	}
 
-	bool NetworkFacade::PopMessage(const uint8 queueId, ACE_Message_Block** block, const int timeout)
+	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs )
+	{
+		SyncSocket testSocket;
+		return testSocket.Connect(ip, port, timeoutMs);
+	}
+
+	bool NetworkFacade::PopMessage(const uint8 queueId, ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == _suspend.value())
 			return false;
@@ -159,14 +162,14 @@ namespace HalfNetwork
 		return _queueRepository->Pop(queueId, block, timeout);
 	}
 
-	bool NetworkFacade::PopAllMessage(const uint8 queueId, ACE_Message_Block** block, const int timeout)
+	bool NetworkFacade::PopAllMessage(const uint8 queueId, ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == _suspend.value())
 			return false;
 		return _queueRepository->PopAll(queueId, block, timeout);
 	}
 
-	bool NetworkFacade::PopAllMessage(ACE_Message_Block** block, const int timeout)
+	bool NetworkFacade::PopAllMessage(ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == _suspend.value())
 			return false;
@@ -178,21 +181,21 @@ namespace HalfNetwork
 		_queueRepository->PulseAll();
 	}
 
-	void NetworkFacade::Pulse(const uint8 queueId)
+	void NetworkFacade::Pulse(uint8 queueId)
 	{
 		_queueRepository->Pulse(queueId);
 	}
 
-	bool NetworkFacade::PushCustomMessage(const uint8 queId, ACE_Message_Block* block)
+	bool NetworkFacade::PushCustomMessage(uint8 queId, ACE_Message_Block* block)
 	{
 		return PushMessage(queId, eMH_Custom, Invalid_ID, block);
 	}
 
 	bool NetworkFacade::PushMessage(  
-							const uint8 queId, 
-							const char command, 
-							const uint32 serial, 
-							ACE_Message_Block* block)
+		uint8 queId, 
+		char command, 
+		uint32 serial, 
+		ACE_Message_Block* block)
 	{
 		if (TRUE == _suspend.value())
 			return false;
@@ -205,7 +208,7 @@ namespace HalfNetwork
 		return true;
 	}
 
-	bool NetworkFacade::SendRequest(const uint32 streamId, ACE_Message_Block* block, bool copy_block) 
+	bool NetworkFacade::SendRequest(uint32 streamId, ACE_Message_Block* block, bool copy_block) 
 	{
 		if (TRUE == _suspend.value())
 		{
@@ -227,7 +230,7 @@ namespace HalfNetwork
 		return _serviceAccessor->SendRequest(streamId, send_block);
 	}
 
-	bool NetworkFacade::SendRequest(const uint32 streamId, const char* buffer, const uint32 length) 
+	bool NetworkFacade::SendRequest(uint32 streamId, const char* buffer, uint32 length) 
 	{
 		ACE_Message_Block* send_block = AllocateBlock(length);
 		ACE_ASSERT(send_block);
@@ -236,7 +239,7 @@ namespace HalfNetwork
 	}
 
 	bool NetworkFacade::SendReserve(
-		const uint32 streamId, const char* buffer, const uint32 length, const uint32 delay)
+		uint32 streamId, const char* buffer, uint32 length, uint32 delay)
 	{
 		ACE_Message_Block* send_block = AllocateBlock(length);
 		ACE_ASSERT(send_block);
@@ -244,22 +247,22 @@ namespace HalfNetwork
 		return _serviceAccessor->SendReserve(streamId, send_block, delay);
 	}
 
-	void NetworkFacade::SetSendMode(const ESendMode mode)
+	void NetworkFacade::SetSendMode(ESendMode mode)
 	{
 		SystemConfigInst->Send_Mode = mode;
 	}
 
-	void NetworkFacade::SetWorkerThreadCount(const uint8 count)
+	void NetworkFacade::SetWorkerThreadCount(uint8 count)
 	{
 		SystemConfigInst->Worker_Thread_Count = count;
 	}
 
-	void NetworkFacade::SetReceiveBufferLen(const uint32 length)
+	void NetworkFacade::SetReceiveBufferLen(uint32 length)
 	{
 		SystemConfigInst->Receive_Buffer_Len = length;
 	}
 
-	void NetworkFacade::SetIntervalSendTerm(const uint32 ms)
+	void NetworkFacade::SetIntervalSendTerm(uint32 ms)
 	{
 		SystemConfigInst->Interval_Send_Term = ms;
 	}
@@ -292,7 +295,7 @@ namespace HalfNetwork
 		_blockPool->Dump();
 	}
 
-	ACE_Message_Block* NetworkFacade::AllocateBlock(const size_t bufferSize)
+	ACE_Message_Block* NetworkFacade::AllocateBlock(size_t bufferSize)
 	{
 		ACE_Message_Block* block = _blockPool->Allocate(bufferSize);
 		if (NULL == block)
@@ -300,7 +303,7 @@ namespace HalfNetwork
 		return block;
 	}
 
-	void NetworkFacade::PrepareMessageBlock( const size_t bufferSize, const uint32 count )
+	void NetworkFacade::PrepareMessageBlock( size_t bufferSize, uint32 count )
 	{
 		ACE_Array_Base<ACE_Message_Block*> blockArray(count);
 		for(uint32 i=0;i<count;++i)
@@ -315,7 +318,7 @@ namespace HalfNetwork
 		}
 	}
 
-	void NetworkFacade::PrepareMemoryBlock( const size_t bufferSize, const uint32 count )
+	void NetworkFacade::PrepareMemoryBlock( size_t bufferSize, uint32 count )
 	{
 		ACE_Array_Base<void*> pointerArray(count);
 		for(uint32 i=0;i<count;++i)
@@ -331,7 +334,7 @@ namespace HalfNetwork
 		}
 	}
 
-	bool NetworkFacade::SuspendAcceptor(const uint16 port)
+	bool NetworkFacade::SuspendAcceptor(uint16 port)
 	{
 		AcceptorIter iter(_acceptorList);
 		while(false == iter.done())
@@ -348,7 +351,7 @@ namespace HalfNetwork
 		return false;
 	}
 
-	bool NetworkFacade::ResumeAcceptor(const uint16 port)
+	bool NetworkFacade::ResumeAcceptor(uint16 port)
 	{
 		AcceptorIter iter(_acceptorList);
 		while(false == iter.done())
@@ -392,7 +395,7 @@ namespace HalfNetwork
 		}
 	}
 
-	bool NetworkFacade::CheckDuplicatedServicePort(const uint16 port)
+	bool NetworkFacade::CheckDuplicatedServicePort(uint16 port)
 	{
 		AcceptorIter iter(_acceptorList);
 		while(false == iter.done())
@@ -428,12 +431,12 @@ namespace HalfNetwork
 		SystemConfigInst->Send_Mode = eSM_Interval;
 	}
 
-	void NetworkFacade::CloseStream(const uint32 streamID)
+	void NetworkFacade::CloseStream(uint32 streamID)
 	{
 		_serviceAccessor->DisableService(streamID);
 	}
 
-	void NetworkFacade::CloseReceiveStream(const uint32 streamID)
+	void NetworkFacade::CloseReceiveStream(uint32 streamID)
 	{
 		_serviceAccessor->CloseReceiveStream(streamID);
 	}

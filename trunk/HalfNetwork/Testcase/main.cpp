@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include <time.h>
 #include <ace/ACE.h>
-#include <ace/SOCK_Connector.h>
 #include <ace/OS_NS_unistd.h>
 #include "NetworkFacade.h"
 #include "ProactorFactory.h"
@@ -16,6 +15,7 @@
 #include "InterlockedValue.h"
 #include "TsidMap.h"
 #include "TsQueueWithEvent.h"
+#include "SyncSocket.h"
 
 class CTestFunctionPrint
 {
@@ -94,12 +94,10 @@ protected:
 
 	void DoEchoClientTest(const ACE_TCHAR* ip, uint32 port)
 	{
-		ACE_INET_Addr connect_addr(port, ip);
-		ACE_SOCK_Connector connector;
-		ACE_SOCK_Stream peer;
-
+		SyncSocket socket;
 		// Connect Test
-		ACE_TEST_ASSERT(-1 != connector.connect(peer, connect_addr));
+		const uint32 WaitTime = 1000;
+		ACE_TEST_ASSERT(socket.Connect(ip, port, WaitTime));
 
 		// echo test
 		const int send_recv_test_count = 64;
@@ -109,13 +107,13 @@ protected:
 			char send_buffer[buffer_size] = {0,};
 			char recv_buffer[buffer_size] = {0,};
 			GenerateRandomBuffer((unsigned char*)send_buffer, buffer_size);
-			ACE_TEST_ASSERT( buffer_size == (size_t)peer.send_n(send_buffer, buffer_size));
-			ACE_TEST_ASSERT( buffer_size == (size_t)peer.recv_n(recv_buffer, buffer_size));
+			ACE_TEST_ASSERT(socket.Send(send_buffer, buffer_size));
+			ACE_TEST_ASSERT(buffer_size == socket.Receive(recv_buffer, buffer_size, WaitTime));
 			// check same buffer
 			ACE_TEST_ASSERT(0 == memcmp(send_buffer, recv_buffer, buffer_size));
 			//printf("DoEchoClientTest %d\n", j);
 		}
-		peer.close();
+		socket.Disconnect();
 	}
 
 	uint32 GetProperWorkerThreadCount()

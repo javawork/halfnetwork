@@ -8137,6 +8137,10 @@
 				<File
 					RelativePath=".\Include\ServiceImpl.h"
 					>
+                                </File>
+                                <File
+					RelativePath=".\Include\SyncSocket.h"
+					>
 				</File>
 			</Filter>
 			<Filter
@@ -8197,7 +8201,11 @@
 				<File
 					RelativePath=".\Src\ServiceImpl.cpp"
 					>
-				</File>
+                                </File>
+                                <File
+					RelativePath=".\Src\SyncSocket.cpp"
+					>
+                                </File>
 			</Filter>
 			<Filter
 				Name="Container"

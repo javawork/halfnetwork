@@ -78,53 +78,62 @@ namespace HalfNetwork
 		// Return:
 		//   success or not
 		/////////////////////////////////////////////////////////////////////////
-		bool	AddAcceptor(const uint16 port, const uint8 queueId);
-		bool	AddAcceptor(const ACE_TCHAR* acceptIp, const uint16 port, const uint8 queueId);
-		bool	AddAcceptor(const ACE_TCHAR* acceptIp, const uint16 port, const uint8 queueId, const uint32 receiveBufferSize);
+		bool	AddAcceptor(uint16 port, uint8 queueId);
+		bool	AddAcceptor(const ACE_TCHAR* acceptIp, uint16 port, uint8 queueId);
+		bool	AddAcceptor(const ACE_TCHAR* acceptIp, uint16 port, uint8 queueId, uint32 receiveBufferSize);
 		bool	AddAcceptor(
-			const ACE_TCHAR* acceptIp, 
-			const uint16 port, 
-			const uint8 queueId, 
-			const uint32 receiveBufferSize, 
-			const uint32 initialAcceptCount);
+						const ACE_TCHAR* acceptIp, 
+						uint16 port, 
+						uint8 queueId, 
+						uint32 receiveBufferSize, 
+						uint32 initialAcceptCount);
 
 		/////////////////////////////////////////////////////////////////////////
 		// Description:
 		//   Connect right now. Result will be informed Message through queue 
+		//   No accepting, No message.
+		//   If you want to check "Are there any accepting?", use TryConnect()
 		// Arguments:
 		//   queueId - Related queue id
 		/////////////////////////////////////////////////////////////////////////
-		bool	Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queueId);
-		bool	Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queueId, const uint32 receiveBufferSize);
+		bool	Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId);
+		bool	Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 receiveBufferSize);
+
+		/////////////////////////////////////////////////////////////////////////
+		// Description:
+		//   Just check the ip and port are accepting for now.
+		//	 If you want send/recv packet, you must use Connect() method
+		//////////////////////////////////////////////////////////////////////////
+		bool	TryConnect(const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs);
 
 	public:
 		////////////////////////////////////////////////////////////
 		// Description:
 		//   Get Message from specified MessageQueue(queue_id)
 		// Arguments:
-		//   timeout_ms : wait time(millisecond) / -1 means infinite
+		//   timeout : wait time(millisecond) / -1 means infinite
 		///////////////////////////////////////////////////////////
-		bool	PopMessage(const uint8 queueId, ACE_Message_Block** block, const int timeout);
-		bool	PopAllMessage(const uint8 queueId, ACE_Message_Block** block, const int timeout);
+		bool	PopMessage(const uint8 queueId, ACE_Message_Block** block, int timeout);
+		bool	PopAllMessage(const uint8 queueId, ACE_Message_Block** block, int timeout);
 
 		/////////////////////////////////////////////////////
 		// Description:
 		//   Get Message from whole MessageQueue(make chain)
 		/////////////////////////////////////////////////////
-		bool	PopAllMessage(ACE_Message_Block** block, const int timeout);
+		bool	PopAllMessage(ACE_Message_Block** block, int timeout);
 
 		/////////////////////////////////////////////////////
 		// Description:
 		//   Push user custom message block
 		/////////////////////////////////////////////////////
-		bool	PushCustomMessage(const uint8 queId, ACE_Message_Block* block);
+		bool	PushCustomMessage(uint8 queId, ACE_Message_Block* block);
 
 		/////////////////////////////////////////////////////
 		// Description:
 		//   Wake up thread which wait PopMessage
 		/////////////////////////////////////////////////////
 		void	Pulse();
-		void	Pulse(const uint8 queueId);
+		void	Pulse(uint8 queueId);
 
 	public:
 		///////////////////////////////////////////////////////////////////////////////////
@@ -132,8 +141,8 @@ namespace HalfNetwork
 		//   Send block or buffer. 
 		//   Directly(eSM_Direct) or after a while(eSM_Interval) depend on mode(ESendMode)
 		///////////////////////////////////////////////////////////////////////////////////
-		bool	SendRequest(const uint32 streamId, ACE_Message_Block* block, bool copy_block = false);
-		bool	SendRequest(const uint32 streamId, const char* buffer, const uint32 length);
+		bool	SendRequest(uint32 streamId, ACE_Message_Block* block, bool copy_block = false);
+		bool	SendRequest(uint32 streamId, const char* buffer, uint32 length);
 
 		///////////////////////////////////////////////////////////////////////////////////
 		// Description:
@@ -141,24 +150,24 @@ namespace HalfNetwork
 		// Arguments:
 		//   delay : delayed time(millisecond)
 		///////////////////////////////////////////////////////////////////////////////////
-		bool	SendReserve(const uint32 streamId, const char* buffer, const uint32 length, const uint32 delay);
+		bool	SendReserve(uint32 streamId, const char* buffer, uint32 length, uint32 delay);
 
 		/////////////////////////////////////////////////
 		// Description:
 		//   Close connection
 		/////////////////////////////////////////////////
-		void	CloseStream(const uint32 streamID);
-		void	CloseReceiveStream(const uint32 streamID);
+		void	CloseStream(uint32 streamID);
+		void	CloseReceiveStream(uint32 streamID);
 
 	public:
 		/////////////////////////////////////////////////////
 		// Description:
 		//   Setup options
 		/////////////////////////////////////////////////////
-		void	SetWorkerThreadCount(const uint8 count);
-		void	SetSendMode(const ESendMode mode);
-		void	SetReceiveBufferLen(const uint32 length);
-		void	SetIntervalSendTerm(const uint32 ms);
+		void	SetWorkerThreadCount(uint8 count);
+		void	SetSendMode(ESendMode mode);
+		void	SetReceiveBufferLen(uint32 length);
+		void	SetIntervalSendTerm(uint32 ms);
 
 	public:
 		void	GetInformation(NetworkFacadeInfo& info);
@@ -168,17 +177,33 @@ namespace HalfNetwork
 		//   Show current status
 		/////////////////////////////////////////////////////
 		void	Dump();
-		ACE_Message_Block*	AllocateBlock(const size_t bufferSize);
-		void	PrepareMessageBlock(const size_t bufferSize, const uint32 count);
-		void	PrepareMemoryBlock(const size_t bufferSize, const uint32 count);
+
+		/////////////////////////////////////////////////////
+		// Description:
+		//   Allocate a MessageBlock from pool
+		/////////////////////////////////////////////////////
+		ACE_Message_Block*	AllocateBlock(size_t bufferSize);
+
+		/////////////////////////////////////////////////////
+		// Description:
+		//   Allocate MessageBlocks and save in the pool
+		//   In other words, Allocate blocks in advance
+		/////////////////////////////////////////////////////
+		void	PrepareMessageBlock(size_t bufferSize, uint32 count);
+
+		/////////////////////////////////////////////////////
+		// Description:
+		//   Allocate MemoryBlocks and save in the pool
+		/////////////////////////////////////////////////////
+		void	PrepareMemoryBlock(size_t bufferSize, uint32 count);
 
 	public:
 		/////////////////////////////////////////////////////
 		// Description:
-		//   Stop accept
+		//   Stop accepting
 		/////////////////////////////////////////////////////
-		bool	SuspendAcceptor(const uint16 port);
-		bool	ResumeAcceptor(const uint16 port);
+		bool	SuspendAcceptor(uint16 port);
+		bool	ResumeAcceptor(uint16 port);
 
 	protected:
 		//////////////////////////////////////////////////////////////////////////////////
@@ -186,16 +211,16 @@ namespace HalfNetwork
 		//   Push event message. For example
 		//   Accept(Connect) new connection / Receive packets / Close connection
 		//////////////////////////////////////////////////////////////////////////////////
-		bool	PushMessage(const uint8 queId, 
-							const char command, 
-							const uint32 serial, 
+		bool	PushMessage(uint8 queId, 
+							char command, 
+							uint32 serial, 
 							ACE_Message_Block* block);
 
 	protected:
 		bool	Create(AbstractFactory* const factory);
 		bool	StartListen();
 		void	ClearAcceptor();
-		bool	CheckDuplicatedServicePort(const uint16 port);
+		bool	CheckDuplicatedServicePort(uint16 port);
 		void	CloseService();
 		void	ClearMessageQueue();
 

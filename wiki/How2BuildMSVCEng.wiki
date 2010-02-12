@@ -9,7 +9,7 @@ http://i45.tinypic.com/2rnwv45.png
 You can see ACE_wrappers folder in above picture. It’s ACE library. 
 
 Here's simple steps for build.
- * Download the source code or get it from SVN
+ * Download the source code or get it through SVN
  * Open the solution file(`HalfNetwork_vc8` or `_vc9`) with MSVC
  * Build all projects
 

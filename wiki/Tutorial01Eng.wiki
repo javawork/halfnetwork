@@ -1,0 +1,66 @@
+#summary EchoServer Tutorial(English)
+
+Create event model
+{{{
+NetworkInstance->Create<HalfNetwork::ProactorFactory>();
+}}}
+or
+{{{
+NetworkInstance->Create<HalfNetwork::ReactorFactory>();
+}}}
+
+If you work on Windows, Proactor is the best choice. On Linux, Reactor is the one.
+
+Assign listen port and Queue ID.
+{{{
+int port = 25251;
+int queueID = 103;
+NetworkInstance->AddAcceptor(NULL, port, queueID);
+}}}
+
+In case of you’d like to accept from specific ip, the first parameter is the ip. Otherwise it must be NULL. For more detail, you can reference [FunctionReferenceEng#here AddAcceptor].
+
+Start listen.
+{{{
+NetworkInstance->Open();
+}}}
+You can assign more parameters for detail setting. For more detail, you can reference [FunctionReferenceEng#here Open]. 
+
+Check constantly there is any new message.
+{{{
+using namespace HalfNetwork;
+ACE_Message_Block* commandBlock = NULL;
+bool receiveData = NetworkInstance->PopMessage(queueID, &commandBlock, -1);
+if (false == receiveData)
+	return;
+
+MessagePostee postee;
+memcpy(&postee, commandBlock->rd_ptr(), sizeof(MessagePostee));
+commandBlock->rd_ptr(sizeof(MessagePostee));
+ACE_Message_Block* payloadBlock = commandBlock->cont();
+switch(postee.command)
+{
+case eMH_Establish:
+	OnAccept(postee.stream_id, payloadBlock->rd_ptr());
+	break;
+case eMH_Read:
+	OnRead(postee.stream_id, payloadBlock->rd_ptr(), payloadBlock->length());
+	break;
+case eMH_Close:
+	OnClose(postee.stream_id);
+	break;
+}
+commandBlock->release();
+}}}
+
+For performance, [FunctionReferenceEng#Pop_All_Message PopAllMessage] is the better choice rather than [FunctionReferenceEng#Pop_Message PopMessage].
+
+Echo the received packet.
+{{{
+void OnRead(unsigned int streamID, char* buffer, unsigned int length)
+{
+	ACE_Message_Block* block = NetworkInstance->AllocateBlock(length);
+	block->copy(buffer, length);
+	NetworkInstance->SendRequest(streamID, block);
+}
+}}}

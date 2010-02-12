@@ -1,0 +1,13 @@
+#summary How to build on Windows MSVC(English)
+
+ * Download the source code
+ * Open the solution file(`HalfNetwork_vc8` or `_vc9`) with MSVC
+ * Build all projects
+
+You don’t need ACE library in addtion. `HalfNetwork` already includes it. 
+
+http://i45.tinypic.com/2rnwv45.png
+
+You can see ACE_wrappers folder in above picture. It’s ACE library. 
+
+When the build is finished, you can find the library and executable files in Bin32(or Bin64) folder.

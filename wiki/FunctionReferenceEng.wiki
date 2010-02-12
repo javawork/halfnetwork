@@ -1,0 +1,157 @@
+#summary Public function reference on NetworkFacade(English)
+
+= Initialization methods =
+
+  * Note
+    * Initialization methods aren't thread safe. It should be called only before start service.
+
+== Create ==
+
+  * Description
+    * Decide event model(Proactor/Reactor)
+  * Note
+    * On Windows, Proactor is the best choice for performance. On Linux, Reactor is the one.
+
+== Add Acceptor ==
+
+  * Description
+    * Accept(Listen)를 위한 메소드
+    * Accept 할 포트를 하나 추가합니다.
+  * 인자
+    * acceptIp : 특정  ip에서만 accept를 받고 싶을 경우 설정합니다. NULL혹은 빈문자열을 넣으면 사용하지 않습니다.
+    * port : accept 받을 포트
+    * queueId : 해당 포트로 받은 패킷을 어느 queue로 받을지 설정합니다. [FunctionReferenceEng#Pop_Message PopMessage] (혹은 [FunctionReferenceEng#Pop_All_Message PopAllMessage])의 queueId 인자와 같은 값을 설정해야 패킷을 제대로 받을 수 있습니다.
+    * receiveBufferSize : 최대 `ReceiveBufferSize`를 설정. 포트마다 다르게 설정할 수 있습니다. 이 값이 너무 작으면 성능이 떨어지고 너무 크면 메모리가 낭비 됩니다. 설정하지 않을 경우에는 `SystemConfig`의 값을 따릅니다.
+    * initialAcceptCount : 초기에 미리 생성해 놓을 Acceptor의 개수를 설정합니다. 기본값은 1024.
+  * Note
+    * 바로 listen을 시작하는 것은 아니고 [FunctionReferenceEng#Open Open] 메소드가 호출 되었을때 listen을 시작합니다.
+    * Add Acceptor를 하고 [FunctionReferenceEng#Open Open] 메소드를 호출해야합니다.
+
+== Open ==
+
+  * Description
+    * listen을 시작하고 worker thread를 시작하는 등 여러 초기화를 수행합니다.
+  * 인자
+    * config
+      * `Receive_Buffer_Len` : 최대 `ReceiveBufferSize`를 설정. 이 값이 너무 작으면 성능이 떨어지고 너무 크면 메모리가 낭비 됩니다.
+      * `Worker_Thread_Count` : `WorkerThread` 개수. 0으로 설정하면 cpu*2로 설정합니다.
+      * `Send_Mode` : 바로 패킷을 보낼것인지(DIRECT_SEND), 모아서 보낼 것인지(INTERVAL_SEND)를 설정합니다. INTERVAL_SEND를 추천합니다.
+      * `Interval_Send_Term` : 패킷 모아서 보내는 시간, 끊어짐 감지하는 시간을 설정합니다(millisecond). 20ms정도면 충분합니다.
+      * 넣어주지 않을 경우. `NetworkFacade::_SetupDefaultConfig()` 메소드에서 기본설정된 값을 사용합니다.
+  * Note
+    * [FunctionReferenceEng#Create Create] 메소드를 호출해서 이벤트 모델(Proactor/Reactor)을 정한후에 호출해야 합니다.
+
+
+== Prepare Message Block ==
+
+  * Description
+    * `MessageBlockPool` 에 block을 미리 할당해둡니다.
+  * 인자
+    * bufferSize : 주로 사용할 block size
+    * count :  몇개를 할당할지
+  * Note
+    * 패킷을 받기위해 `MessageBlock`을 사용합니다. new로 할당 받지 않고 `MessageBlockPool`을 사용하는데 이 Pool은 기본 64개에서 시작해서 모두 사용하면 2배수씩 늘려서 재할당을 받는 방식을 사용합니다. 이 메소드를 사용해서 block을 미리 할당해두면 서버가 가동중에 동적 할당을 받는 상황을 피할수 있습니다. 일종의 정적할당이라고 생각할수도 있습니다.
+
+
+== Prepare Memory Block ==
+
+  * Description
+    * `MemoryObject`에 메모리를 미리 할당해 둡니다.
+  * 인자 : [FunctionReferenceEng#Prepare_Message_Block PrepareMessageBlock] 참고
+  * Note
+    * `MemoryObject`를 상속받으면 `MemoryPool`을 사용할 수 있습니다. 이 `MemoryPool`에 메모리를 할당해두는 메소드입니다.
+    * `MessageBlockPool`과 거의 같은 코드를 사용합니다.
+
+
+= Operation method =
+
+  * Note
+    * These methods are thread-safe. You can call any threads.
+
+== Connect ==
+
+  * Description
+    * 접속요청
+  * 인자
+    * [FunctionReferenceEng#Add_Acceptor AddAcceptor] 참조
+  * Note
+    * [FunctionReferenceEng#Add_Acceptor AddAcceptor]와 달리 바로 접속을 요청합니다. 따라서 Open 메소드 호출후에 요청해야 합니다.
+    * 접속이 성공하면 [FunctionReferenceEng#Pop_Message PopMessage]를 통해 eMH_Establish를 받게 됩니다.
+    * 해당 주소와 포트에서 listen하고 있지 않다면 아무 메시지도 받을수 없습니다. 즉, 실패한 결과는 알수 없습니다. listen하고 있는지 미리 체크하고 싶다면 [FunctionReferenceEng#Try_Connect TryConnect] 메소드를 사용해야 합니다.
+
+== Pop Message ==
+
+  * Description
+    * 패킷 혹은 accept, connect, close 신호를 받아옵니다.
+  * 인자
+    * queueId : [FunctionReferenceEng#Add_Acceptor AddAcceptor] 혹은 [FunctionReferenceEng#Connect Connect] 메소드의 queueId 인자로 넣어준 값. queueId를 넣어주지 않는 `PopMessage`를 사용하게 되면 모든 메세지를 받아오게 되고 어느 queueId인지는 `MessagePostee.queueId`로 알수 있습니다.
+    * block : 받아올 block  포인터. 할당받지 않은 block을 넣어야 합니다.
+    * timeout : 당장 받아올 메시지가 없을 경우 어느 정도 대기할 것일지를 설정합니다(millisecond).  -1일 경우 받아올 메세지가 생길때까지 대기 합니다.  성능에는 -1이 가장 이상적이기는 합니다만 그렇지 못할 경우라도 바쁜대기(busy wait)를 만들지 않을 정도의 ms를 넣어주는 것이 좋습니다.
+  * Note
+    * Command block과 Payload block이 하나의 메세지를 이룹니다. Command의 내용을 파싱해서 Payload 를 어떻게 사용해야 할지 알수 있습니다. `TestClient`, `TestServer` 예제 참조. http://javawork.egloos.com/2439678 참조.
+    * 성능에는 [FunctionReferenceEng#Pop_All_Message PopAllMessage]가 좋습니다. 대부분의 경우에 [FunctionReferenceEng#PopAllMessage PopAllMessage]의 사용을 추천합니다.
+
+== Pop All Message ==
+
+  * Description
+    * [FunctionReferenceEng#Pop_Message PopMessage]와 비슷하지만 현재 queue에 들어있는 모든 메세지를 linked list 형태로 가져옵니다.
+  * 인자
+    * [FunctionReferenceEng#Pop_Message PopMessage] 참조
+  * Note
+    * 현재 queue에 들어있는 모든 메세지를 링크드 리스트 형태로 다 가져옵니다. Payload block의 다음이 NULL일때까지 루프를 돌면서 처리를 해주어야 합니다.
+    * 성능에는 `PopAllMessage`가 절대적으로 좋습니다. Context swiching을 줄여주기 때문입니다.
+
+== Allocate Block ==
+
+  * Description
+    * `MessageBlockPool`에서 block을 하나 할당 받습니다.
+
+== Send Request ==
+
+  * Description
+    * 패킷을 보냅니다.
+  * 인자
+    * streamId : [FunctionReferenceEng#Pop_Message PopMessage]에서 넘어온 MessagePostee.streamId 값을 넣어주면 됩니다.
+    * block 혹은 buffer, length : block 혹은 buffer를 선택적으로 사용할 수 있습니다.
+    * copy_block : 인자로 넣어준 block을 라이브러리가 복사해서 사용할 것인지 설정해줍니다. false로 사용하는 것이 성능에는 좋습니다.
+  * Note
+    * 인자로 넣어준 block 혹은 버퍼는 send가 완료되면 라이브러리안에서 해제됩니다.
+
+== Send Reserve ==
+
+  * Description
+    * 일정 시간(millisecond) 후에 패킷을 보낼 것을 예약합니다
+  * Note
+    * 일반 send와 같은 queue에 관리되기 때문에 일반 send가 너무 많아서 예약된 send가 delay되는 경우는 없습니다.
+
+== Close Stream ==
+
+  * Note
+    * 나중에는 closesocket을 호출하게 되지만 중간 과정은 gracefull close를 구현하고 있습니다.
+
+== Close Receive Stream ==
+
+  * Note
+    * 받기스트림만 종료합니다. closesocket(SD_RECEIVE) 입니다.
+    * 일반적으로 [FunctionReferenceEng#Close_Stream CloseStream]을 호출하는 것을 추천합니다.
+
+== Pulse ==
+
+  * Description
+    * 대기하고 있는 [FunctionReferenceEng#Pop_Message PopMessage]에 신호를 주어서 깨웁니다.
+  * Note
+    * 종료시에나 [FunctionReferenceEng#Pop_Message PopMessage]를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.
+
+== Push Custom Message == 
+
+  * Description 
+    * 사용자 정의 블럭 하나를 Queue에 넣어줍니다.
+    * [FunctionReferenceEng#Pop_Message PopMessage]에서 eMH_Custom 타입으로 받아서 처리할 수 있습니다.
+  * Note
+    * 어떤 작업을 패킷처리 스레드에서 처리하도록 하고 싶을때 사용하면 좋습니다. 
+
+== Try Connect == 
+  * Description
+    * 해당 주소와 포트에서 listen하고 있는지 체크합니다.
+  * Note
+    * 이 메소드는 체크만 하는데 사용해야하고 이후 메세지를 주고 받고 싶다면 [FunctionReferenceEng#Connect Connect]메소드를 사용해야 합니다.

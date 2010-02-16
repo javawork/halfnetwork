@@ -18,7 +18,7 @@
     * Prepare for Listen 
     * Add an accept port
   * Parameter
-    * acceptIp : In case you want to accept specific ip. Otherwise assign NULL.
+    * acceptIp : In case you want to accept only specific ip. Otherwise assign NULL.
     * port : listen port
     * queueId : It must be same as [FunctionReferenceEng#Pop_Message PopMessage] (or [FunctionReferenceEng#Pop_All_Message PopAllMessage]) queueId parameter.
     * receiveBufferSize : The maximum receive buffer size. It's applied only this case. Default value is 1024x4.
@@ -36,30 +36,25 @@
       * `Receive_Buffer_Len` : The maximum receive buffer size. It is applied globally.
       * `Worker_Thread_Count` : If you assign 0, the count is cpu*2.
       * `Send_Mode` : Either send immediately(DIRECT_SEND) or cyclically(INTERVAL_SEND).
-      * `Interval_Send_Term` : The term which for interval_send and detect socket close. The unit is millisecond and the recommend value is 20.
+      * `Interval_Send_Term` : The term which for interval_send and detecting socket close. The unit is millisecond and the recommend value is 20.
   * Note
     * You have to call [FunctionReferenceEng#Create Create] before this method.
 
 == Prepare Message Block ==
 
   * Description
-    * `MessageBlockPool` 에 block을 미리 할당해둡니다.
-  * 인자
-    * bufferSize : 주로 사용할 block size
-    * count :  몇개를 할당할지
+    * Allocate `MessageBlock` in `MessageBlockPool` in advance.
+  * Parameter
+    * bufferSize : buffer size
+    * count :  buffer size
   * Note
-    * 패킷을 받기위해 `MessageBlock`을 사용합니다. new로 할당 받지 않고 `MessageBlockPool`을 사용하는데 이 Pool은 기본 64개에서 시작해서 모두 사용하면 2배수씩 늘려서 재할당을 받는 방식을 사용합니다. 이 메소드를 사용해서 block을 미리 할당해두면 서버가 가동중에 동적 할당을 받는 상황을 피할수 있습니다. 일종의 정적할당이라고 생각할수도 있습니다.
-
+    * We use `MessageBlock` for receive packet. The `MessageBlock` is from `MessageBlockPool`. This method is sort of pre-allocation.
 
 == Prepare Memory Block ==
 
   * Description
-    * `MemoryObject`에 메모리를 미리 할당해 둡니다.
-  * 인자 : [FunctionReferenceEng#Prepare_Message_Block PrepareMessageBlock] 참고
-  * Note
-    * `MemoryObject`를 상속받으면 `MemoryPool`을 사용할 수 있습니다. 이 `MemoryPool`에 메모리를 할당해두는 메소드입니다.
-    * `MessageBlockPool`과 거의 같은 코드를 사용합니다.
-
+    * Allocate `MemoryObject` in `MemoryPool` in advance.
+  * Parameter : [FunctionReferenceEng#Prepare_Message_Block PrepareMessageBlock]
 
 = Operation method =
 

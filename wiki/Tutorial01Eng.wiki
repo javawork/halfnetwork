@@ -18,7 +18,7 @@ int queueID = 103;
 NetworkInstance->AddAcceptor(NULL, port, queueID);
 }}}
 
-In case of you’d like to accept from specific ip, the first parameter is the ip. Otherwise it must be NULL. For more detail, you can reference [FunctionReferenceEng#Add_Acceptor here ].
+In case of you’d like to accept from specific ip only, the first parameter is the ip. Otherwise it must be NULL. For more detail, you can reference [FunctionReferenceEng#Add_Acceptor here ].
 
 Start listen.
 {{{

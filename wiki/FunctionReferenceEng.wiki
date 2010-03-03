@@ -104,47 +104,43 @@
   * Description
     * Send packet 
   * Parameter
-    * streamId : [FunctionReferenceEng#Pop_Message PopMessage]에서 넘어온 MessagePostee.streamId 값을 넣어주면 됩니다.
-    * block 혹은 buffer, length : block 혹은 buffer를 선택적으로 사용할 수 있습니다.
-    * copy_block : 인자로 넣어준 block을 라이브러리가 복사해서 사용할 것인지 설정해줍니다. false로 사용하는 것이 성능에는 좋습니다.
+    * streamId : MessagePostee.streamId from [FunctionReferenceEng#Pop_Message PopMessage] method
+    * You can select either ACE_Message_Block or (char* buffer, int len)
+    * copy_block : If it's true, copy the block(or buffer) inside the function. False is good for performance, because it would decrease memory copy.
   * Note
-    * 인자로 넣어준 block 혹은 버퍼는 send가 완료되면 라이브러리안에서 해제됩니다.
+    * The block(or buffer) will be free, when send is completed.
 
 == Send Reserve ==
 
   * Description
-    * 일정 시간(millisecond) 후에 패킷을 보낼 것을 예약합니다
-  * Note
-    * 일반 send와 같은 queue에 관리되기 때문에 일반 send가 너무 많아서 예약된 send가 delay되는 경우는 없습니다.
+    * Send packet after a certain delay 
 
 == Close Stream ==
 
   * Note
-    * 나중에는 closesocket을 호출하게 되지만 중간 과정은 gracefull close를 구현하고 있습니다.
+    * Gracefull socket close
 
 == Close Receive Stream ==
 
   * Note
-    * 받기스트림만 종료합니다. closesocket(SD_RECEIVE) 입니다.
-    * 일반적으로 [FunctionReferenceEng#Close_Stream CloseStream]을 호출하는 것을 추천합니다.
+    * Close only receive stream like closesocket(SD_RECEIVE)
+    * [FunctionReferenceEng#Close_Stream CloseStream] is recommended rather than this.
 
 == Pulse ==
 
   * Description
-    * 대기하고 있는 [FunctionReferenceEng#Pop_Message PopMessage]에 신호를 주어서 깨웁니다.
-  * Note
-    * 종료시에나 [FunctionReferenceEng#Pop_Message PopMessage]를 처리하는 스레드에 어떤 작업을 처리하도록 요청할때 사용할 수 있습니다.
+    * Wake up [FunctionReferenceEng#Pop_Message PopMessage] thread
 
 == Push Custom Message == 
 
   * Description 
-    * 사용자 정의 블럭 하나를 Queue에 넣어줍니다.
-    * [FunctionReferenceEng#Pop_Message PopMessage]에서 eMH_Custom 타입으로 받아서 처리할 수 있습니다.
+    * Insert user define block to queue
+    * The message type is eMH_Custom.
   * Note
-    * 어떤 작업을 패킷처리 스레드에서 처리하도록 하고 싶을때 사용하면 좋습니다. 
+    * When you want to give signal to packet parsing thread([FunctionReferenceEng#Pop_Message PopMessage] thread)
 
 == Try Connect == 
   * Description
-    * 해당 주소와 포트에서 listen하고 있는지 체크합니다.
+    * Test connect, whether there is a listen or not.
   * Note
-    * 이 메소드는 체크만 하는데 사용해야하고 이후 메세지를 주고 받고 싶다면 [FunctionReferenceEng#Connect Connect]메소드를 사용해야 합니다.
+    * It's only for test. If you want to communicate with peer after connect, you have to use [FunctionReferenceEng#Connect Connect] method.

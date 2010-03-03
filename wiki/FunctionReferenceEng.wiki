@@ -91,7 +91,7 @@
   * Parameter
     * Same as [FunctionReferenceEng#Pop_Message PopMessage]
   * Note
-    * It gets whole messages in the queue. So you have to process all messages during while loop.
+    * Retrieves whole messages from the queue as linked list. So you have to process all messages during while loop.
     * It's definitely good for performance due to reduce Context swiching.
 
 == Allocate Block ==

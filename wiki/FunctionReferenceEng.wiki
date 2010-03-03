@@ -137,7 +137,7 @@
     * Insert user define block to queue
     * The message type is eMH_Custom.
   * Note
-    * When you want to give signal to packet parsing thread([FunctionReferenceEng#Pop_Message PopMessage] thread)
+    * When you want to give a signal to packet parsing thread([FunctionReferenceEng#Pop_Message PopMessage] thread)
 
 == Try Connect == 
   * Description

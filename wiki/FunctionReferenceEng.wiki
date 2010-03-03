@@ -105,7 +105,7 @@
     * Send packet 
   * Parameter
     * streamId : MessagePostee.streamId from [FunctionReferenceEng#Pop_Message PopMessage] method
-    * You can select either ACE_Message_Block or (char* buffer, int len)
+    * You can select either `ACE_Message_Block` or `(char* buffer, int len)`
     * copy_block : If it's true, copy the block(or buffer) inside the function. False is good for performance, because it would decrease memory copy.
   * Note
     * The block(or buffer) will be free, when send is completed.

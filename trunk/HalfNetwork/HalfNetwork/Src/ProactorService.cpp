@@ -246,7 +246,7 @@ namespace HalfNetwork
 	{
 		//ACE_DEBUG ((LM_DEBUG, "[%t] OnAccept.\n"));
 		
-		ACE_Message_Block* block = _serviceImpl->AllocateBlock(sizeof(_peer_ip));
+		ACE_Message_Block* block = _serviceImpl->AllocateBlock(IP_ADDR_LEN);
 		block->copy((const char*)_peer_ip, IP_ADDR_LEN);
 		_serviceImpl->PushEventBlock(eMH_Establish, _queue_id, _serial, block);
 	}

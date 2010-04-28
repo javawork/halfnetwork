@@ -38,7 +38,6 @@ namespace HalfNetwork
 		_factory = factory;
 		_connector = _factory->CreateConnector();
 		_eventPool = _factory->CreateEventPool();
-		_serviceAccessor = _factory->CreateServiceAccessor(SystemConfigInst->Send_Mode);
 		_queueRepository = new MessageQueueRepository();
 		_blockPool = new FlexibleSizePoolT<MessageBlockPool, ACE_Message_Block>();
 		return true;
@@ -59,6 +58,8 @@ namespace HalfNetwork
 		_suspend = FALSE;
 		if (NULL != config)
 			*SystemConfigInst = *config;
+
+		_serviceAccessor = _factory->CreateServiceAccessor(SystemConfigInst->Send_Mode);
 
 		if (false == _connector->Open())
 			return false;
@@ -213,7 +214,7 @@ namespace HalfNetwork
 		if (TRUE == _suspend.value())
 		{
 			//OutputDebugString(_T("SendRequest #1\n"));
-			return false;
+			return true;
 		}
 
 		ACE_Message_Block* send_block = NULL;

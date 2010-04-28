@@ -88,9 +88,9 @@ namespace HalfNetwork
 		void	ReceiveClose();
 
 	public:
-		void	IntervalSend(ACE_Message_Block* block);
-		void	DirectSend(ACE_Message_Block* block);
-		void	ReserveSend(ACE_Message_Block* block, uint32 delay);
+		bool	IntervalSend(ACE_Message_Block* block);
+		bool	DirectSend(ACE_Message_Block* block);
+		bool	ReserveSend(ACE_Message_Block* block, uint32 delay);
 
 	protected:
 		//////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ namespace HalfNetwork
 		//   1. when completed previous send operation : directly send
 		//   2. when incompleted previous send operation : insert gather_block
 		//////////////////////////////////////////////////////////////////////
-		void	_SmartSend(ACE_Message_Block* block);
+		bool	_SmartSend(ACE_Message_Block* block);
 
 	protected:
 		///////////////////////////////
@@ -153,7 +153,7 @@ namespace HalfNetwork
 		// Description:
 		// 
 		//////////////////////////
-		void	_PushQueue(ACE_Message_Block* block, uint32 tick);
+		bool	_PushQueue(ACE_Message_Block* block, uint32 tick);
 		bool	_PopQueue(ACE_Message_Block** block);
 		void	_SendQueuedBlock();
 

@@ -38,15 +38,19 @@ void SendThread::Update()
 
 	char buffer[1024] = {0,};
 	unsigned int sendSize = rand()%1000 + 4;
-	MakeRandomBuffer(buffer, sendSize);
-	ACE_Message_Block* block = new ACE_Message_Block(sendSize);
-	block->copy(buffer, sendSize);
-	unsigned int streamId = 0;
-	
-	if (NetworkInstance->SendRequest(streamId, block, false))
-		_ioStatus->AddSendBytes(sendSize);
-	else
-		printf("SendRequest fail.");
+	//sendSize = 50;
+	//for(int i=0;i<300;++i)
+	{
+		MakeRandomBuffer(buffer, sendSize);
+		ACE_Message_Block* block = new ACE_Message_Block(sendSize);
+		block->copy(buffer, sendSize);
+		unsigned int streamId = 0;
+		
+		if (NetworkInstance->SendRequest(streamId, block, false))
+			_ioStatus->AddSendBytes(sendSize);
+		else
+			printf("SendRequest fail bytes(%d).\n", sendSize);
+	}
 
 	EventSleep(30);
 }

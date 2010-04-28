@@ -89,7 +89,7 @@ int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 	HALF_LOG(ConsoleLogger, ACE_TEXT("ConnectCount = %d, start connect."), connectionCount);
 	for(unsigned int i=0; i<connectionCount; ++i)
 	{
-		NetworkInstance->Connect(serverIp.c_str(), port, QueueID);
+		bool result = NetworkInstance->Connect(serverIp.c_str(), port, QueueID);
 		EventSleep(configReader.GetValue<int>(ACE_TEXT("ConnectTerm")));
 	}
 	HALF_LOG(ConsoleLogger, ACE_TEXT("connect end"), 0);

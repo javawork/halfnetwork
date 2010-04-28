@@ -21,7 +21,7 @@ namespace HalfNetwork
 		m_queueContainer.unbind_all();
 	}
 
-	bool MessageQueueRepository::CreateQueue(const uint8 id)
+	bool MessageQueueRepository::CreateQueue(uint8 id)
 	{
 		MessageQueue* que = GetQueue(id);
 		if ( NULL != que )
@@ -32,7 +32,7 @@ namespace HalfNetwork
 		return true;
 	}
 
-	MessageQueue* MessageQueueRepository::GetQueue(const uint8 id) const
+	MessageQueue* MessageQueueRepository::GetQueue(uint8 id) const
 	{
 		MessageQueue* que = NULL;
 		if ( -1 == m_queueContainer.find(id, que) )
@@ -40,9 +40,9 @@ namespace HalfNetwork
 		return que;
 	}
 
-	bool MessageQueueRepository::Push( const uint8 queId, 
+	bool MessageQueueRepository::Push( uint8 queId, 
 									EMessageHeader command, 
-									const uint32 serial, 
+									uint32 serial, 
 									ACE_Message_Block* block)
 	{
 		if (TRUE == m_suspendPush.value())
@@ -55,7 +55,7 @@ namespace HalfNetwork
 		return que->Push(queId, command, serial, block);
 	}
 
-	bool MessageQueueRepository::Pop(const uint8 queId, ACE_Message_Block** block, const int timeout)
+	bool MessageQueueRepository::Pop(uint8 queId, ACE_Message_Block** block, int timeout)
 	{
 		MessageQueue* que = GetQueue(queId);
 		if (NULL == que)
@@ -64,7 +64,7 @@ namespace HalfNetwork
 		return que->Pop(block, timeout);
 	}
 
-	bool MessageQueueRepository::Pop(ACE_Message_Block** block, const int timeout)
+	bool MessageQueueRepository::Pop(ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == m_popProgress.value())
 			return false;
@@ -83,7 +83,7 @@ namespace HalfNetwork
 		return false;
 	}
 
-	bool MessageQueueRepository::PopAll(uint8 que_id, ACE_Message_Block** block, const int timeout)
+	bool MessageQueueRepository::PopAll(uint8 que_id, ACE_Message_Block** block, int timeout)
 	{
 		MessageQueue* que = GetQueue(que_id);
 		if (NULL == que)
@@ -92,7 +92,7 @@ namespace HalfNetwork
 		return que->PopAll(block, timeout);
 	}
 
-	bool MessageQueueRepository::PopAll(ACE_Message_Block** block, const int timeout)
+	bool MessageQueueRepository::PopAll(ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == m_popProgress.value())
 			return false;
@@ -127,7 +127,7 @@ namespace HalfNetwork
 		return true;
 	}
 
-	bool MessageQueueRepository::ExistQueueID(const uint8 queId) const
+	bool MessageQueueRepository::ExistQueueID(uint8 queId) const
 	{
 		MessageQueue* que = GetQueue(queId);
 		return (NULL != que);

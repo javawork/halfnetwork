@@ -148,7 +148,7 @@ namespace HalfNetwork
 		return _connector->Connect(ip, port, queueId, receiveBufferSize);
 	}
 
-	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs )
+	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs ) const
 	{
 		SyncSocket testSocket;
 		return testSocket.Connect(ip, port, timeoutMs);

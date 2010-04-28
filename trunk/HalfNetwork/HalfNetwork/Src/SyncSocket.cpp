@@ -30,7 +30,7 @@ namespace HalfNetwork
 	{
 		if (len <= 0)
 			return false;
-		return (len == m_stream->send_n(buffer, len));
+		return (len == (uint32)m_stream->send_n(buffer, len));
 	}
 
 	uint32 SyncSocket::Receive(char* buffer, uint32 len, uint32 timeoutMs)

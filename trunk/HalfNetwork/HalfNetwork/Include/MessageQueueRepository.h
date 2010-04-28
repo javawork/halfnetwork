@@ -33,22 +33,22 @@ namespace HalfNetwork
 		//   CreateQueue
 		//   should CreateQueue once before use(push, pop)
 		/////////////////////////////////////////////////////
-		bool	CreateQueue(const uint8 id);
+		bool	CreateQueue(uint8 id);
 
 	public:
-		bool	Push(const uint8 queId, 
+		bool	Push(uint8 queId, 
 					EMessageHeader command, 
-					const uint32 serial, 
+					uint32 serial, 
 					ACE_Message_Block* block);
 
-		bool	Pop(const uint8 queId, ACE_Message_Block** block, const int timeout);
-		bool	Pop(ACE_Message_Block** block, const int timeout);
+		bool	Pop(uint8 queId, ACE_Message_Block** block, int timeout);
+		bool	Pop(ACE_Message_Block** block, int timeout);
 
-		bool	PopAll(uint8 que_id, ACE_Message_Block** block, const int timeout);
-		bool	PopAll(ACE_Message_Block** block, const int timeout);
+		bool	PopAll(uint8 que_id, ACE_Message_Block** block, int timeout);
+		bool	PopAll(ACE_Message_Block** block, int timeout);
 		
 	public:
-		bool	ExistQueueID(const uint8 queId) const;
+		bool	ExistQueueID(uint8 queId) const;
 		void	SuspendPush();
 		void	Dump();
 		void	Pulse(const uint8 queId) const;

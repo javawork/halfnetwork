@@ -16,6 +16,8 @@ namespace HalfNetwork
 			_timerLock(new InterlockedValue()),
 			_sendLock(new InterlockedValue())
 	{
+		size_t QueueHighWaterMark = 1024*32;
+		_block_queue->high_water_mark(QueueHighWaterMark);
 	}
 
 	ServiceImpl::~ServiceImpl()
@@ -27,25 +29,26 @@ namespace HalfNetwork
 		SAFE_DELETE(_sendLock);
 	}
 
-	void ServiceImpl::PushQueue(ACE_Message_Block* block, uint32 tick)
+	bool ServiceImpl::PushQueue(ACE_Message_Block* block, uint32 tick)
 	{
 		block->msg_priority(tick);
-		_block_queue->enqueue_prio(block);
+		ACE_Time_Value noWait(0, 0); // I don't want to wait here.
+		return (-1 != _block_queue->enqueue_prio(block, &noWait));
 	}
 
 	bool ServiceImpl::PopQueue(ACE_Message_Block** param_block)
 	{
-		ACE_Time_Value wait_time(0, 0);
+		ACE_Time_Value noWait(0, 0);
 		uint32 current_tick = GetTick();
 		ACE_Message_Block* block = NULL;
 		uint32 block_count = 0;
 		do 
 		{
-			if (-1 == _block_queue->dequeue_prio(block, &wait_time))
+			if (-1 == _block_queue->dequeue_prio(block, &noWait))
 				break;
 			if (block->msg_priority() > current_tick)
 			{
-				_block_queue->enqueue_prio(block, &wait_time);
+				_block_queue->enqueue_prio(block, &noWait);
 				break;
 			}
 
@@ -58,6 +61,10 @@ namespace HalfNetwork
 			ACE_Message_Block* tail_block = FindTailBlock(*param_block);
 			if (NULL != tail_block)
 				tail_block->cont(block);
+
+			if (block_count >= ACE_IOV_MAX)
+				break;
+
 		} while(true);
 
 		if (0 == block_count)

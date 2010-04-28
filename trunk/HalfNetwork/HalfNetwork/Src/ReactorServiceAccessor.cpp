@@ -16,8 +16,7 @@ namespace HalfNetwork
 		ReactorService* service = ReactorServiceMap->Get(streamID);
 		if (NULL == service)
 			return false;
-		service->IntervalSend(block);
-		return true;
+		return service->IntervalSend(block);
 	}
 
 	bool DirectReactorSend::Send(uint32 streamID, ACE_Message_Block* block)
@@ -25,8 +24,7 @@ namespace HalfNetwork
 		ReactorService* service = ReactorServiceMap->Get(streamID);
 		if (NULL == service)
 			return false;
-		service->DirectSend(block);
-		return true;
+		return service->DirectSend(block);
 	}
 
 	ReactorServiceAccessor::ReactorServiceAccessor(uint8 send_mode) : _send_strategy(NULL)

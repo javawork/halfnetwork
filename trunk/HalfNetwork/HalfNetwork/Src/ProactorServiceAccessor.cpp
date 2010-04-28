@@ -15,8 +15,7 @@ namespace HalfNetwork
 		ProactorService* service = ProactorServiceMap->Get(streamID);
 		if (NULL == service)
 			return false;
-		service->IntervalSend(block);
-		return true;
+		return service->IntervalSend(block);
 	}
 
 	bool IntervalProactorSend::SendReserve(uint32 streamID, ACE_Message_Block* block, uint32 delay)
@@ -24,8 +23,7 @@ namespace HalfNetwork
 		ProactorService* service = ProactorServiceMap->Get(streamID);
 		if (NULL == service)
 			return false;
-		service->ReserveSend(block, delay);
-		return true;
+		return service->ReserveSend(block, delay);
 	}
 
 	bool DirectProactorSend::Send(uint32 streamID, ACE_Message_Block* block)
@@ -36,8 +34,7 @@ namespace HalfNetwork
 			//OutputDebugString(_T("DirectProactorSend::Send #1\n"));
 			return false;
 		}
-		service->DirectSend(block);
-		return true;
+		return service->DirectSend(block);
 	}
 
 	bool DirectProactorSend::SendReserve(uint32 streamID, ACE_Message_Block* block, uint32 delay)
@@ -45,8 +42,7 @@ namespace HalfNetwork
 		ProactorService* service = ProactorServiceMap->Get(streamID);
 		if (NULL == service)
 			return false;
-		service->ReserveSend(block, delay);
-		return true;
+		return service->ReserveSend(block, delay);
 	}
 
 	ProactorServiceAccessor::ProactorServiceAccessor(uint8 send_mode) : _send_strategy(NULL)
@@ -87,7 +83,7 @@ namespace HalfNetwork
 
 	void ProactorServiceAccessor::CloseService()
 	{
-		for (int i=0;i<Max_ProactorService; ++i)
+		for (size_t i=0;i<Max_ProactorService; ++i)
 		{
 			ProactorService* service = ProactorServiceMap->Get(i);
 			if (NULL == service)
@@ -98,7 +94,6 @@ namespace HalfNetwork
 
 		ACE_Event wait_event;
 		ACE_Time_Value* wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, 100*1000));
-		int wait_count = 0;
 		while (0 != ProactorServiceMap->Size())
 		{
 			wait_event.wait(wait_time);

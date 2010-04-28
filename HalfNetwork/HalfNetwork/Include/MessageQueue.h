@@ -50,20 +50,20 @@ namespace HalfNetwork
 		//   serial : Stream ID
 		//   block : payload data block
 		/////////////////////////////////////////////////
-		bool	Push(const uint8 queId, EMessageHeader command, 
-					const uint32 serial, ACE_Message_Block* block);
+		bool	Push(uint8 queId, EMessageHeader command, 
+					uint32 serial, ACE_Message_Block* block);
 
 		/////////////////////////////////////
 		// Description:
 		//   Dequeue one item
 		/////////////////////////////////////
-		bool	Pop(ACE_Message_Block** block, const int timeout);
+		bool	Pop(ACE_Message_Block** block, int timeout);
 
 		///////////////////////////////////////
 		// Description:
 		//   Dequeue all item as a linked list
 		///////////////////////////////////////
-		bool	PopAll(ACE_Message_Block** block, const int timeout);
+		bool	PopAll(ACE_Message_Block** block, int timeout);
 		void	Pulse();
 		void	Clear();
 		void	Dump();

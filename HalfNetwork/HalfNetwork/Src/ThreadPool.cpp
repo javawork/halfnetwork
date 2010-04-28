@@ -8,7 +8,7 @@
 namespace HalfNetwork
 {
 
-	ThreadPool::ThreadPool() : _event(new ACE_Event), _wait_milisecond(0)
+	ThreadPool::ThreadPool() : _wait_milisecond(0), _event(new ACE_Event)
 	{
 	}
 

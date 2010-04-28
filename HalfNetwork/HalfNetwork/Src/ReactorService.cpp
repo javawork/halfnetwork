@@ -236,15 +236,15 @@ namespace HalfNetwork
 		_serviceImpl->SetCloseFlag(eCF_Passive);
 	}
 
-	void ReactorService::IntervalSend(ACE_Message_Block* block)
+	bool ReactorService::IntervalSend(ACE_Message_Block* block)
 	{
-		_PushQueue(block, 0);
+		return _PushQueue(block, 0);
 		//_SmartSend(block);
 	}
 
-	void ReactorService::DirectSend(ACE_Message_Block* block)
+	bool ReactorService::DirectSend(ACE_Message_Block* block)
 	{
-		_SmartSend(block);
+		return _SmartSend(block);
 	}
 
 	void ReactorService::_OnEstablish()
@@ -265,12 +265,11 @@ namespace HalfNetwork
 		_serviceImpl->PushEventBlock(eMH_Close, _queue_id, _serial, block);
 	}
 
-	void ReactorService::_SmartSend(ACE_Message_Block* block)
+	bool ReactorService::_SmartSend(ACE_Message_Block* block)
 	{
 		if (false == _serviceImpl->AcquireSendLock())
 		{
-			_PushQueue(block, 0);
-			return;
+			return _PushQueue(block, 0);
 		}
 		ssize_t send_cnt = _sock.send(block->rd_ptr(), block->length());
 		if (send_cnt < (ssize_t)block->length())
@@ -292,6 +291,7 @@ namespace HalfNetwork
 
 		_serviceImpl->ReleaseSendLock();
 		_SendQueuedBlock();
+		return true;
 	}
 
 	void ReactorService::_SendQueuedBlock()
@@ -313,10 +313,10 @@ namespace HalfNetwork
 			_SmartSend(block);
 	}
 
-	void ReactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
+	bool ReactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
 	{
 		//printf("_PushQueue(%d)\n", block->length());
-		_serviceImpl->PushQueue(block, tick);
+		return _serviceImpl->PushQueue(block, tick);
 	}
 
 	bool ReactorService::_PopQueue(ACE_Message_Block** param_block)

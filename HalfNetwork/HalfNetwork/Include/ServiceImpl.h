@@ -25,7 +25,7 @@ namespace HalfNetwork
 		~ServiceImpl();
 
 	public:
-		void	PushQueue(ACE_Message_Block* block, uint32 tick);
+		bool	PushQueue(ACE_Message_Block* block, uint32 tick);
 		bool	PopQueue(ACE_Message_Block** param_block);
 		int8	GetCloseFlag();
 		void	SetCloseFlag(int8 flag);

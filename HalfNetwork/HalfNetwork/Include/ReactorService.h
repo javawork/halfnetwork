@@ -66,7 +66,7 @@ namespace HalfNetwork
 		ACE_SOCK_Stream& peer();
 
 	protected:
-		void	_SmartSend(ACE_Message_Block* block);
+		bool	_SmartSend(ACE_Message_Block* block);
 
 	public:
 		void	ActiveClose();
@@ -75,8 +75,8 @@ namespace HalfNetwork
 		void	ReceiveBufferSize( uint32 size );
 
 	public:
-		void	IntervalSend(ACE_Message_Block* block);
-		void	DirectSend(ACE_Message_Block* block);
+		bool	IntervalSend(ACE_Message_Block* block);
+		bool	DirectSend(ACE_Message_Block* block);
 
 	protected:
 		void	_CloseHandle();
@@ -105,7 +105,7 @@ namespace HalfNetwork
 		//   Send gather_block
 		///////////////////////////////////////
 		void	_SendQueuedBlock();
-		void	_PushQueue(ACE_Message_Block* block, uint32 tick);
+		bool	_PushQueue(ACE_Message_Block* block, uint32 tick);
 		bool	_PopQueue(ACE_Message_Block** param_block);
 
 	protected:

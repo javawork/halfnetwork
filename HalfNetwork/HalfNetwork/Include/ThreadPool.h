@@ -36,7 +36,7 @@ namespace HalfNetwork
 
 	protected:
 		uint8		_poolSize;
-		uint32		_wait_milisecond;
+		uint32	_wait_milisecond;
 
 	private:
 		ACE_Event*	_event;

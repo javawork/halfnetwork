@@ -177,19 +177,19 @@ namespace HalfNetwork
 			_serviceImpl->SetCloseFlag(eCF_Receive);
 	}
 
-	void ProactorService::IntervalSend(ACE_Message_Block* block)
+	bool ProactorService::IntervalSend(ACE_Message_Block* block)
 	{
-		_PushQueue(block, 0);
+		return _PushQueue(block, 0);
 	}
 
-	void ProactorService::DirectSend(ACE_Message_Block* block)
+	bool ProactorService::DirectSend(ACE_Message_Block* block)
 	{
-		_SmartSend(block);
+		return _SmartSend(block);
 	}
 
-	void ProactorService::ReserveSend(ACE_Message_Block* block, uint32 delay)
+	bool ProactorService::ReserveSend(ACE_Message_Block* block, uint32 delay)
 	{
-		_PushQueue(block, GetTick()+delay);
+		return _PushQueue(block, GetTick()+delay);
 	}
 
 	void ProactorService::_InitializeRead()
@@ -289,9 +289,9 @@ namespace HalfNetwork
 		ACE_Proactor::instance()->schedule_timer(*this, 0, ACE_Time_Value::zero, intervalTime);
 	}
 
-	void ProactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
+	bool ProactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
 	{
-		_serviceImpl->PushQueue(block, tick);
+		return _serviceImpl->PushQueue(block, tick);
 	}
 
 	bool ProactorService::_PopQueue(ACE_Message_Block** param_block)
@@ -309,12 +309,11 @@ namespace HalfNetwork
 		_SmartSend(block);
 	}
 
-	void ProactorService::_SmartSend(ACE_Message_Block* block)
+	bool ProactorService::_SmartSend(ACE_Message_Block* block)
 	{
 		if (false == _serviceImpl->AcquireSendLock())
 		{
-			_PushQueue(block, 0);
-			return;
+			return _PushQueue(block, 0);
 		}
 		//ACE_DEBUG (( LM_INFO, ACE_TEXT("_%d_ SmartSend : Length(%d)"), _serial, block->length()));
 		if (NULL == block->cont())
@@ -325,7 +324,7 @@ namespace HalfNetwork
 				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService SmartSend write")));
 				block->release();
 				ReserveClose();
-				return;
+				return false;
 			}
 		}
 		else
@@ -343,9 +342,10 @@ namespace HalfNetwork
 				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService SmartSend writev")));
 				block->release();
 				ReserveClose();
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 
 	bool ProactorService::_IsCloseFlagActivate()

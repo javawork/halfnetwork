@@ -104,7 +104,7 @@ namespace HalfNetwork
 		//   Just check the ip and port are accepting for now.
 		//	 If you want send/recv packet, you must use Connect() method
 		//////////////////////////////////////////////////////////////////////////
-		bool	TryConnect(const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs);
+		bool	TryConnect(const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs) const;
 
 	public:
 		////////////////////////////////////////////////////////////

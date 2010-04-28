@@ -15,8 +15,8 @@ namespace HalfNetwork
 	{
 	}
 
-	bool MessageQueue::Push(const uint8 queId, EMessageHeader command, 
-								const uint32 serial, ACE_Message_Block* block)
+	bool MessageQueue::Push(uint8 queId, EMessageHeader command, 
+								uint32 serial, ACE_Message_Block* block)
 	{
 		MessagePostee postee;
 		postee.stream_id = serial;
@@ -31,7 +31,7 @@ namespace HalfNetwork
 		return (-1 != m_queue.enqueue_tail(commandBlock));
 	}
 
-	bool MessageQueue::Pop(ACE_Message_Block** block, const int timeout)
+	bool MessageQueue::Pop(ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == m_popProgress.value())
 			return false;
@@ -48,7 +48,7 @@ namespace HalfNetwork
 		return (-1 != result);
 	}
 
-	bool MessageQueue::PopAll(ACE_Message_Block** block, const int timeout)
+	bool MessageQueue::PopAll(ACE_Message_Block** block, int timeout)
 	{
 		if (TRUE == m_popProgress.value())
 			return false;

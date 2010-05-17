@@ -975,6 +975,7 @@
     <ClCompile Include="Src\MessageBlockPool.cpp" />
     <ClCompile Include="Src\MessageQueue.cpp" />
     <ClCompile Include="Src\MessageQueueRepository.cpp" />
+    <ClCompile Include="Src\SyncSocket.cpp" />
     <ClCompile Include="Src\TsBlockList.cpp" />
     <ClCompile Include="Src\SimpleConfig.cpp" />
     <ClCompile Include="Src\ThreadPool.cpp" />
@@ -1626,6 +1627,7 @@
     <ClInclude Include="Include\MessageQueue.h" />
     <ClInclude Include="Include\MessageQueueRepository.h" />
     <ClInclude Include="Include\PoolStrategy.h" />
+    <ClInclude Include="Include\SyncSocket.h" />
     <ClInclude Include="Include\TsBlockList.h" />
     <ClInclude Include="Include\TsidMap.h" />
     <ClInclude Include="Include\TsQueue.h" />

@@ -36,3 +36,9 @@ long IOStatus::GetSentBytes()
 {
 	return _sendBytes.value();
 }
+
+void IOStatus::Reset()
+{
+	_recvBytes = 0;
+	_sendBytes = 0;
+}

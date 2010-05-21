@@ -106,23 +106,24 @@ namespace HalfNetwork
 		//	ACE_TEXT("_%d_ Write Complete : write(%d), transfer(%d)\n"), 
 		//	_serial, result.bytes_to_write(), result.bytes_transferred()));
 
-		// check partial send
-		uint32 remainingLength = (uint32)result.bytes_to_write() - (uint32)result.bytes_transferred();
-		if ( remainingLength > 0 )
+		if (0 < result.message_block().total_length())
 		{
-			if ( 0 != m_writer.write(result.message_block(), result.message_block().length()))
+			ACE_Message_Block &block = result.message_block();
+			//printf("handle_write_stream transferred(%d), write(%d), remain(%d), %d\n", 
+			//	result.bytes_transferred(), result.bytes_to_write(), block.total_length(), block.length());
+			
+			if (false == _SmartSendImpl(&block))
 			{
 				//_LogError(ACE_OS::last_error());
-				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService handle_write_stream write")));
-				result.message_block().release();
+				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService SmartSend writev")));
+				block.release();
 				ReserveClose();
-				return;
+				_serviceImpl->ReleaseSendLock();
 			}
 			return;
 		}
-		ACE_Message_Block &mb = result.message_block();
-		mb.release();
-
+		ACE_Message_Block &block = result.message_block();
+		block.release();
 		_serviceImpl->ReleaseSendLock();
 	}
 
@@ -137,6 +138,7 @@ namespace HalfNetwork
 			_SendQueuedBlock();
 
 		_serviceImpl->ReleaseTimerLock();
+		_CheckZombieConnection();
 	}
 
 	void ProactorService::addresses(const ACE_INET_Addr& remote, const ACE_INET_Addr& local)
@@ -194,8 +196,7 @@ namespace HalfNetwork
 
 	void ProactorService::_InitializeRead()
 	{
-		ACE_Message_Block* block = 
-			_serviceImpl->AllocateBlock(_receive_buffer_size);
+		ACE_Message_Block* block = _serviceImpl->AllocateBlock(_receive_buffer_size);
 		ACE_ASSERT(block);
 		if (0 != this->m_reader.read(*block, block->space()))
 		{
@@ -316,16 +317,21 @@ namespace HalfNetwork
 			return _PushQueue(block, 0);
 		}
 		//ACE_DEBUG (( LM_INFO, ACE_TEXT("_%d_ SmartSend : Length(%d)"), _serial, block->length()));
+		if (false == _SmartSendImpl(block))
+		{
+			block->release();
+			ReserveClose();
+			return false;
+		}
+		return true;
+	}
+
+	bool ProactorService::_SmartSendImpl( ACE_Message_Block* block )
+	{
 		if (NULL == block->cont())
 		{
-			if ( 0 != m_writer.write(*block, block->length()))
-			{
-				//_LogError(ACE_OS::last_error());
-				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService SmartSend write")));
-				block->release();
-				ReserveClose();
+			if ( -1 == m_writer.write(*block, block->length()))
 				return false;
-			}
 		}
 		else
 		{
@@ -337,16 +343,11 @@ namespace HalfNetwork
 #else
 			if ( -1 == m_writer.writev(*block, block->total_length()))
 #endif
-			{
-				//_LogError(ACE_OS::last_error());
-				//ACE_DEBUG ((LM_ERROR, ACE_TEXT("ProactorService SmartSend writev")));
-				block->release();
-				ReserveClose();
 				return false;
-			}
 		}
 		return true;
 	}
+
 
 	bool ProactorService::_IsCloseFlagActivate()
 	{
@@ -369,5 +370,14 @@ namespace HalfNetwork
 			return false;
 		}
 		return false;
+	}
+
+	void ProactorService::_CheckZombieConnection()
+	{
+		if (false == _serviceImpl->IsZombieConnection())
+			return;
+
+		ActiveClose();
+		//ReserveClose();
 	}
 } // namespace HalfNetwork

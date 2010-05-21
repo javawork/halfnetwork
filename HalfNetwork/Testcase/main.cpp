@@ -173,8 +173,6 @@ const ACE_TCHAR* NetworkTestcase<ReactorFactory>::GetEventModelName()
 	return ACE_TEXT("Reactor");
 }
 
-
-
 struct TestElement
 {
 	int serial;

@@ -52,6 +52,7 @@ namespace HalfNetwork
 		uint8	Worker_Thread_Count;
 		uint32 Interval_Send_Term;
 		ESendMode Send_Mode;
+		uint32			ZombieConnectionTerm;
 	};
 
 	typedef ACE_Singleton<SystemConfig, ACE_Thread_Mutex> SystemConfigSingleton;

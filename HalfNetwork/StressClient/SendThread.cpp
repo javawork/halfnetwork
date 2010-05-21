@@ -33,13 +33,14 @@ void SendThread::Update()
 	if ((unsigned int)_ioStatus->GetSentBytes() >= _aimSendByte)
 	{
 		EventSleep(1000);
+		//Reset();
 		return;
 	}
 
 	char buffer[1024] = {0,};
 	unsigned int sendSize = rand()%1000 + 4;
-	//sendSize = 50;
-	//for(int i=0;i<300;++i)
+	sendSize = 50;
+	for(int i=0;i<300;++i)
 	{
 		MakeRandomBuffer(buffer, sendSize);
 		ACE_Message_Block* block = new ACE_Message_Block(sendSize);
@@ -76,4 +77,10 @@ void SendThread::SetIoStatus( IOStatus* ioStatus )
 void SendThread::SetAimSendByte( unsigned int byte )
 {
 	_aimSendByte = byte;
+}
+
+void SendThread::Reset()
+{
+	_aimSendByte = 0;
+	_ioStatus->Reset();
 }

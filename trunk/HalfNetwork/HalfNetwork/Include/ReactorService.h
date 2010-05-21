@@ -69,6 +69,10 @@ namespace HalfNetwork
 		bool	_SmartSend(ACE_Message_Block* block);
 
 	public:
+		/////////////////////////////////
+		// Description:
+		//   For MainThread(not recommend)
+		/////////////////////////////////
 		void	ActiveClose();
 		void	ReceiveClose();
 		void	QueueID(uint8 id);
@@ -91,7 +95,6 @@ namespace HalfNetwork
 		//   close connection actively
 		//////////////////////////////
 		void	_ActiveClose();
-		void	_ReceiveClose();
 		void	ReserveClose();
 
 	protected:
@@ -110,6 +113,7 @@ namespace HalfNetwork
 
 	protected:
 		bool _IsCloseFlagActivate();
+		void _CheckZombieConnection();
 
 	private:
 		ACE_SOCK_Stream											_sock;
@@ -121,15 +125,14 @@ namespace HalfNetwork
 		uint8						_queue_id;
 		uint32					_receive_buffer_size;
 		char*						_peer_ip;
-
-	private:
 		ServiceImpl*		_serviceImpl;
+		bool						_sentCloseMessage;
 	};
 
 	const uint32 Max_ReactorService = 1024;
 	typedef TsIDMapT<ReactorService, Max_ReactorService> ReactorServiceMapType;
 	typedef ACE_Singleton<ReactorServiceMapType, ACE_Thread_Mutex> ReactorServiceMapSingleton;
-	#define ReactorServiceMap ReactorServiceMapSingleton::instance()
+#define ReactorServiceMap ReactorServiceMapSingleton::instance()
 
 } // namespace HalfNetwork
 

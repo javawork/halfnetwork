@@ -100,6 +100,7 @@ namespace HalfNetwork
 		//   2. when incompleted previous send operation : insert gather_block
 		//////////////////////////////////////////////////////////////////////
 		bool	_SmartSend(ACE_Message_Block* block);
+		bool	_SmartSendImpl(ACE_Message_Block* block);
 
 	protected:
 		///////////////////////////////
@@ -159,6 +160,7 @@ namespace HalfNetwork
 
 	protected:
 		bool	_IsCloseFlagActivate();
+		void _CheckZombieConnection();
 
 
 	private:

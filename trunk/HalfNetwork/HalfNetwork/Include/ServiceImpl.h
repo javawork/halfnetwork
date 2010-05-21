@@ -36,6 +36,7 @@ namespace HalfNetwork
 		bool	AcquireSendLock();
 		void	ReleaseSendLock();
 		bool	TrySendLock();
+		bool	IsZombieConnection();
 	
 	public:
 		void	PushEventBlock(int8 eventType, uint8 queueID, uint32 serial, ACE_Message_Block* block);
@@ -46,6 +47,7 @@ namespace HalfNetwork
 		InterlockedValue*		_closeFlag;
 		InterlockedValue*		_timerLock;
 		InterlockedValue*		_sendLock;
+		uint32							_lastReceivedTick;
 	};
 
 } // namespace HalfNetwork

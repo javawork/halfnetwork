@@ -430,6 +430,7 @@ namespace HalfNetwork
 		SystemConfigInst->Worker_Thread_Count = 0;
 		SystemConfigInst->Interval_Send_Term = 20;
 		SystemConfigInst->Send_Mode = eSM_Interval;
+		SystemConfigInst->ZombieConnectionTerm = 0;
 	}
 
 	void NetworkFacade::CloseStream(uint32 streamID)

@@ -17,6 +17,7 @@ public:
 	void AddRecvBytes(long value);
 	void Print();
 	long GetSentBytes();
+	void Reset();
 
 
 private:

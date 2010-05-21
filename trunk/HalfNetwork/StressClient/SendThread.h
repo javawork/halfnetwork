@@ -26,6 +26,7 @@ public:
 protected:
 	void MakeRandomBuffer( char* buffer, unsigned int len );
 	void EventSleep(int ms);
+	void Reset();
 	
 
 private:

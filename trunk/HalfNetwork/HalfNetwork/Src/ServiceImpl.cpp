@@ -14,9 +14,10 @@ namespace HalfNetwork
 			_block_queue(new ACE_Message_Queue<ACE_MT_SYNCH>),
 			_closeFlag(new InterlockedValue()),
 			_timerLock(new InterlockedValue()),
-			_sendLock(new InterlockedValue())
+			_sendLock(new InterlockedValue()),
+			_lastReceivedTick(GetTick())
 	{
-		size_t QueueHighWaterMark = 1024*32;
+		size_t QueueHighWaterMark = 1024*32*10;
 		_block_queue->high_water_mark(QueueHighWaterMark);
 	}
 
@@ -63,7 +64,9 @@ namespace HalfNetwork
 				tail_block->cont(block);
 
 			if (block_count >= ACE_IOV_MAX)
-				break;
+			{
+				//break;
+			}
 
 		} while(true);
 
@@ -74,6 +77,7 @@ namespace HalfNetwork
 
 	void ServiceImpl::PushEventBlock( int8 eventType, uint8 queueID, uint32 serial, ACE_Message_Block* block )
 	{
+		_lastReceivedTick = GetTick();
 		NetworkInstance->PushMessage(queueID, eventType, serial, block);
 	}
 
@@ -122,4 +126,17 @@ namespace HalfNetwork
 	{
 		return _sendLock->Compare(0);
 	}
+
+	bool ServiceImpl::IsZombieConnection()
+	{
+		if (0 == SystemConfigInst->ZombieConnectionTerm)
+			return false;
+
+		if ( (GetTick() - _lastReceivedTick) < SystemConfigInst->ZombieConnectionTerm)
+			return false;
+
+		_lastReceivedTick = GetTick();
+		return true;
+	}
+
 } // namespace HalfNetwork

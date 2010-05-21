@@ -15,12 +15,13 @@
 namespace HalfNetwork
 {
 	//////////////////////////////////////////////////////////////////////////
-	ReactorService::ReactorService() : 
-		_closeLock(new InterlockedValue()),
+	ReactorService::ReactorService() 
+		: _closeLock(new InterlockedValue()),
 		_serial(Invalid_ID), 
 		_queue_id(0),
 		_receive_buffer_size(SystemConfigInst->Receive_Buffer_Len),
-		_serviceImpl(new ServiceImpl())
+		_serviceImpl(new ServiceImpl()),
+		_sentCloseMessage(false)
 	{
 		_peer_ip = new char[IP_ADDR_LEN];
 		_serviceImpl->SetCloseFlag(eCF_None);
@@ -41,7 +42,6 @@ namespace HalfNetwork
 
 	int ReactorService::open()
 	{
-		this->reactor()->dump();
 		ACE_INET_Addr peer_addr;
 		if (0 == this->_sock.get_remote_addr(peer_addr))
 		{
@@ -51,6 +51,7 @@ namespace HalfNetwork
 		_Register();
 		_OnEstablish();
 		_RegisterTimer();
+
 		return this->reactor()->register_handler(this, ACE_Event_Handler::READ_MASK);
 	}
 
@@ -80,36 +81,6 @@ namespace HalfNetwork
 		return 0;
 	}
 
-#if 0
-	int ReactorService::handle_output(ACE_HANDLE fd)
-	{
-		ACE_UNUSED_ARG(fd);
-		//printf("handle_output\n");
-		ACE_Message_Block *mb = 0;
-		ACE_Time_Value nowait (ACE_OS::gettimeofday ());
-		while (-1 != this->getq (mb, &nowait))
-		{
-			ACE_DEBUG((LM_DEBUG, "handle_output send_length(%d)\n", mb->length ()));
-			ssize_t send_cnt = _sock.send (mb->rd_ptr(), mb->length());
-			
-			ACE_DEBUG((LM_DEBUG, "handle_output sent_cnt(%d)\n", send_cnt));
-			if (send_cnt == -1)
-				ACE_ERROR ((LM_ERROR,
-				ACE_TEXT ("(%P|%t) %p\n"),
-				ACE_TEXT ("send")));
-			else
-				mb->rd_ptr (static_cast<size_t> (send_cnt));
-			if (mb->length () > 0)
-			{
-				this->ungetq (mb);
-				break;
-			}
-			mb->release ();
-		}
-		return (this->msg_queue()->is_empty()) ? -1 : 0;
-	}
-#endif
-
 	int ReactorService::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask mask)
 	{
 		ACE_UNUSED_ARG(handle);
@@ -135,6 +106,7 @@ namespace HalfNetwork
 			_SendQueuedBlock();
 
 		_serviceImpl->ReleaseTimerLock();
+		_CheckZombieConnection();
 		return 0;
 	}
 
@@ -204,14 +176,6 @@ namespace HalfNetwork
 		_sock.close_writer();
 	}
 
-	void ReactorService::_ReceiveClose()
-	{
-		if (ACE_INVALID_HANDLE == get_handle())
-			return;
-
-		_sock.close_reader();
-	}
-
 	void ReactorService::QueueID(uint8 id)
 	{
 		_queue_id = id;
@@ -226,6 +190,7 @@ namespace HalfNetwork
 	{
 		_serviceImpl->SetCloseFlag(eCF_Active);
 	}
+
 	void ReactorService::ReceiveClose()
 	{
 		_serviceImpl->SetCloseFlag(eCF_Receive);
@@ -239,7 +204,7 @@ namespace HalfNetwork
 	bool ReactorService::IntervalSend(ACE_Message_Block* block)
 	{
 		return _PushQueue(block, 0);
-		//_SmartSend(block);
+		//return _SmartSend(block);
 	}
 
 	bool ReactorService::DirectSend(ACE_Message_Block* block)
@@ -248,7 +213,7 @@ namespace HalfNetwork
 	}
 
 	void ReactorService::_OnEstablish()
-	{
+	{	
 		ACE_Message_Block* block = _serviceImpl->AllocateBlock(IP_ADDR_LEN);
 		block->copy((const char*)_peer_ip, IP_ADDR_LEN);
 		_serviceImpl->PushEventBlock(eMH_Establish, _queue_id, _serial, block);
@@ -261,37 +226,55 @@ namespace HalfNetwork
 
 	void ReactorService::_NotifyClose()
 	{
+		if (_sentCloseMessage)
+			return;
+		_sentCloseMessage = true;
 		ACE_Message_Block* block = new ACE_Message_Block();
 		_serviceImpl->PushEventBlock(eMH_Close, _queue_id, _serial, block);
+		ECloseFlag closeFlag = (ECloseFlag)_serviceImpl->GetCloseFlag();
+		if (eCF_None == closeFlag)
+			ReserveClose();
 	}
 
 	bool ReactorService::_SmartSend(ACE_Message_Block* block)
 	{
+		ECloseFlag closeFlag = (ECloseFlag)_serviceImpl->GetCloseFlag();
+		if (eCF_None != closeFlag)
+		{
+			block->release();
+			return false;
+		}
+		if (NULL != block->cont())
+		{
+			ACE_Message_Block* margedBlock = _serviceImpl->AllocateBlock(block->total_length());
+			MakeMergedBlock(block, margedBlock);
+			block->release();
+			block = margedBlock;
+		}
+
 		if (false == _serviceImpl->AcquireSendLock())
 		{
 			return _PushQueue(block, 0);
 		}
-		ssize_t send_cnt = _sock.send(block->rd_ptr(), block->length());
-		if (send_cnt < (ssize_t)block->length())
-		{
-			// put the remain block
-			if (send_cnt == -1)
-				send_cnt = 0;
-			ACE_Message_Block *remainBlock = 0;
-			size_t remaining = static_cast<size_t> ((block->length() - send_cnt));
-			remainBlock = _serviceImpl->AllocateBlock(remaining);
-			block->rd_ptr(send_cnt);
-			remainBlock->copy(block->rd_ptr(), remaining);
-			 _PushQueue(remainBlock, 0);
-		}
-		else
+		ssize_t send_length = _sock.send(block->rd_ptr(), block->length());
+		_serviceImpl->ReleaseSendLock();
+		if (send_length >= (ssize_t)block->length())
 		{
 			block->release();
+			return true;
 		}
 
-		_serviceImpl->ReleaseSendLock();
-		_SendQueuedBlock();
-		return true;
+		//printf("_SmartSend fail(%d, %d)\n", send_length, error_no);
+		if (send_length == -1 && ACE_OS::last_error() != EWOULDBLOCK)
+		{
+			ReserveClose();
+			block->release();
+			return false;
+		}
+
+		if (send_length > 0)
+			block->rd_ptr(send_length);
+		return _PushQueue(block, 0);
 	}
 
 	void ReactorService::_SendQueuedBlock()
@@ -301,21 +284,11 @@ namespace HalfNetwork
 		ACE_Message_Block* block = NULL;
 		if (false == _PopQueue(&block))
 			return;
-		//printf("_SendQueuedBlock(%d, %d)\n", block->length(), block->total_length());
-		if (NULL != block->cont())
-		{
-			ACE_Message_Block* mergedBlock = _serviceImpl->AllocateBlock(block->total_length());
-			MakeMergedBlock(block, mergedBlock);
-			block->release();
-			_SmartSend(mergedBlock);
-		}
-		else
-			_SmartSend(block);
+		_SmartSend(block);
 	}
 
 	bool ReactorService::_PushQueue(ACE_Message_Block* block, uint32 tick)
 	{
-		//printf("_PushQueue(%d)\n", block->length());
 		return _serviceImpl->PushQueue(block, tick);
 	}
 
@@ -338,12 +311,15 @@ namespace HalfNetwork
 			ReserveClose();
 			return true;
 		}
-		else if (eCF_Receive == closeFlag)
-		{
-			_ReceiveClose();
-			_serviceImpl->SetCloseFlag(eCF_None);
-			return false;
-		}
 		return false;
+	}
+
+	void ReactorService::_CheckZombieConnection()
+	{
+		if (false == _serviceImpl->IsZombieConnection())
+			return;
+
+		//ActiveClose();
+		ReserveClose();
 	}
 } // namespace HalfNetwork

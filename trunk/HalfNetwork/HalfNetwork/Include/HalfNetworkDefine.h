@@ -44,6 +44,7 @@ namespace HalfNetwork
 			Worker_Thread_Count = other.Worker_Thread_Count;
 			Interval_Send_Term = other.Interval_Send_Term;
 			Send_Mode = other.Send_Mode;
+			ZombieConnectionTerm = other.ZombieConnectionTerm;
 			return *this;
 		}
 

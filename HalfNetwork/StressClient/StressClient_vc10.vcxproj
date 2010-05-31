@@ -199,12 +199,6 @@
   <ItemGroup>
     <None Include="StressClientConfig.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HalfNetwork\HalfNetwork_vc9.vcxproj">
-      <Project>{42b15f66-b15c-4454-bbc8-749ac8bfc31e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

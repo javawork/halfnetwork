@@ -12,7 +12,7 @@ namespace HalfNetwork
 
 	ServiceImpl::ServiceImpl() : 
 			_block_queue(new ACE_Message_Queue<ACE_MT_SYNCH>),
-			_closeFlag(new InterlockedValue()),
+			_closeFlag(new InterlockedValue((long)eCF_None)),
 			_timerLock(new InterlockedValue()),
 			_sendLock(new InterlockedValue()),
 			_lastReceivedTick(GetTick())

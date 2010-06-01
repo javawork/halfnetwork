@@ -12,6 +12,9 @@ namespace HalfNetwork
 	class InterlockedValue
 	{
 	public:
+		InterlockedValue();
+		InterlockedValue(long initialValue);
+		~InterlockedValue() {};
 		bool	Acquire();
 		void	Release();
 

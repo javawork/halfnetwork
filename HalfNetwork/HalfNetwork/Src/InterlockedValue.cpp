@@ -4,6 +4,15 @@
 namespace HalfNetwork
 {
 
+	InterlockedValue::InterlockedValue()
+	{
+
+	}
+
+	InterlockedValue::InterlockedValue( long initialValue ) : _value(initialValue)
+	{
+	}
+
 	bool InterlockedValue::Acquire()
 	{
 		return CompareExchange(1, 0);

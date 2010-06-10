@@ -16,6 +16,7 @@ namespace HalfNetwork
 		eMH_Read,				// receive
 		eMH_Write,			// send
 		eMH_Close,			// connection close
+		eMH_Timer,			// timer
 		eMH_Custom,			// User custom type
 	};
 

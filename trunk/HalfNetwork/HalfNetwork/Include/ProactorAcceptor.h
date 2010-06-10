@@ -21,19 +21,19 @@ namespace HalfNetwork
 
 	public:
 		ProactorService*	make_handler();
-		int					validate_connection (const ACE_Asynch_Accept::Result& result,
-												const ACE_INET_Addr &remote,
-												const ACE_INET_Addr& local);
+		int validate_connection (const ACE_Asynch_Accept::Result& result,
+														 const ACE_INET_Addr &remote,
+														 const ACE_INET_Addr& local);
 	public:
-		void				QueueID(uint8 id);
-		void				Suspend();
-		void				Resume();
-		bool				IsSuspend();
-		void				ReceiveBufferSize(uint32 size);
+		void QueueID(uint8 id);
+		void Suspend();
+		void Resume();
+		bool IsSuspend();
+		void ReceiveBufferSize(uint32 size);
 
 	private:
-		uint8				_queueId;
-		uint32			_receive_buffer_size;
+		uint8 _queueId;
+		uint32 _receive_buffer_size;
 		ACE_Atomic_Op<ACE_Thread_Mutex, long>	_suspendAccept;
 	};
 
@@ -61,15 +61,15 @@ namespace HalfNetwork
 		virtual void	InitialAcceptCount(uint32 count);
 
 	protected:
-		bool	StartListen();
+		bool StartListen();
 
 	private:
-		CustomAsynchAcceptor	_acceptor;
-		uint16					_servicePort;
-		uint8					_queueId;
-		ACE_TCHAR*		_acceptIp;
-		uint32				_receiveBufferSize;
-		uint32				_initialAcceptcount;
+		CustomAsynchAcceptor _acceptor;
+		uint16 _servicePort;
+		uint8	_queueId;
+		ACE_TCHAR* _acceptIp;
+		uint32 _receiveBufferSize;
+		uint32 _initialAcceptcount;
 	};
 
 } // namespace HalfNetwork

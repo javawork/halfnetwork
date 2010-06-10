@@ -16,7 +16,7 @@ namespace HalfNetwork
 		virtual ~AbstractEventPool() {}
 
 	public:
-		virtual	bool	Open(const uint8 pool_size) = 0;
+		virtual	bool	Open(uint8 pool_size) = 0;
 		virtual	void	Close() = 0;
 		virtual	uint8	GetPoolSize() = 0;
 	};

@@ -6,6 +6,7 @@
 namespace HalfNetwork
 {
 	const	int32	IP_ADDR_LEN			=	17;
+	const int UsecAdjustValue = 1000;
 	
 	enum ESendMode
 	{

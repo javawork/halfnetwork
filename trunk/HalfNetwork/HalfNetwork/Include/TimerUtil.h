@@ -16,6 +16,12 @@ namespace HalfNetwork
 #endif
 	}
 
+	inline void ConvertTimeValue(ACE_Time_Value& tm, uint32 ms)
+	{
+		const uint32 UsecAdjustValue = 1000;
+		tm.set(ms/UsecAdjustValue, (ms%UsecAdjustValue)*UsecAdjustValue);
+	}
+
 	class CycleChecker
 	{
 	public:

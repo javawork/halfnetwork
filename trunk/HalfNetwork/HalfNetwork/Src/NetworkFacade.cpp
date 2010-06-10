@@ -9,22 +9,25 @@
 #include "AbstractConnector.h"
 #include "AbstractEventPool.h"
 #include "AbstractServiceAccessor.h"
+#include "AbstractTimer.h"
 #include "MemoryObject.h"
 #include "SyncSocket.h"
 
 namespace HalfNetwork
 {
+
+	const uint8 TimerQueueID = 11;
 	/////////////////////////////////////////////////////
 	// NetworkFacade
 	/////////////////////////////////////////////////////
-	NetworkFacade::NetworkFacade() : 
-		_factory(NULL), 
-		_connector(NULL), 
-		_eventPool(NULL), 
-		_serviceAccessor(NULL), 
-		_queueRepository(NULL), 
-		_blockPool(NULL),
-		_suspend(FALSE)
+	NetworkFacade::NetworkFacade() 
+		: _factory(NULL)
+		, _connector(NULL)
+		, _eventPool(NULL)
+		, _serviceAccessor(NULL)
+		, _queueRepository(NULL)
+		, _blockPool(NULL)
+		, _suspend(FALSE)
 	{
 		SetupDefaultConfig();
 	}
@@ -38,6 +41,7 @@ namespace HalfNetwork
 		_factory = factory;
 		_connector = _factory->CreateConnector();
 		_eventPool = _factory->CreateEventPool();
+		_timer = _factory->CreateTimer();
 		_queueRepository = new MessageQueueRepository();
 		_blockPool = new FlexibleSizePoolT<MessageBlockPool, ACE_Message_Block>();
 		return true;
@@ -51,6 +55,7 @@ namespace HalfNetwork
 		SAFE_DELETE(_serviceAccessor);
 		SAFE_DELETE(_queueRepository);
 		SAFE_DELETE(_blockPool);
+		SAFE_DELETE(_timer);;
 	}
 
 	bool NetworkFacade::Open(SystemConfig* const config)
@@ -74,7 +79,7 @@ namespace HalfNetwork
 
 		if (false == StartListen())
 			return false;
-
+		StartTimer();
 		return true;
 	}
 
@@ -84,6 +89,7 @@ namespace HalfNetwork
 		ClearMessageQueue();
 		_suspend = TRUE;
 		CloseService();
+		_timer->Close();
 		_eventPool->Close();
 		_queueRepository->Close();
 		ClearAcceptor();
@@ -137,25 +143,37 @@ namespace HalfNetwork
 		return true;
 	}
 
+	bool NetworkFacade::AddTimer( uint32 timerID, uint32 interval, uint32 start )
+	{
+		return _timer->Add(timerID, interval, start);
+	}
+
 	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId)
 	{
 		_queueRepository->CreateQueue(queueId);
 		return _connector->Connect(ip, port, queueId);
 	}
 
-	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 receiveBufferSize)
+	bool NetworkFacade::Connect(const ACE_TCHAR* ip, 
+															uint16 port, 
+															uint8 queueId, 
+															uint32 receiveBufferSize)
 	{
 		_queueRepository->CreateQueue(queueId);
 		return _connector->Connect(ip, port, queueId, receiveBufferSize);
 	}
 
-	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, uint16 port, uint32 timeoutMs ) const
+	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, 
+																	uint16 port, 
+																	uint32 timeoutMs ) const
 	{
 		SyncSocket testSocket;
 		return testSocket.Connect(ip, port, timeoutMs);
 	}
 
-	bool NetworkFacade::PopMessage(const uint8 queueId, ACE_Message_Block** block, int timeout)
+	bool NetworkFacade::PopMessage(uint8 queueId, 
+																 ACE_Message_Block** block, 
+																 int timeout)
 	{
 		if (TRUE == _suspend.value())
 			return false;
@@ -163,7 +181,9 @@ namespace HalfNetwork
 		return _queueRepository->Pop(queueId, block, timeout);
 	}
 
-	bool NetworkFacade::PopAllMessage(const uint8 queueId, ACE_Message_Block** block, int timeout)
+	bool NetworkFacade::PopAllMessage(uint8 queueId, 
+																		ACE_Message_Block** block, 
+																		int timeout)
 	{
 		if (TRUE == _suspend.value())
 			return false;
@@ -190,6 +210,12 @@ namespace HalfNetwork
 	bool NetworkFacade::PushCustomMessage(uint8 queId, ACE_Message_Block* block)
 	{
 		return PushMessage(queId, eMH_Custom, Invalid_ID, block);
+	}
+
+	bool NetworkFacade::PushTimerMessage(uint32 timerID)
+	{
+		ACE_Message_Block* block = AllocateBlock(0);
+		return PushMessage(TimerQueueID, eMH_Timer, timerID, block);
 	}
 
 	bool NetworkFacade::PushMessage(  
@@ -380,6 +406,15 @@ namespace HalfNetwork
 			++iter;
 		}
 		return true;
+	}
+
+	void NetworkFacade::StartTimer()
+	{
+		if (true == _queueRepository->ExistQueueID(TimerQueueID))
+			return;
+		if (false == _queueRepository->CreateQueue(TimerQueueID))
+			return;
+		_timer->Open();
 	}
 
 	void NetworkFacade::ClearAcceptor()

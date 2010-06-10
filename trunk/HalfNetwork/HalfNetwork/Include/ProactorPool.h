@@ -23,7 +23,7 @@ namespace HalfNetwork
 		// Description:
 		// Create Thread 
 		////////////////////
-		bool	Open(const uint8 poolSize);
+		bool	Open(uint8 poolSize);
 
 		////////////////////
 		// Description:
@@ -49,9 +49,9 @@ namespace HalfNetwork
 	class ProactorPool : public AbstractEventPool
 	{
 	public:
-		bool	Open(const uint8 poolSize);
-		void	Close();
-		uint8	GetPoolSize();
+		virtual bool	Open(uint8 poolSize);
+		virtual void	Close();
+		virtual uint8	GetPoolSize();
 
 	private:
 		ProactorTask	m_task;

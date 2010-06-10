@@ -28,6 +28,7 @@ namespace HalfNetwork
 			return false;
 
 		MessageQueue* queue = new MessageQueue();
+		queue->SetEventNotiStrategy(&_eventNotiStrategy);
 		m_queueContainer.bind(id, queue);
 		return true;
 	}
@@ -66,6 +67,9 @@ namespace HalfNetwork
 
 	bool MessageQueueRepository::Pop(ACE_Message_Block** block, int timeout)
 	{
+		if (IsAllEmpty())
+			_eventNotiStrategy.Wait(timeout);
+
 		if (TRUE == m_popProgress.value())
 			return false;
 		InterlockedGuard guard(m_popProgress);
@@ -94,20 +98,25 @@ namespace HalfNetwork
 
 	bool MessageQueueRepository::PopAll(ACE_Message_Block** block, int timeout)
 	{
+		if (IsAllEmpty())
+			_eventNotiStrategy.Wait(timeout);
+
 		if (TRUE == m_popProgress.value())
 			return false;
 		InterlockedGuard guard(m_popProgress);
 
-		int timeoutValue = timeout;
-		if (timeoutValue <= -1)
-			timeoutValue = 0;
+		return PopAllImpl(block);
+	}
+
+	bool MessageQueueRepository::PopAllImpl( ACE_Message_Block** block )
+	{
 		ACE_Message_Block* current = NULL;
 		ACE_Message_Block* head = NULL;
 		MessageQueueMap::iterator iter(m_queueContainer);
 		for (MessageQueueMap::iterator iter = m_queueContainer.begin(); iter != m_queueContainer.end(); iter++)
 		{
 			MessageQueue* mq = (*iter).int_id_;
-			if (false == mq->PopAll(&current, timeoutValue))
+			if (false == mq->PopAll(&current, 0))
 				continue;
 			if (NULL == head)
 			{
@@ -119,11 +128,22 @@ namespace HalfNetwork
 				tail->cont(current);
 			}			
 		}
-
 		if (NULL == head)
 			return false;
 
 		*block = head;
+		return true;
+	}
+
+	bool MessageQueueRepository::IsAllEmpty()
+	{
+		MessageQueueMap::iterator iter(m_queueContainer);
+		for (MessageQueueMap::iterator iter = m_queueContainer.begin(); iter != m_queueContainer.end(); iter++)
+		{
+			MessageQueue* mq = (*iter).int_id_;
+			if (false == mq->IsEmpty())
+				return false;
+		}
 		return true;
 	}
 

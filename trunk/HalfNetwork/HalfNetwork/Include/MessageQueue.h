@@ -8,6 +8,9 @@
 #include <ace/Map_Manager.h>
 #include "MessageHeader.h"
 
+
+class ACE_Event;
+
 namespace HalfNetwork
 {
 	///////////////////////////////////////////////////////////
@@ -33,6 +36,24 @@ namespace HalfNetwork
 		InterlockedValue&	m_inProgress;
 		
 	};
+
+	//////////////////////////////////////////////////////////////////////////
+
+	class CustemNotificationStrategy : public ACE_Notification_Strategy
+	{
+	public:
+		CustemNotificationStrategy();
+		virtual ~CustemNotificationStrategy();
+
+		virtual int notify (void);
+		virtual int notify (ACE_Event_Handler *, ACE_Reactor_Mask mask) { return 0; }
+
+		bool Wait(int32 timeoutMs);
+
+	private:
+		ACE_Event* _event;
+	};
+
 	///////////////////////////////////////////////////////////
 	// Description:
 	//   connecting point Network layer and Application layer
@@ -67,6 +88,9 @@ namespace HalfNetwork
 		void	Pulse();
 		void	Clear();
 		void	Dump();
+		bool	IsEmpty();
+
+		void	SetEventNotiStrategy(ACE_Notification_Strategy* );
 
 	public:
 		uint32	MessageBytes();

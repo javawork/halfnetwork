@@ -39,7 +39,11 @@ namespace HalfNetwork
 		bool	IsZombieConnection();
 	
 	public:
-		void	PushEventBlock(int8 eventType, uint8 queueID, uint32 serial, ACE_Message_Block* block);
+		void	PushEventBlock(int8 eventType, 
+												 uint8 queueID, 
+												 uint32 serial, 
+												 ACE_Message_Block* block);
+
 		ACE_Message_Block*	AllocateBlock(size_t size);
 
 	private:

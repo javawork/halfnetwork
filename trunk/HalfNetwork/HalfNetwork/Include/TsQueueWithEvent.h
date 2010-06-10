@@ -52,7 +52,7 @@ namespace HalfNetwork
 				return false;
 			if (0 == Size())
 			{
-				ACE_Time_Value waitTime(ms/1000, (ms%1000)*1000);
+				ACE_Time_Value waitTime(ms/UsecAdjustValue, (ms%UsecAdjustValue)*UsecAdjustValue);
 				_event.wait(&waitTime, 0);
 			}
 			ACE_Guard<ACE_Thread_Mutex> guard(_lock);

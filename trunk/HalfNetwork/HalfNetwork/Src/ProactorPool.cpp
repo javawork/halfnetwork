@@ -17,7 +17,7 @@ namespace HalfNetwork
 	{
 	}
 
-	bool ProactorTask::Open(const uint8 poolSize)
+	bool ProactorTask::Open(uint8 poolSize)
 	{
 		int properPoolSize = poolSize;
 		if (0 == properPoolSize)
@@ -54,7 +54,7 @@ namespace HalfNetwork
 	/////////////////////////////////////////
 	// ProactorPool
 	/////////////////////////////////////////
-	bool ProactorPool::Open(const uint8 poolSize)
+	bool ProactorPool::Open(uint8 poolSize)
 	{
 		return m_task.Open(poolSize);
 	}

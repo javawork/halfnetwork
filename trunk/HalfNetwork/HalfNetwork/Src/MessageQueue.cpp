@@ -3,9 +3,42 @@
 #include "MessageQueue.h"
 #include "MessageBlockUtil.h"
 #include "NetworkFacade.h"
+#include <ace/Event.h>
 
 namespace HalfNetwork
 {
+
+	//////////////////////////////////////////////////////////////////////////
+
+	CustemNotificationStrategy::CustemNotificationStrategy() 
+		: ACE_Notification_Strategy(NULL, 0), _event(new ACE_Event())
+	{
+	}
+
+	CustemNotificationStrategy::~CustemNotificationStrategy()
+	{
+		SAFE_DELETE(_event)
+	}
+
+	int CustemNotificationStrategy::notify( void )
+	{
+		_event->signal();
+		return 0;
+	}
+
+	bool CustemNotificationStrategy::Wait(int32 timeoutMs)
+	{
+		ACE_Time_Value* wait_time = NULL;
+		if (-1 != timeoutMs)
+		{
+			wait_time = new ACE_Time_Value(
+				ACE_OS::gettimeofday()+ACE_Time_Value(0, timeoutMs*UsecAdjustValue));
+		}
+		_event->wait(wait_time);
+		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 
 	MessageQueue::MessageQueue() : m_popProgress(FALSE)
 	{
@@ -40,7 +73,7 @@ namespace HalfNetwork
 		ACE_Time_Value* wait_time = NULL;
 		if (-1 != timeout)
 		{
-			wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, timeout*1000));
+			wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, timeout*UsecAdjustValue));
 		}
 
 		int result = m_queue.dequeue_head(*block, wait_time);
@@ -57,7 +90,7 @@ namespace HalfNetwork
 		ACE_Time_Value* wait_time = NULL;
 		if (-1 != timeout)
 		{
-			wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, timeout*1000));
+			wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, timeout*UsecAdjustValue));
 		}
 
 		ACE_Message_Block* current = NULL;
@@ -113,5 +146,15 @@ namespace HalfNetwork
 	uint32 MessageQueue::MessageCount()
 	{
 		return (uint32)m_queue.message_count();
+	}
+
+	void MessageQueue::SetEventNotiStrategy( ACE_Notification_Strategy* strategy)
+	{
+		m_queue.notification_strategy(strategy);
+	}
+
+	bool MessageQueue::IsEmpty()
+	{
+		return m_queue.is_empty();
 	}
 }

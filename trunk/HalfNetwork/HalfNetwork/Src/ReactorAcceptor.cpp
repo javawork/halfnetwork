@@ -138,9 +138,9 @@ namespace HalfNetwork
 	/////////////////////////////////////////
 	// ReactorAcceptor
 	/////////////////////////////////////////
-	ReactorAcceptor::ReactorAcceptor(uint16 service_port, uint8 queue_id) : 
-		_service_port(service_port), 
-		_custom_acceptor(service_port, queue_id)
+	ReactorAcceptor::ReactorAcceptor(uint16 service_port, uint8 queue_id) 
+		: _service_port(service_port)
+		, _custom_acceptor(service_port, queue_id)
 	{
 	}
 

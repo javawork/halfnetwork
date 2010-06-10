@@ -63,12 +63,14 @@ namespace HalfNetwork
 		SAFE_DELETE(_send_strategy);
 	}
 
-	bool ProactorServiceAccessor::SendRequest(const uint32 streamID, ACE_Message_Block* block)
+	bool ProactorServiceAccessor::SendRequest(uint32 streamID, ACE_Message_Block* block)
 	{
 		return _send_strategy->Send(streamID, block);
 	}
 
-	bool ProactorServiceAccessor::SendReserve(const uint32 streamID, ACE_Message_Block* block, const uint32 delay)
+	bool ProactorServiceAccessor::SendReserve(uint32 streamID, 
+																						ACE_Message_Block* block, 
+																						uint32 delay)
 	{
 		return _send_strategy->SendReserve(streamID, block, delay);
 	}
@@ -85,7 +87,7 @@ namespace HalfNetwork
 	{
 		for (size_t i=0;i<Max_ProactorService; ++i)
 		{
-			ProactorService* service = ProactorServiceMap->Get(i);
+			ProactorService* service = ProactorServiceMap->Get((uint32)i);
 			if (NULL == service)
 				continue;
 
@@ -93,7 +95,7 @@ namespace HalfNetwork
 		}
 
 		ACE_Event wait_event;
-		ACE_Time_Value* wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, 100*1000));
+		ACE_Time_Value* wait_time = new ACE_Time_Value(ACE_OS::gettimeofday() + ACE_Time_Value(0, 100*UsecAdjustValue));
 		while (0 != ProactorServiceMap->Size())
 		{
 			wait_event.wait(wait_time);
@@ -106,7 +108,7 @@ namespace HalfNetwork
 		return ProactorServiceMap->Size();
 	}
 
-	void ProactorServiceAccessor::CloseReceiveStream(const uint32 streamID)
+	void ProactorServiceAccessor::CloseReceiveStream(uint32 streamID)
 	{
 		ProactorService* service = ProactorServiceMap->Get(streamID);
 		if (NULL == service)

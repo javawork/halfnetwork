@@ -23,7 +23,7 @@ namespace HalfNetwork
 		virtual ~SimpleConfig();
 
 		template<typename T>
-		bool					Add(const tstring& key, const T& value)
+		bool Add(const tstring& key, const T& value)
 		{
 			const int MaxValueLength = 64;
 			ACE_TCHAR strValue[MaxValueLength] = {0,};
@@ -31,8 +31,8 @@ namespace HalfNetwork
 			return AddImpl(key, strValue);
 		}
 
-		bool					Remove(const tstring& key);
-		void					Clear();
+		bool Remove(const tstring& key);
+		void Clear();
 
 		template<typename T>
 		T		GetValue(const tstring& key) const
@@ -48,15 +48,15 @@ namespace HalfNetwork
 		//   Parsing and Add to container 
 		//   i.e.) name=alice;level=40; => ["name", "alice"], ["level", "40"]
 		////////////////////////////////////////////////////////////////////////
-		bool					ReadFile(const ACE_TCHAR* filename);
-		bool					Parse(const tstring& source);
-		tstring		MakeString() const;
-		uint32				MakeBuffer(char* buffer, uint32 length) const;
-		void					EncryptKey(unsigned char* key, unsigned char keyLen);
+		bool ReadFile(const ACE_TCHAR* filename);
+		bool Parse(const tstring& source);
+		tstring MakeString() const;
+		uint32 MakeBuffer(char* buffer, uint32 length) const;
+		void EncryptKey(unsigned char* key, unsigned char keyLen);
 
 	protected:
-		bool					AddImpl(const tstring& key, const tstring& value);
-		tstring		GetValueImpl(const tstring& key) const;
+		bool AddImpl(const tstring& key, const tstring& value);
+		tstring GetValueImpl(const tstring& key) const;
 
 	private:
 		StringKeyValueMap m_container;

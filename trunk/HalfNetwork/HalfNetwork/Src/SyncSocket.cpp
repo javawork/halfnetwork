@@ -3,6 +3,7 @@
 #include <ace/INET_Addr.h>
 #include <ace/SOCK_Connector.h>
 #include <ace/Time_Value.h>
+#include "TimerUtil.h"
 
 namespace HalfNetwork
 {
@@ -19,7 +20,8 @@ namespace HalfNetwork
 	{
 		ACE_INET_Addr connectAddr(port, ip);
 		ACE_SOCK_Connector connector;
-		ACE_Time_Value waitTime(timeoutMs/1000, (timeoutMs%1000)*1000);
+		ACE_Time_Value waitTime;
+		ConvertTimeValue(waitTime, timeoutMs);
 		int result = connector.connect(*m_stream, connectAddr, &waitTime);
 		if (-1 == result)
 			return false;
@@ -35,7 +37,8 @@ namespace HalfNetwork
 
 	uint32 SyncSocket::Receive(char* buffer, uint32 len, uint32 timeoutMs)
 	{
-		ACE_Time_Value waitTime(timeoutMs/1000, (timeoutMs%1000)*1000);
+		ACE_Time_Value waitTime;
+		ConvertTimeValue(waitTime, timeoutMs);
 		return (uint32)m_stream->recv(buffer, len, &waitTime);
 	}
 

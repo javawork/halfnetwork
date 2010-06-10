@@ -27,8 +27,14 @@ namespace HalfNetwork
 		void	Close();
 
 	public:
-		bool	Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queue_id);
-		bool	Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queue_id, const uint32 receiveBufferSize);
+		bool	Connect(const ACE_TCHAR* ip, 
+									uint16 port, 
+									uint8 queue_id);
+
+		bool	Connect(const ACE_TCHAR* ip,
+									uint16 port, 
+									uint8 queue_id, 
+									uint32 receiveBufferSize);
 
 	private:
 		ACE_Connector<ReactorService, ACE_SOCK_CONNECTOR> _connector;

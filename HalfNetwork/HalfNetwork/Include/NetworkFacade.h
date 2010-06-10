@@ -27,6 +27,8 @@ namespace HalfNetwork
 		uint32			service_count;
 	};
 
+	const uint8 TimerQueueID = 11;
+	
 	class MessageQueueRepository;
 
 	class NetworkFacade

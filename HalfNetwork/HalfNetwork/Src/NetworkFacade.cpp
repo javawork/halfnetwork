@@ -16,7 +16,6 @@
 namespace HalfNetwork
 {
 
-	const uint8 TimerQueueID = 11;
 	/////////////////////////////////////////////////////
 	// NetworkFacade
 	/////////////////////////////////////////////////////
@@ -106,22 +105,20 @@ namespace HalfNetwork
 		return AddAcceptor(acceptIp, port, queueId, 0, 0);
 	}
 
-	bool NetworkFacade::AddAcceptor (	
-		const ACE_TCHAR* acceptIp, 
-		uint16 port, 
-		uint8 queueId, 
-		uint32 receiveBufferSize)
+	bool NetworkFacade::AddAcceptor (const ACE_TCHAR* acceptIp, 
+																	 uint16 port, 
+																	 uint8 queueId, 
+																	 uint32 receiveBufferSize)
 	{
 		return AddAcceptor(acceptIp, port, queueId, receiveBufferSize, 0);
 	}
 
 
-	bool NetworkFacade::AddAcceptor( 
-		const ACE_TCHAR* acceptIp, 
-		uint16 port, 
-		uint8 queueId, 
-		uint32 receiveBufferSize, 
-		uint32 initialAcceptCount)
+	bool NetworkFacade::AddAcceptor(const ACE_TCHAR* acceptIp, 
+																	uint16 port, 
+																	uint8 queueId, 
+																	uint32 receiveBufferSize, 
+																	uint32 initialAcceptCount)
 	{
 		if (true == _queueRepository->ExistQueueID(queueId))
 			return false;

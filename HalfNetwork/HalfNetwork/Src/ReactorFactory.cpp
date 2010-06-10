@@ -8,6 +8,7 @@
 #include "ReactorConnector.h"
 #include "ReactorPool.h"
 #include "ReactorServiceAccessor.h"
+#include "ReactorTimer.h"
 
 namespace HalfNetwork
 {
@@ -17,7 +18,7 @@ namespace HalfNetwork
 		ACE_OS::strcpy(m_factoryName, ACE_TEXT("Reactor"));
 	}
 
-	AbstractAcceptor* ReactorFactory::CreateAcceptor(const uint16 service_port, const uint8 queue_id)
+	AbstractAcceptor* ReactorFactory::CreateAcceptor(uint16 service_port, uint8 queue_id)
 	{
 		return new ReactorAcceptor(service_port, queue_id);
 	}
@@ -35,6 +36,11 @@ namespace HalfNetwork
 	AbstractServiceAccessor* ReactorFactory::CreateServiceAccessor(uint8 send_mode)
 	{
 		return new ReactorServiceAccessor(send_mode);
+	}
+
+	AbstractTimer* ReactorFactory::CreateTimer()
+	{
+		return new ReactorTimer();
 	}
 
 	const ACE_TCHAR* ReactorFactory::GetFactoryName()

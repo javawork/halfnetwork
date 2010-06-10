@@ -8083,6 +8083,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Include\AbstractTimer.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Include\NetworkFacade.h"
 					>
 				</File>
@@ -8111,6 +8115,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Include\ProactorTimer.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Include\ReactorAcceptor.h"
 					>
 				</File>
@@ -8132,6 +8140,10 @@
 				</File>
 				<File
 					RelativePath=".\Include\ReactorServiceAccessor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Include\ReactorTimer.h"
 					>
 				</File>
 				<File
@@ -8175,6 +8187,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Src\ProactorTimer.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Src\ReactorAcceptor.cpp"
 					>
 				</File>
@@ -8196,6 +8212,10 @@
 				</File>
 				<File
 					RelativePath=".\Src\ReactorServiceAccessor.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Src\ReactorTimer.cpp"
 					>
 				</File>
 				<File

@@ -4,11 +4,13 @@
 #include "HalfNetworkType.h"
 #include "ThreadPool.h"
 #include <ace/Event.h>
+#include "TimerUtil.h"
 
 namespace HalfNetwork
 {
-
-	ThreadPool::ThreadPool() : _wait_milisecond(0), _event(new ACE_Event)
+	ThreadPool::ThreadPool() 
+		: _wait_milisecond(0)
+		, _event(new ACE_Event)
 	{
 	}
 
@@ -31,7 +33,8 @@ namespace HalfNetwork
 
 	int ThreadPool::svc()
 	{
-		ACE_Time_Value wait_time(0, _wait_milisecond*1000);
+		ACE_Time_Value wait_time;
+		ConvertTimeValue(wait_time, _wait_milisecond);
 		uint32 loop_counter = 0;
 		while(true)
 		{

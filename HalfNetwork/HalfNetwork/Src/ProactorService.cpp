@@ -14,9 +14,9 @@ namespace HalfNetwork
 {
 
 	//////////////////////////////////////////////////////////////////////////
-	DeleteHandler::DeleteHandler( ACE_Service_Handler* p ) : 
-		_parentHandle(p), 
-		_timerLock(new InterlockedValue())
+	DeleteHandler::DeleteHandler( ACE_Service_Handler* p ) 
+		: _parentHandle(p)
+		, _timerLock(new InterlockedValue())
 	{
 		_timerLock->Release();
 	}
@@ -37,12 +37,12 @@ namespace HalfNetwork
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	ProactorService::ProactorService() : 
-		_serial(Invalid_ID), 
-		_queue_id(0),
-		_receive_buffer_size(SystemConfigInst->Receive_Buffer_Len),
-		_deleteHandler(new DeleteHandler(this)),
-		_serviceImpl(new ServiceImpl())
+	ProactorService::ProactorService() 
+		: _serial(Invalid_ID)
+		, _queue_id(0)
+		, _receive_buffer_size(SystemConfigInst->Receive_Buffer_Len)
+		,	_deleteHandler(new DeleteHandler(this))
+		,	_serviceImpl(new ServiceImpl())
 	{
 		//ACE_DEBUG ((LM_DEBUG, "[%t] ProactorService Create.\n"));
 		_serviceImpl->SetCloseFlag(eCF_None);
@@ -286,7 +286,8 @@ namespace HalfNetwork
 
 	void ProactorService::_RegisterTimer()
 	{
-		ACE_Time_Value intervalTime(0, SystemConfigInst->Interval_Send_Term*1000);
+		ACE_Time_Value intervalTime;
+		ConvertTimeValue(intervalTime, SystemConfigInst->Interval_Send_Term);
 		ACE_Proactor::instance()->schedule_timer(*this, 0, ACE_Time_Value::zero, intervalTime);
 	}
 

@@ -6,7 +6,6 @@ namespace HalfNetwork
 
 	InterlockedValue::InterlockedValue()
 	{
-
 	}
 
 	InterlockedValue::InterlockedValue( long initialValue ) : _value(initialValue)

@@ -37,9 +37,9 @@ namespace HalfNetwork
 
 	public:
 		bool	Push(uint8 queId, 
-					EMessageHeader command, 
-					uint32 serial, 
-					ACE_Message_Block* block);
+						EMessageHeader command, 
+						uint32 serial, 
+						ACE_Message_Block* block);
 
 		bool	Pop(uint8 queId, ACE_Message_Block** block, int timeout);
 		bool	Pop(ACE_Message_Block** block, int timeout);
@@ -57,6 +57,8 @@ namespace HalfNetwork
 	protected:
 		void	ClearAll();
 		void	DeleteAll();
+		bool	PopAllImpl(ACE_Message_Block** block);
+		bool	IsAllEmpty();
 
 	protected:
 		MessageQueue*	GetQueue(const uint8 id) const;
@@ -66,6 +68,7 @@ namespace HalfNetwork
 		ACE_Thread_Mutex	m_popLock;
 		ACE_Atomic_Op<ACE_Thread_Mutex, int32>	m_popProgress;
 		ACE_Atomic_Op<ACE_Thread_Mutex, int32>	m_suspendPush;
+		CustemNotificationStrategy _eventNotiStrategy;
 	};
 
 } // namespace HalfNetwork

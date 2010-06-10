@@ -31,6 +31,7 @@ bool NetworkInit(const HalfNetwork::SimpleConfig& configReader, unsigned char qu
 	config.Receive_Buffer_Len = configReader.GetValue<unsigned int>(ACE_TEXT("ReceiveBufferLength"));
 	config.Interval_Send_Term = configReader.GetValue<unsigned int>(ACE_TEXT("UpdateTerm"));
 	config.Send_Mode = HalfNetwork::eSM_Interval;
+	config.ZombieConnectionTerm = 0;
 
 	HALF_LOG(ConsoleLogger, ACE_TEXT("Port(%d)"), port);
 	HALF_LOG(ConsoleLogger, ACE_TEXT("WorkerThread Count(%d)"), config.Worker_Thread_Count);

@@ -10,12 +10,12 @@
 namespace HalfNetwork
 {
 
-	ServiceImpl::ServiceImpl() : 
-			_block_queue(new ACE_Message_Queue<ACE_MT_SYNCH>),
-			_closeFlag(new InterlockedValue((long)eCF_None)),
-			_timerLock(new InterlockedValue()),
-			_sendLock(new InterlockedValue()),
-			_lastReceivedTick(GetTick())
+	ServiceImpl::ServiceImpl() 
+		: _block_queue(new ACE_Message_Queue<ACE_MT_SYNCH>)
+		,	_closeFlag(new InterlockedValue((long)eCF_None))
+		,	_timerLock(new InterlockedValue())
+		,	_sendLock(new InterlockedValue())
+		,	_lastReceivedTick(GetTick())
 	{
 		size_t QueueHighWaterMark = 1024*32*10;
 		_block_queue->high_water_mark(QueueHighWaterMark);
@@ -75,7 +75,10 @@ namespace HalfNetwork
 		return true;
 	}
 
-	void ServiceImpl::PushEventBlock( int8 eventType, uint8 queueID, uint32 serial, ACE_Message_Block* block )
+	void ServiceImpl::PushEventBlock( int8 eventType, 
+																		uint8 queueID, 
+																		uint32 serial, 
+																		ACE_Message_Block* block )
 	{
 		_lastReceivedTick = GetTick();
 		NetworkInstance->PushMessage(queueID, eventType, serial, block);

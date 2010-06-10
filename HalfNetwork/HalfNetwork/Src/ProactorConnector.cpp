@@ -8,7 +8,9 @@ namespace HalfNetwork
 	///////////////////////
 	// CustomConnector
 	///////////////////////
-	CustomConnector::CustomConnector() : _queueId(0), _receive_buffer_size(0)
+	CustomConnector::CustomConnector() 
+		: _queueId(0)
+		, _receive_buffer_size(0)
 	{
 	}
 
@@ -47,12 +49,17 @@ namespace HalfNetwork
 	{
 	}
 
-	bool ProactorConnector::Connect(const ACE_TCHAR* ip, const uint16 port, const uint8 queue_id)
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip,
+																	uint16 port, 
+																	uint8 queue_id)
 	{
 		return Connect(ip, port, queue_id, 0);
 	}
 
-	bool ProactorConnector::Connect( const ACE_TCHAR* ip, const uint16 port, const uint8 queue_id, const uint32 receiveBufferSize )
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip, 
+																	uint16 port, 
+																	uint8 queue_id, 
+																	uint32 receiveBufferSize )
 	{
 		m_connector.QueueID(queue_id);
 		m_connectAddr.set(port, ip);

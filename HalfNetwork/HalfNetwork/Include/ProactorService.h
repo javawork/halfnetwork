@@ -162,7 +162,6 @@ namespace HalfNetwork
 		bool	_IsCloseFlagActivate();
 		void _CheckZombieConnection();
 
-
 	private:
 		ACE_Asynch_Read_Stream	m_reader;
 		ACE_Asynch_Write_Stream	m_writer;

@@ -18,7 +18,7 @@ namespace HalfNetwork
 		this->reactor(NULL);
 	}
 
-	bool ReactorTask::Open(const uint8 poolSize)
+	bool ReactorTask::Open(uint8 poolSize)
 	{
 		int properPoolSize = poolSize;
 		if (0 == properPoolSize)
@@ -49,7 +49,7 @@ namespace HalfNetwork
 	/////////////////////////////////////////
 	// ReactorPool
 	/////////////////////////////////////////
-	bool ReactorPool::Open(const uint8 poolSize)
+	bool ReactorPool::Open(uint8 poolSize)
 	{
 		return _task.Open(poolSize);
 	}

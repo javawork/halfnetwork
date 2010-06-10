@@ -16,12 +16,12 @@ namespace HalfNetwork
 {
 	//////////////////////////////////////////////////////////////////////////
 	ReactorService::ReactorService() 
-		: _closeLock(new InterlockedValue()),
-		_serial(Invalid_ID), 
-		_queue_id(0),
-		_receive_buffer_size(SystemConfigInst->Receive_Buffer_Len),
-		_serviceImpl(new ServiceImpl()),
-		_sentCloseMessage(false)
+		: _closeLock(new InterlockedValue())
+		, _serial(Invalid_ID)
+		, _queue_id(0)
+		, _receive_buffer_size(SystemConfigInst->Receive_Buffer_Len)
+		,	_serviceImpl(new ServiceImpl())
+		,	_sentCloseMessage(false)
 	{
 		_peer_ip = new char[IP_ADDR_LEN];
 		_serviceImpl->SetCloseFlag(eCF_None);
@@ -164,7 +164,8 @@ namespace HalfNetwork
 
 	void ReactorService::_RegisterTimer()
 	{
-		ACE_Time_Value intervalTime(0, SystemConfigInst->Interval_Send_Term*1000);
+		ACE_Time_Value intervalTime;
+		ConvertTimeValue(intervalTime, SystemConfigInst->Interval_Send_Term);
 		this->reactor()->schedule_timer(this, 0, ACE_Time_Value::zero, intervalTime);
 	}
 

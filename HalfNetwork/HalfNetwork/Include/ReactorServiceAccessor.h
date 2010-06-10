@@ -39,12 +39,12 @@ namespace HalfNetwork
 		virtual ~ReactorServiceAccessor();
 
 	public:
-		virtual	bool	SendRequest(const uint32 streamID, ACE_Message_Block* block);
-		virtual	bool	SendReserve(const uint32 streamID, ACE_Message_Block* block, const uint32 delay);
-		virtual	void	DisableService(const uint32 streamID);
+		virtual	bool	SendRequest(uint32 streamID, ACE_Message_Block* block);
+		virtual	bool	SendReserve(uint32 streamID, ACE_Message_Block* block, uint32 delay);
+		virtual	void	DisableService(uint32 streamID);
 		virtual	void	CloseService();
 		virtual	uint32	ServiceCount();
-		virtual	void	CloseReceiveStream(const uint32 streamID);
+		virtual	void	CloseReceiveStream(uint32 streamID);
 
 	private:
 		AbstractReactorSend*	_send_strategy;

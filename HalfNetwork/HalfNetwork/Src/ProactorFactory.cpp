@@ -6,6 +6,7 @@
 #include "ProactorConnector.h"
 #include "ProactorPool.h"
 #include "ProactorServiceAccessor.h"
+#include "ProactorTimer.h"
 
 namespace HalfNetwork
 {
@@ -15,7 +16,7 @@ namespace HalfNetwork
 		ACE_OS::strcpy(m_factoryName, ACE_TEXT("Proactor"));
 	}
 
-	AbstractAcceptor* ProactorFactory::CreateAcceptor(const uint16 service_port, const uint8 queue_id)
+	AbstractAcceptor* ProactorFactory::CreateAcceptor(uint16 service_port, uint8 queue_id)
 	{
 		return new ProactorAcceptor(service_port, queue_id);
 	}
@@ -33,6 +34,11 @@ namespace HalfNetwork
 	AbstractServiceAccessor* ProactorFactory::CreateServiceAccessor(uint8 send_mode)
 	{
 		return new ProactorServiceAccessor(send_mode);
+	}
+
+	AbstractTimer* ProactorFactory::CreateTimer()
+	{
+		return new ProactorTimer();
 	}
 
 	const ACE_TCHAR* ProactorFactory::GetFactoryName()

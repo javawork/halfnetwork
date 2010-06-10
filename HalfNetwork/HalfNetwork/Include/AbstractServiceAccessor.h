@@ -17,12 +17,12 @@ namespace HalfNetwork
 		virtual ~AbstractServiceAccessor() {}
 
 	public:
-		virtual	bool	SendRequest(const uint32 streamID, ACE_Message_Block* block) = 0;
-		virtual	bool	SendReserve(const uint32 streamID, ACE_Message_Block* block, const uint32 delay) = 0;
-		virtual	void	DisableService(const uint32 streamID) = 0;
+		virtual	bool	SendRequest(uint32 streamID, ACE_Message_Block* block) = 0;
+		virtual	bool	SendReserve(uint32 streamID, ACE_Message_Block* block, uint32 delay) = 0;
+		virtual	void	DisableService(uint32 streamID) = 0;
 		virtual	void	CloseService() = 0;
 		virtual uint32	ServiceCount() = 0;
-		virtual	void	CloseReceiveStream(const uint32 streamID) = 0;
+		virtual	void	CloseReceiveStream(uint32 streamID) = 0;
 
 	};
 

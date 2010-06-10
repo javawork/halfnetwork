@@ -12,11 +12,10 @@ namespace HalfNetwork
 	////////////////////
 	// CustomAcceptor
 	////////////////////
-	CustomAsynchAcceptor::CustomAsynchAcceptor() : 
-		_queueId(0), 
-		_receive_buffer_size(0),
-		_suspendAccept(FALSE)
-		
+	CustomAsynchAcceptor::CustomAsynchAcceptor() 
+		: _queueId(0)
+		, _receive_buffer_size(0)
+		,	_suspendAccept(FALSE)
 	{
 
 	}

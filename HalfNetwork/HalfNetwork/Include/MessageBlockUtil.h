@@ -15,7 +15,8 @@ namespace HalfNetwork
 		return tail;
 	}
 
-	inline bool MakeMergedBlock(ACE_Message_Block *blockList, ACE_Message_Block *mergedBlock)
+	inline bool MakeMergedBlock(ACE_Message_Block *blockList, 
+															ACE_Message_Block *mergedBlock)
 	{
 		if (mergedBlock->capacity() < blockList->total_length())
 			return false;

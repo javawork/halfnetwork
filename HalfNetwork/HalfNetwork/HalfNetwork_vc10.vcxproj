@@ -963,12 +963,14 @@
     <ClCompile Include="Src\ProactorPool.cpp" />
     <ClCompile Include="Src\ProactorService.cpp" />
     <ClCompile Include="Src\ProactorServiceAccessor.cpp" />
+    <ClCompile Include="Src\ProactorTimer.cpp" />
     <ClCompile Include="Src\ReactorAcceptor.cpp" />
     <ClCompile Include="Src\ReactorConnector.cpp" />
     <ClCompile Include="Src\ReactorFactory.cpp" />
     <ClCompile Include="Src\ReactorPool.cpp" />
     <ClCompile Include="Src\ReactorService.cpp" />
     <ClCompile Include="Src\ReactorServiceAccessor.cpp" />
+    <ClCompile Include="Src\ReactorTimer.cpp" />
     <ClCompile Include="Src\ServiceImpl.cpp" />
     <ClCompile Include="Src\InterlockedValue.cpp" />
     <ClCompile Include="Src\MemoryBlockPool.cpp" />
@@ -1605,6 +1607,7 @@
     <ClInclude Include="Include\AbstractEventPool.h" />
     <ClInclude Include="Include\AbstractFactory.h" />
     <ClInclude Include="Include\AbstractServiceAccessor.h" />
+    <ClInclude Include="Include\AbstractTimer.h" />
     <ClInclude Include="Include\NetworkFacade.h" />
     <ClInclude Include="Include\ProactorAcceptor.h" />
     <ClInclude Include="Include\ProactorConnector.h" />
@@ -1612,12 +1615,14 @@
     <ClInclude Include="Include\ProactorPool.h" />
     <ClInclude Include="Include\ProactorService.h" />
     <ClInclude Include="Include\ProactorServiceAccessor.h" />
+    <ClInclude Include="Include\ProactorTimer.h" />
     <ClInclude Include="Include\ReactorAcceptor.h" />
     <ClInclude Include="Include\ReactorConnector.h" />
     <ClInclude Include="Include\ReactorFactory.h" />
     <ClInclude Include="Include\ReactorPool.h" />
     <ClInclude Include="Include\ReactorService.h" />
     <ClInclude Include="Include\ReactorServiceAccessor.h" />
+    <ClInclude Include="Include\ReactorTimer.h" />
     <ClInclude Include="Include\ServiceImpl.h" />
     <ClInclude Include="Include\InterlockedValue.h" />
     <ClInclude Include="Include\MemoryBlockPool.h" />

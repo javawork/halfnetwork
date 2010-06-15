@@ -131,14 +131,19 @@ int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 	const unsigned char QueueID = 103;
 	if (false == NetworkInit(configReader, QueueID))
 	{
-		HALF_LOG(ConsoleLogger, ACE_TEXT("NetworkInit Fail."), 0);
+		HALF_LOG(ConsoleLogger, ACE_TEXT("NetworkInit fail."), 0);
 		return 0;
 	}
 
 	unsigned int connectionCount = configReader.GetValue<unsigned int>(ACE_TEXT("ConnectionCount"));
 	unsigned short port = configReader.GetValue<unsigned short>(ACE_TEXT("ServerPort"));
 	tstring serverIp = configReader.GetValue<tstring>(ACE_TEXT("ServerIp"));
-	NetworkInstance->Connect(serverIp.c_str(), port, QueueID);
+	unsigned int waitMs = 3000;
+	if (false == NetworkInstance->Connect(serverIp.c_str(), port, QueueID, waitMs))
+	{
+		HALF_LOG(ConsoleLogger, ACE_TEXT("Connect fail."), 0);
+		return 0;
+	}
 
 	while(true)
 		ProcessRecvQueue(QueueID);

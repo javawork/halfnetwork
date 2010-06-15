@@ -23,18 +23,29 @@ namespace HalfNetwork
 		virtual ~ReactorConnector() {}
 
 	public:
-		bool	Open();
-		void	Close();
+		bool Open();
+		void Close();
 
 	public:
-		bool	Connect(const ACE_TCHAR* ip, 
-									uint16 port, 
-									uint8 queue_id);
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
+														   uint16 port, 
+															 uint8 queue_id);
 
-		bool	Connect(const ACE_TCHAR* ip,
-									uint16 port, 
-									uint8 queue_id, 
-									uint32 receiveBufferSize);
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip,
+															 uint16 port, 
+															 uint8 queue_id, 
+															 uint32 receiveBufferSize);
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+					 							 uint16 port, 
+												 uint8 queue_id,
+												 uint32 waitMs);
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+												 uint16 port, 
+												 uint8 queue_id, 
+												 uint32 waitMs, 
+												 uint32 receiveBufferSize);
 
 	private:
 		ACE_Connector<ReactorService, ACE_SOCK_CONNECTOR> _connector;

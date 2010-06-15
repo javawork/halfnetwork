@@ -17,18 +17,29 @@ namespace HalfNetwork
 		virtual ~AbstractConnector() {}
 
 	public:
-		virtual	bool	Open() = 0;
-		virtual	void	Close() = 0;
+		virtual	bool Open() = 0;
+		virtual	void Close() = 0;
 
 	public:
-		virtual	bool	Connect(const ACE_TCHAR* ip, 
-												  uint16 port, 
-													uint8 queue_id) = 0;
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
+															 uint16 port, 
+															 uint8 queue_id) = 0;
 
-		virtual	bool	Connect(const ACE_TCHAR* ip, 
-													uint16 port, 
-													uint8 queue_id, 
-													uint32 receiveBufferSize) = 0;
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
+															 uint16 port, 
+															 uint8 queue_id, 
+															 uint32 receiveBufferSize) = 0;
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+												 uint16 port, 
+												 uint8 queue_id, 
+												 uint32 waitMs) = 0;
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+												 uint16 port, 
+												 uint8 queue_id, 
+												 uint32 waitMs, 
+												 uint32 receiveBufferSize) = 0;
 	};
 
 } // namespace HalfNetwork

@@ -1,20 +1,22 @@
 #include <string>
 #include <ace/Singleton.h>
+#include <ace/SOCK_Connector.h>
 #include "HalfNetworkType.h"
 #include "ProactorConnector.h"
+#include "TimerUtil.h"
 
 namespace HalfNetwork
 {
 	///////////////////////
-	// CustomConnector
+	// ProactorAsynchConnector
 	///////////////////////
-	CustomConnector::CustomConnector() 
+	ProactorAsynchConnector::ProactorAsynchConnector() 
 		: _queueId(0)
 		, _receive_buffer_size(0)
 	{
 	}
 
-	ProactorService* CustomConnector::make_handler()
+	ProactorService* ProactorAsynchConnector::make_handler()
 	{
 		ProactorService* handler = new ProactorService();
 		handler->QueueID(_queueId);
@@ -23,15 +25,54 @@ namespace HalfNetwork
 		return handler;
 	}
 
-	void CustomConnector::QueueID(uint8 id)
+	void ProactorAsynchConnector::QueueID(uint8 id)
 	{
 		_queueId = id;
 	}
 
-	void CustomConnector::ReceiveBufferSize( uint32 size )
+	void ProactorAsynchConnector::ReceiveBufferSize( uint32 size )
 	{
 		_receive_buffer_size = size;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	ProactorSynchConnector::ProactorSynchConnector()
+	{
+	}
+
+	bool ProactorSynchConnector::Connect( const ACE_TCHAR* ip, 
+																				uint16 port, 
+																				uint8 queue_id, 
+																				uint32 waitMs, 
+																				uint32 receiveBufferSize )
+	{
+		ACE_SOCK_Stream* stream = new ACE_SOCK_Stream();
+		ACE_INET_Addr connectAddr(port, ip);
+		ACE_SOCK_Connector connector;
+		if (0 == waitMs)
+			waitMs = 300;
+		ACE_Time_Value waitTime;
+		ConvertTimeValue(waitTime, waitMs);
+		int result = connector.connect(*stream, connectAddr, &waitTime);
+		if (-1 == result)
+			return false;
+
+		ProactorService* handler = new ProactorService();
+		handler->QueueID(queue_id);
+		if (0 != receiveBufferSize)
+			handler->ReceiveBufferSize(receiveBufferSize);
+
+		ACE_Message_Block mb;
+		handler->open(stream->get_handle(), mb);
+		delete stream;
+		stream = NULL;
+		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+
 	///////////////////////
 	// ProactorConnector
 	///////////////////////
@@ -49,17 +90,15 @@ namespace HalfNetwork
 	{
 	}
 
-	bool ProactorConnector::Connect(const ACE_TCHAR* ip,
-																	uint16 port, 
-																	uint8 queue_id)
+	bool ProactorConnector::AsynchConnect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id)
 	{
-		return Connect(ip, port, queue_id, 0);
+		return AsynchConnect(ip, port, queue_id, 0);
 	}
 
-	bool ProactorConnector::Connect(const ACE_TCHAR* ip, 
-																	uint16 port, 
-																	uint8 queue_id, 
-																	uint32 receiveBufferSize )
+	bool ProactorConnector::AsynchConnect(const ACE_TCHAR* ip, 
+																				uint16 port, 
+																				uint8 queue_id, 
+																				uint32 receiveBufferSize )
 	{
 		m_connector.QueueID(queue_id);
 		m_connectAddr.set(port, ip);
@@ -69,5 +108,19 @@ namespace HalfNetwork
 			return false;
 
 		return true;
+	}
+
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id, uint32 waitMs)
+	{
+		return Connect(ip, port, queue_id, waitMs, 0);
+	}
+
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip, 
+																	uint16 port, 
+																	uint8 queue_id, 
+																	uint32 waitMs, 
+																	uint32 receiveBufferSize)
+	{
+		return m_synchConnector.Connect(ip, port, queue_id, waitMs, receiveBufferSize);
 	}
 } // namespace HalfNetwork

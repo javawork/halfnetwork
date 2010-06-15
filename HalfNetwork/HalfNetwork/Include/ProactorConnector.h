@@ -11,18 +11,40 @@ namespace HalfNetwork
 
 	/////////////////////////////////////////////////////
 	// Description:
-	// Custom Asynch_Connector
+	// Asynch_Connector
 	/////////////////////////////////////////////////////
-	class CustomConnector : public ACE_Asynch_Connector<ProactorService>
+	class ProactorAsynchConnector : public ACE_Asynch_Connector<ProactorService>
 	{
 	public:
-		CustomConnector();
-		virtual ~CustomConnector() {}
+		ProactorAsynchConnector();
+		virtual ~ProactorAsynchConnector() {}
 
 	public:
 		ProactorService*	make_handler();
 		void QueueID(uint8 id);
 		void ReceiveBufferSize(uint32 size);
+
+	private:
+		uint8	_queueId;
+		uint32 _receive_buffer_size;
+	};
+
+	/////////////////////////////////////////////////////
+	// Description:
+	// Synch_Connector
+	/////////////////////////////////////////////////////
+	class ProactorSynchConnector 
+	{
+	public:
+		ProactorSynchConnector();
+		virtual ~ProactorSynchConnector() {}
+
+	public:
+		bool Connect( const ACE_TCHAR* ip, 
+									uint16 port, 
+									uint8 queue_id, 
+									uint32 waitMs, 
+									uint32 receiveBufferSize);
 
 	private:
 		uint8	_queueId;
@@ -44,17 +66,29 @@ namespace HalfNetwork
 		void	Close();
 
 	public:
-		virtual bool	Connect(const ACE_TCHAR* ip, 
-													uint16 port, 
-													uint8 queue_id);
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
+															 uint16 port, 
+															 uint8 queue_id);
 
-		virtual bool	Connect(const ACE_TCHAR* ip, 
-													uint16 port, 
-													uint8 queue_id, 
-													uint32 receiveBufferSize);
+		virtual	bool AsynchConnect(const ACE_TCHAR* ip,
+															 uint16 port, 
+															 uint8 queue_id, 
+															 uint32 receiveBufferSize);
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+												 uint16 port, 
+												 uint8 queue_id,
+												 uint32 waitMs);
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+												 uint16 port, 
+												 uint8 queue_id, 
+												 uint32 waitMs, 
+												 uint32 receiveBufferSize);
 
 	private:
-		CustomConnector	m_connector;
+		ProactorAsynchConnector	m_connector;
+		ProactorSynchConnector m_synchConnector;
 		ACE_INET_Addr	m_connectAddr;
 	};
 

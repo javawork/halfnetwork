@@ -145,27 +145,46 @@ namespace HalfNetwork
 		return _timer->Add(timerID, interval, start);
 	}
 
-	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId)
+	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 waitMs)
 	{
 		_queueRepository->CreateQueue(queueId);
-		return _connector->Connect(ip, port, queueId);
+		return _connector->Connect(ip, port, queueId, waitMs);
 	}
 
 	bool NetworkFacade::Connect(const ACE_TCHAR* ip, 
 															uint16 port, 
-															uint8 queueId, 
+															uint8 queueId,
+															uint32 waitMs,
 															uint32 receiveBufferSize)
 	{
 		_queueRepository->CreateQueue(queueId);
-		return _connector->Connect(ip, port, queueId, receiveBufferSize);
+		return _connector->Connect(ip, port, queueId, waitMs, receiveBufferSize);
+	}
+
+
+	bool NetworkFacade::AsynchConnect( const ACE_TCHAR* ip, 
+																		uint16 port, 
+																		uint8 queueId)
+	{
+		_queueRepository->CreateQueue(queueId);
+		return _connector->AsynchConnect(ip, port, queueId);
+	}
+
+	bool NetworkFacade::AsynchConnect(const ACE_TCHAR* ip, 
+																		uint16 port, 
+																		uint8 queueId, 
+																		uint32 receiveBufferSize)
+	{
+		_queueRepository->CreateQueue(queueId);
+		return _connector->AsynchConnect(ip, port, queueId, receiveBufferSize);
 	}
 
 	bool NetworkFacade::TryConnect( const ACE_TCHAR* ip, 
 																	uint16 port, 
-																	uint32 timeoutMs ) const
+																	uint32 waitMs ) const
 	{
 		SyncSocket testSocket;
-		return testSocket.Connect(ip, port, timeoutMs);
+		return testSocket.Connect(ip, port, waitMs);
 	}
 
 	bool NetworkFacade::PopMessage(uint8 queueId, 

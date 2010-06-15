@@ -40,7 +40,7 @@ void SendThread::Update()
 	char buffer[1024] = {0,};
 	unsigned int sendSize = rand()%1000 + 4;
 	sendSize = 50;
-	for(int i=0;i<100;++i)
+	for(int i=0;i<10;++i)
 	{
 		MakeRandomBuffer(buffer, sendSize);
 		ACE_Message_Block* block = new ACE_Message_Block(sendSize);

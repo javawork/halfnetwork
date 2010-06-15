@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <ace/Time_Value.h>
+
 namespace HalfNetwork
 {
 	inline uint32 GetTick()

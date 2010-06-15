@@ -82,7 +82,9 @@ void NetworkThread::_ProcessRecvQueue(unsigned char queue_id)
 
 void NetworkThread::_OnConnect(unsigned int streamID, const char* ip)
 {
-	//ACE_DEBUG ((LM_DEBUG, "[%t] OnConnect(%d).\n", streamID));
+	HALF_LOG(
+		ConsoleLogger, 
+		ACE_TEXT("OnConnect(%d)"), streamID);
 	SendDummyData(streamID);
 }
 
@@ -136,6 +138,9 @@ void NetworkThread::_EchoTest( unsigned int streamID, char* buffer, size_t lengt
 
 void NetworkThread::_OnClose(unsigned int streamID)
 {
+	HALF_LOG(
+		ConsoleLogger, 
+		ACE_TEXT("OnClose(%d)"), streamID);
 }
 
 long NetworkThread::GetCurrentConnection()

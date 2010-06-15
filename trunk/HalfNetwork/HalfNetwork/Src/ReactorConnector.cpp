@@ -23,9 +23,20 @@ namespace HalfNetwork
 		_connector.close();
 	}
 
-	bool ReactorConnector::Connect(const ACE_TCHAR* ip, 
-																 uint16 port, 
-																 uint8 queue_id)
+	bool ReactorConnector::AsynchConnect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id)
+	{
+		return Connect(ip, port, queue_id, 0);
+	}
+
+	bool ReactorConnector::AsynchConnect(const ACE_TCHAR* ip, 
+																			 uint16 port, 
+																			 uint8 queue_id, 
+																			 uint32 receiveBufferSize )
+	{
+		return Connect(ip, port, queue_id, receiveBufferSize);
+	}
+
+	bool ReactorConnector::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id, uint32 waitMs)
 	{
 		return Connect(ip, port, queue_id, 0);
 	}
@@ -33,7 +44,8 @@ namespace HalfNetwork
 	bool ReactorConnector::Connect(const ACE_TCHAR* ip, 
 																 uint16 port, 
 																 uint8 queue_id, 
-																 uint32 receiveBufferSize )
+																 uint32 waitMs, 
+																 uint32 receiveBufferSize)
 	{
 		_queue_id = queue_id;
 		ACE_INET_Addr connect_addr(port, ip);

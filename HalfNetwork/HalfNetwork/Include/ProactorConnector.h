@@ -40,11 +40,10 @@ namespace HalfNetwork
 		virtual ~ProactorSynchConnector() {}
 
 	public:
-		bool Connect( const ACE_TCHAR* ip, 
-									uint16 port, 
-									uint8 queue_id, 
-									uint32 waitMs, 
-									uint32 receiveBufferSize);
+		bool Connect(const ACE_TCHAR* ip, 
+                 uint16 port, 
+                 uint8 queue_id, 
+                 uint32 receiveBufferSize);
 
 	private:
 		uint8	_queueId;
@@ -66,25 +65,25 @@ namespace HalfNetwork
 		void	Close();
 
 	public:
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+                         uint16 port, 
+                         uint8 queue_id);
+
+		virtual	bool Connect(const ACE_TCHAR* ip, 
+                         uint16 port, 
+                         uint8 queue_id, 
+                         uint32 receiveBufferSize);
+
 		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
-															 uint16 port, 
-															 uint8 queue_id);
+                               uint16 port, 
+                               uint8 queue_id);
 
 		virtual	bool AsynchConnect(const ACE_TCHAR* ip,
-															 uint16 port, 
-															 uint8 queue_id, 
-															 uint32 receiveBufferSize);
+                               uint16 port, 
+                               uint8 queue_id, 
+                               uint32 receiveBufferSize);
 
-		virtual	bool Connect(const ACE_TCHAR* ip, 
-												 uint16 port, 
-												 uint8 queue_id,
-												 uint32 waitMs);
 
-		virtual	bool Connect(const ACE_TCHAR* ip, 
-												 uint16 port, 
-												 uint8 queue_id, 
-												 uint32 waitMs, 
-												 uint32 receiveBufferSize);
 
 	private:
 		ProactorAsynchConnector	m_connector;

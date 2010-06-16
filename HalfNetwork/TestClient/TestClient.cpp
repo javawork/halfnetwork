@@ -90,7 +90,7 @@ int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 	HALF_LOG(ConsoleLogger, ACE_TEXT("ConnectCount = %d, start connect."), connectionCount);
 	for(unsigned int i=0; i<connectionCount; ++i)
 	{
-		bool result = NetworkInstance->AsynchConnect(serverIp.c_str(), port, QueueID);
+		bool result = NetworkInstance->Connect(serverIp.c_str(), port, QueueID);
 		EventSleep(configReader.GetValue<int>(ACE_TEXT("ConnectTerm")));
 	}
 	HALF_LOG(ConsoleLogger, ACE_TEXT("connect end"), 0);
@@ -106,7 +106,7 @@ int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 			//HalfNetwork::MemoryPoolInstance->Dump();
 			for(int i=0; i<fillupConnection; ++i)
 			{
-				if (false == NetworkInstance->AsynchConnect(serverIp.c_str(), port, QueueID))
+				if (false == NetworkInstance->Connect(serverIp.c_str(), port, QueueID))
 					HALF_LOG(ConsoleLogger, ACE_TEXT("Connection fail"), 0);
 				EventSleep(configReader.GetValue<int>(ACE_TEXT("ConnectTerm")));
 			}

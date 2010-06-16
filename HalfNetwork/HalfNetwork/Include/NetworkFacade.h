@@ -107,20 +107,19 @@ namespace HalfNetwork
 		// Arguments:
 		//   queueId - Related queue id
 		/////////////////////////////////////////////////////////////////////////
-		bool	Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 waitMs = 0);
+		bool	Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId);
 		bool	Connect(const ACE_TCHAR* ip, 
-									uint16 port, 
-									uint8 queueId, 
-									uint32 waitMs,
-									uint32 receiveBufferSize);
+                  uint16 port, 
+                  uint8 queueId, 
+                  uint32 receiveBufferSize);
 
 		bool	AsynchConnect(const ACE_TCHAR* ip, 
-											 uint16 port, 
-											 uint8 queueId);
+                        uint16 port, 
+                        uint8 queueId);
 		bool	AsynchConnect(const ACE_TCHAR* ip, 
-												uint16 port, 
-												uint8 queueId, 
-												uint32 receiveBufferSize);
+                        uint16 port, 
+                        uint8 queueId, 
+                        uint32 receiveBufferSize);
 
 		/////////////////////////////////////////////////////////////////////////
 		// Description:

@@ -42,19 +42,14 @@ namespace HalfNetwork
 	}
 
 	bool ProactorSynchConnector::Connect( const ACE_TCHAR* ip, 
-																				uint16 port, 
-																				uint8 queue_id, 
-																				uint32 waitMs, 
-																				uint32 receiveBufferSize )
+                                        uint16 port, 
+                                        uint8 queue_id, 
+                                        uint32 receiveBufferSize )
 	{
 		ACE_SOCK_Stream* stream = new ACE_SOCK_Stream();
 		ACE_INET_Addr connectAddr(port, ip);
 		ACE_SOCK_Connector connector;
-		if (0 == waitMs)
-			waitMs = 300;
-		ACE_Time_Value waitTime;
-		ConvertTimeValue(waitTime, waitMs);
-		int result = connector.connect(*stream, connectAddr, &waitTime);
+		int result = connector.connect(*stream, connectAddr);
 		if (-1 == result)
 			return false;
 
@@ -90,15 +85,28 @@ namespace HalfNetwork
 	{
 	}
 
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id)
+	{
+		return Connect(ip, port, queue_id, 0);
+	}
+
+	bool ProactorConnector::Connect(const ACE_TCHAR* ip, 
+                                  uint16 port, 
+                                  uint8 queue_id, 
+                                  uint32 receiveBufferSize)
+	{
+		return m_synchConnector.Connect(ip, port, queue_id, receiveBufferSize);
+	}
+
 	bool ProactorConnector::AsynchConnect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id)
 	{
 		return AsynchConnect(ip, port, queue_id, 0);
 	}
 
 	bool ProactorConnector::AsynchConnect(const ACE_TCHAR* ip, 
-																				uint16 port, 
-																				uint8 queue_id, 
-																				uint32 receiveBufferSize )
+                                        uint16 port, 
+                                        uint8 queue_id, 
+                                        uint32 receiveBufferSize )
 	{
 		m_connector.QueueID(queue_id);
 		m_connectAddr.set(port, ip);
@@ -108,19 +116,5 @@ namespace HalfNetwork
 			return false;
 
 		return true;
-	}
-
-	bool ProactorConnector::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queue_id, uint32 waitMs)
-	{
-		return Connect(ip, port, queue_id, waitMs, 0);
-	}
-
-	bool ProactorConnector::Connect(const ACE_TCHAR* ip, 
-																	uint16 port, 
-																	uint8 queue_id, 
-																	uint32 waitMs, 
-																	uint32 receiveBufferSize)
-	{
-		return m_synchConnector.Connect(ip, port, queue_id, waitMs, receiveBufferSize);
 	}
 } // namespace HalfNetwork

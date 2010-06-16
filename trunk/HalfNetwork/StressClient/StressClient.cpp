@@ -138,8 +138,7 @@ int ACE_TMAIN (int argc, ACE_TCHAR * argv[])
 	unsigned int connectionCount = configReader.GetValue<unsigned int>(ACE_TEXT("ConnectionCount"));
 	unsigned short port = configReader.GetValue<unsigned short>(ACE_TEXT("ServerPort"));
 	tstring serverIp = configReader.GetValue<tstring>(ACE_TEXT("ServerIp"));
-	unsigned int waitMs = 3000;
-	if (false == NetworkInstance->Connect(serverIp.c_str(), port, QueueID, waitMs))
+	if (false == NetworkInstance->Connect(serverIp.c_str(), port, QueueID))
 	{
 		HALF_LOG(ConsoleLogger, ACE_TEXT("Connect fail."), 0);
 		return 0;

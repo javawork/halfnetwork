@@ -22,24 +22,22 @@ namespace HalfNetwork
 
 	public:
 		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
-															 uint16 port, 
-															 uint8 queue_id) = 0;
+                               uint16 port, 
+                               uint8 queue_id) = 0;
 
 		virtual	bool AsynchConnect(const ACE_TCHAR* ip, 
-															 uint16 port, 
-															 uint8 queue_id, 
-															 uint32 receiveBufferSize) = 0;
+                               uint16 port, 
+                               uint8 queue_id, 
+                               uint32 receiveBufferSize) = 0;
 
 		virtual	bool Connect(const ACE_TCHAR* ip, 
-												 uint16 port, 
-												 uint8 queue_id, 
-												 uint32 waitMs) = 0;
+                         uint16 port, 
+                         uint8 queue_id) = 0;
 
 		virtual	bool Connect(const ACE_TCHAR* ip, 
-												 uint16 port, 
-												 uint8 queue_id, 
-												 uint32 waitMs, 
-												 uint32 receiveBufferSize) = 0;
+                         uint16 port, 
+                         uint8 queue_id, 
+                         uint32 receiveBufferSize) = 0;
 	};
 
 } // namespace HalfNetwork

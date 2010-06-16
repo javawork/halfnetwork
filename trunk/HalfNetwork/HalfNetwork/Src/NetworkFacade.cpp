@@ -145,20 +145,19 @@ namespace HalfNetwork
 		return _timer->Add(timerID, interval, start);
 	}
 
-	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId, uint32 waitMs)
+	bool NetworkFacade::Connect(const ACE_TCHAR* ip, uint16 port, uint8 queueId)
 	{
 		_queueRepository->CreateQueue(queueId);
-		return _connector->Connect(ip, port, queueId, waitMs);
+		return _connector->Connect(ip, port, queueId);
 	}
 
 	bool NetworkFacade::Connect(const ACE_TCHAR* ip, 
 															uint16 port, 
 															uint8 queueId,
-															uint32 waitMs,
 															uint32 receiveBufferSize)
 	{
 		_queueRepository->CreateQueue(queueId);
-		return _connector->Connect(ip, port, queueId, waitMs, receiveBufferSize);
+		return _connector->Connect(ip, port, queueId, receiveBufferSize);
 	}
 
 

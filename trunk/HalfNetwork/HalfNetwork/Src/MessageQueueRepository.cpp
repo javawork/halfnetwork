@@ -183,6 +183,7 @@ namespace HalfNetwork
 			(*iter).int_id_->Pulse();
 			//(*iter).int_id_->Clear();
 		}
+		_eventNotiStrategy.notify();
 	}
 
 	void MessageQueueRepository::ClearAll()

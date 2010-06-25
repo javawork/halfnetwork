@@ -37,3 +37,7 @@
 
   A. 그렇습니다. StreamID는 0~4096 까지 순차적으로 사용되고 다시 순환됩니다.
 ----
+  Q. 접속 개체수 제한을 늘리고 싶습니다.
+
+  A. Proactor를 사용하실때는 `ProactorService.h`의 `Max_ProactorService`, Reactor를 사용하실때는 `ReactorService.h`의 `Max_ReactorService`를 수정하시면 됩니다.
+----

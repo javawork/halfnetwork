@@ -41,3 +41,19 @@
 
   A. Proactor를 사용하실때는 `ProactorService.h`의 `Max_ProactorService`, Reactor를 사용하실때는 `ReactorService.h`의 `Max_ReactorService`를 수정하시면 됩니다.
 ----
+  Q. `SystemConfig`  각 변수들의 의미를 알고 싶습니다.
+
+  A. 각 변수들의 의미는 아래와 같습니다.
+    * `Receive_Buffer_Len` : Receive 버퍼의 최대 크기.  기본값은 1024x4 입니다. 너무 작게 설정하면 큰 패킷을 받을때 여러번 Receive를 하게되서 성능이 저하되고 너무 크게 설정하면 메모리가 낭비됩니다. 프로젝트에서 사용하는 가장 큰 패킷의 크기로 설정하시는게 좋습니다.
+    * `Worker_Thread_Count` : Network worker 스레드의 개수. 0으로 설정하면 cpu개수x2로 설정됩니다.
+    * `Send_Mode` : 패킷 전송 요청이 들어오면 바로 보낼것 인지(eSM_Direct) 모아서 보낼 것인지(eSM_Interval)를 결정합니다. 작은 패킷전송 요청이 잦은 경우(초당 수십~수백)에는 모아서 보내는 것을 추천합니다.
+    * `Interval_Send_Term` : 모아서 보내는 모드일 경우(eSM_Interval) 모아서 보내는 시간을 결정합니다. 밀리세컨드 단위이고 기본값은 20ms 입니다. 
+    * `ZombieConnectionTerm` : 일정시간동안 패킷을 보내지 않으면 해당 세션을 끊어주는 기능을 활성화합니다. 역시 밀리세컨드 단위이고 0으로 넣어주면 해당 기능을 사용하지 않습니다.
+----
+  Q. 종료시에 호출해야하는 메소드의 순서는?
+
+  A. 아래의 순서로 하시면 됩니다.
+    * `NetworkInstance->Pulse();` // `PopMessage`를 깨어나게 합니다.
+    * `NetworkInstance->Close();` // Accept, Receive 등의 동작들을 중지 합니다.
+    * `NetworkInstance->Destroy();` // 객체들을 소멸시킵니다.
+----

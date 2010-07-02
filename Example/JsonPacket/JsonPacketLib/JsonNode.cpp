@@ -104,6 +104,17 @@ bool JsonObjectNode::operator == (const JsonObjectNode& object) const
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+unsigned int JsonObjectNode::MakeBuffer( char* buffer, unsigned int bufferLen )
+{
+	tstring contentStr = ToString();
+	if (bufferLen < contentStr.length())
+		return 0;
+	memcpy(buffer, contentStr.c_str(), contentStr.length());
+	return (unsigned int)contentStr.length();
+}
+
+//////////////////////////////////////////////////////////////////////////
 // JsonArrayNode
 //////////////////////////////////////////////////////////////////////////
 

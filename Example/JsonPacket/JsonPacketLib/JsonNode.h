@@ -8,6 +8,10 @@ namespace json
 	class Array;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// JsonObjectNode
+//////////////////////////////////////////////////////////////////////////
+
 class JsonObjectNode
 {
 public:
@@ -52,6 +56,8 @@ public:
 	void Parse(const tstring& content);
 
 	bool operator == (const JsonObjectNode& object) const;
+
+	unsigned int MakeBuffer(char* buffer, unsigned int bufferLen);
 	
 protected:
 	void AddImpl(const char* key, const tstring& value);
@@ -67,6 +73,8 @@ private:
 	friend class JsonArrayNode;
 };
 
+//////////////////////////////////////////////////////////////////////////
+// JsonArrayNode
 //////////////////////////////////////////////////////////////////////////
 
 class JsonArrayNode

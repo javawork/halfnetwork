@@ -67,7 +67,7 @@ void TestArrayNode()
 	const int ElementCount = 2;
 	tstring TestName[ElementCount] = {"alice", "knight"};
 	int TestLevel[ElementCount] = {22, 43};
-	float TestExp[ElementCount] = {232254.4456f, 2346565.443f};
+	float TestExp[ElementCount] = {232254.4456f, 7346565.443f};
 
 	JsonArrayNode arrayNode;
 	for (int i=0; i<ElementCount; ++i)
@@ -117,12 +117,37 @@ void TestChildNode()
 	assert(childNode == chileNode1);
 }
 
+void TestMakeBuffer()
+{
+	CTestFunctionPrint autoPrint(__FUNCTION__);
+	tstring TestName = "alice";
+	JsonObjectNode node;
+	node.Add("StrValue", TestName);
+	int TestInteger = 23498;
+	node.Add("Integer", TestInteger);
+	int TestNeInteger = -23498;
+	node.Add("SignedInteger", TestNeInteger);
+	unsigned int TestUinteger = 4294967295;
+	node.Add("UInteger", TestUinteger);
+	float TestFloat = 2113432.5646f;
+	node.Add("FloatValue", TestFloat);
+
+	const int BufferSize = 1024;
+	char buffer[BufferSize] = {0,};
+	unsigned int writtenSize = node.MakeBuffer(buffer, BufferSize);
+
+	JsonObjectNode dstNode;
+	dstNode.Parse(buffer, writtenSize);
+	assert(node == dstNode);
+}
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	TestNode();
 	TestArrayNode();
 	TestChildNode();
+	TestMakeBuffer();
 	printf("\nTest success.");
 	getchar();
 	return 0;

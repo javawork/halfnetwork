@@ -96,6 +96,12 @@ namespace Datatype
 	}
 
 	template<>
+	inline void ToString(char* dstStr, const char* srcValue, unsigned int bufferLen ) 
+	{ 
+		sprintf_s(dstStr, bufferLen, "%s", srcValue);
+	}
+
+	template<>
 	inline void ToString(char* dstStr, int srcValue, unsigned int bufferLen ) 
 	{
 		sprintf_s(dstStr, bufferLen, "%d", srcValue);

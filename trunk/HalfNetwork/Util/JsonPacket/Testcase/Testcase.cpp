@@ -70,7 +70,7 @@ void TestArrayNode()
 	int TestLevel[ElementCount] = {22, 43};
 	float TestExp[ElementCount] = {232254.4456f, 7346565.443f};
 
-	JsonArrayNode arrayNode;
+	JsonArrayNode arrayNode0;
 	for (int i=0; i<ElementCount; ++i)
 	{
 		JsonObjectNode objectNode;
@@ -78,12 +78,12 @@ void TestArrayNode()
 		objectNode.Add("level", TestLevel[i]);
 		objectNode.Add("exp", TestExp[i]);
 
-		arrayNode.Insert(objectNode);
+		arrayNode0.Insert(objectNode);
 	}
-	assert(ElementCount == arrayNode.Size());
+	assert(ElementCount == arrayNode0.Size());
 	for (int i=0; i<ElementCount; ++i)
 	{
-		JsonObjectNode objectNode = arrayNode.GetObjectNode(i);
+		JsonObjectNode objectNode = arrayNode0.GetObjectNode(i);
 		tstring name = objectNode.GetValue<tstring>("name");
 		int level = objectNode.GetValue<int>("level");
 		float exp = objectNode.GetValue<float>("exp");
@@ -91,55 +91,122 @@ void TestArrayNode()
 		assert(level == TestLevel[i]);
 		assert(exp == TestExp[i]);
 	}
-	tstring content = arrayNode.ToString();
+	tstring content = arrayNode0.ToString();
 	JsonArrayNode arrayNode1;
 	arrayNode1.Parse(content);
 
-	assert(arrayNode == arrayNode1);
+	assert(arrayNode0 == arrayNode1);
+	assert(arrayNode0.ToString() == arrayNode1.ToString());
+}
+
+void TestOperator()
+{
+	CTestFunctionPrint autoPrint(__FUNCTION__);
+	JsonObjectNode srcObjNode, dstObjNode;
+	srcObjNode.Add("name", "alice");
+	dstObjNode = srcObjNode;
+	assert(srcObjNode == dstObjNode);
+	assert(srcObjNode.ToString() == dstObjNode.ToString());
+
+	JsonArrayNode srcArrayNode, dstArrayNode;
+	srcArrayNode.Insert(srcObjNode);
+	dstArrayNode = srcArrayNode;
+	assert(srcArrayNode == dstArrayNode);
+	assert(srcArrayNode.ToString() == dstArrayNode.ToString());
 }
 
 void TestChildNode()
 {
 	CTestFunctionPrint autoPrint(__FUNCTION__);
 	tstring TestName = "alice";
-	JsonObjectNode childNode;
-	childNode.Add("name", TestName);
+	JsonObjectNode childNode0;
+	childNode0.Add("name", TestName);
 	int TestLevel = 57;
-	childNode.Add("level", TestLevel);
+	childNode0.Add("level", TestLevel);
 
 	JsonObjectNode parentNode;
-	parentNode.Add("npc", &childNode);
-
+	parentNode.Add("npc", &childNode0);
 	JsonObjectNode chileNode1 = parentNode.GetValue<JsonObjectNode>("npc");
 	tstring name = chileNode1.GetValue<tstring>("name");
 	assert(name == TestName);
 	int level = chileNode1.GetValue<int>("level");
 	assert(level == TestLevel);
-	assert(childNode == chileNode1);
+	assert(childNode0 == chileNode1);
+	assert(childNode0.ToString() == chileNode1.ToString());
 }
 
 void TestMakeBuffer()
 {
 	CTestFunctionPrint autoPrint(__FUNCTION__);
 	tstring TestName = "alice";
-	JsonObjectNode node;
-	node.Add("StrValue", TestName);
+	JsonObjectNode srcNode;
+	srcNode.Add("StrValue", TestName);
 	int TestInteger = 23498;
-	node.Add("Integer", TestInteger);
+	srcNode.Add("Integer", TestInteger);
 	int TestNeInteger = -23498;
-	node.Add("SignedInteger", TestNeInteger);
+	srcNode.Add("SignedInteger", TestNeInteger);
 	unsigned int TestUinteger = 4294967295;
-	node.Add("UInteger", TestUinteger);
+	srcNode.Add("UInteger", TestUinteger);
 	float TestFloat = 2113432.5646f;
-	node.Add("FloatValue", TestFloat);
+	srcNode.Add("FloatValue", TestFloat);
 
 	const int BufferSize = 1024;
 	char buffer[BufferSize] = {0,};
-	unsigned int writtenSize = JsonBuilder::MakeBuffer(node, buffer, BufferSize);
+	unsigned int writtenSize = JsonBuilder::MakeBuffer(srcNode, buffer, BufferSize);
 
 	JsonObjectNode dstNode;
 	dstNode.Parse(buffer, writtenSize);
-	assert(node == dstNode);
+	assert(srcNode == dstNode);
+}
+
+void TestMakeBufferWithArray()
+{
+	CTestFunctionPrint autoPrint(__FUNCTION__);
+
+	const int ElementCount = 3;
+	tstring ItemName[ElementCount] = {"onehanded-axe", "short-sword", "spear"};
+	int ItemPrice[ElementCount] = {5, 8, 21};
+	float ItemPower[ElementCount] = {8.12f, 5.9f, 12.0f};
+
+	JsonArrayNode srcItemArray;
+	for (int i=0; i<ElementCount; ++i)
+	{
+		JsonObjectNode itemNode;
+		itemNode.Add("name", ItemName[i]);
+		itemNode.Add("price", ItemPrice[i]);
+		itemNode.Add("power", ItemPower[i]);
+		srcItemArray.Insert(itemNode);
+	}
+
+	JsonObjectNode srcRootNode;
+	srcRootNode.Add("items", &srcItemArray);
+	srcRootNode.Add("race", "human");
+	
+	const int BufferSize = 1024;
+	char buffer[BufferSize] = {0,};
+	unsigned int writtenSize = JsonBuilder::MakeBuffer(srcRootNode, buffer, BufferSize);
+
+	JsonBuilder builder;
+	builder.PushBuffer(buffer, writtenSize);
+	JsonObjectNode dstRootNode;
+	assert(builder.PopCompleteNode(dstRootNode));
+	assert(srcRootNode == dstRootNode);
+
+	tstring human = dstRootNode.GetValue<tstring>("race");
+	assert(human == "human");
+
+	JsonArrayNode dstItemArray = dstRootNode.GetValue<JsonArrayNode>("items");
+	assert(srcItemArray == dstItemArray);
+	assert(srcItemArray.ToString() == dstItemArray.ToString());
+	for (int i=0; i<ElementCount; ++i)
+	{
+		JsonObjectNode dstObj = dstItemArray.GetObjectNode(i);
+		JsonObjectNode srcObj = srcItemArray.GetObjectNode(i);
+		assert(dstObj == srcObj);
+		assert(ItemName[i] == dstObj.GetValue<tstring>("name"));
+		assert(ItemPrice[i] == dstObj.GetValue<int>("price"));
+		assert(ItemPower[i] == dstObj.GetValue<float>("power"));
+	}
 }
 
 void TestSeperatePacket()
@@ -211,13 +278,14 @@ void TestGluePacket()
 	assert(srcNode1 == dstNode1);
 }
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	TestNode();
 	TestArrayNode();
+	TestOperator();
 	TestChildNode();
 	TestMakeBuffer();
+	TestMakeBufferWithArray();
 	TestSeperatePacket();
 	TestGluePacket();
 	printf("\nTest success.");

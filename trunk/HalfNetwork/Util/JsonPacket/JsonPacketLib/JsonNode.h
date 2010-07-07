@@ -8,6 +8,43 @@ namespace json
 	class Array;
 }
 
+class JsonObjectNode;
+
+//////////////////////////////////////////////////////////////////////////
+// JsonArrayNode
+//////////////////////////////////////////////////////////////////////////
+
+class JsonArrayNode
+{
+public:
+	JsonArrayNode();
+	JsonArrayNode(const json::Array& obj);
+	JsonArrayNode(const JsonArrayNode& other);
+	virtual ~JsonArrayNode();
+
+public:
+	JsonArrayNode & operator = (const JsonArrayNode & other);
+	bool operator == (const JsonArrayNode& object) const;
+
+public:
+	void Insert(JsonObjectNode& node);
+	size_t Size() const;
+	void Clear();
+	JsonObjectNode GetObjectNode(int index);
+
+	tstring ToString() const;
+	void Parse(const char* content, size_t len);
+	void Parse(const tstring& content);
+
+protected:
+	json::Array* JsonArrayNode::GetRawNode() const;
+
+private:
+	json::Array* m_jsonArray;
+
+	friend class JsonObjectNode;
+};
+
 //////////////////////////////////////////////////////////////////////////
 // JsonObjectNode
 //////////////////////////////////////////////////////////////////////////
@@ -19,6 +56,10 @@ public:
 	JsonObjectNode(const json::Object& obj);
 	JsonObjectNode(const JsonObjectNode& other);
 	~JsonObjectNode();
+
+public:
+	JsonObjectNode & operator = (const JsonObjectNode & other);
+	bool operator == (const JsonObjectNode& object) const;
 
 public:
 	template<typename T>
@@ -33,7 +74,13 @@ public:
 	template<>
 	void Add(const char* key, JsonObjectNode* node) 
 	{ 
-		AppendChild(key, node);
+		AppendObjectNode(key, node);
+	}
+
+	template<>
+	void Add(const char* key, JsonArrayNode* node) 
+	{ 
+		AppendArrayNode(key, node);
 	}
 
 	template<typename T>
@@ -48,20 +95,26 @@ public:
 	template<>
 	JsonObjectNode GetValue(const char* key) const
 	{
-		return GetChileNode(key);
+		return GetObjectNode(key);
+	}
+
+	template<>
+	JsonArrayNode GetValue(const char* key) const
+	{
+		return GetArrayNode(key);
 	}
 
 	tstring ToString() const;
 	unsigned int Parse(const char* content, size_t len);
 	unsigned int Parse(const tstring& content);
-
-	bool operator == (const JsonObjectNode& object) const;
 	
 protected:
 	void AddImpl(const char* key, const tstring& value);
 	tstring GetValueImpl(const char* key) const;
-	void AppendChild(const char* key, JsonObjectNode* child);
-	JsonObjectNode GetChileNode(const char* key) const;
+	void AppendObjectNode(const char* key, JsonObjectNode* childNode);
+	void AppendArrayNode(const char* key, JsonArrayNode* childNode);
+	JsonObjectNode GetObjectNode(const char* key) const;
+	JsonArrayNode GetArrayNode(const char* key) const;
 
 	json::Object* GetRawNode() const;
 
@@ -71,28 +124,3 @@ private:
 	friend class JsonArrayNode;
 };
 
-//////////////////////////////////////////////////////////////////////////
-// JsonArrayNode
-//////////////////////////////////////////////////////////////////////////
-
-class JsonArrayNode
-{
-public:
-	JsonArrayNode();
-	virtual ~JsonArrayNode();
-
-public:
-	void Insert(JsonObjectNode& node);
-	size_t Size() const;
-	void Clear();
-	JsonObjectNode GetObjectNode(int index);
-
-	tstring ToString() const;
-	void Parse(const char* content, size_t len);
-	void Parse(const tstring& content);
-
-	bool operator == (const JsonArrayNode& object) const;
-
-private:
-	json::Array* m_jsonArray;
-};

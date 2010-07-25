@@ -1,0 +1,11 @@
+= How to build on Windows MSVC(Japan) =
+
+以前にはHalfNetworkをbuildするためには必須にACEをダウンロード受けて、これをbuildして、関連 libファイルをHalfNetworkにリンクされるようにすると不便さがありました。 
+しかしHalfNetwork 0.60から、ソースを受けた後、Visual Studioでプロジェクトを開けた後、buildするのだけで終わります。 
+こんなに易しくbuildができたん理由はACEをHalfNetworkプロジェクト内部に 含みしただからです。 
+
+<絵 1> HalfNetworkソースをダウンロード受けたん、ディレクトリーの姿です。
+ 
+HalfNetworkディレクトリー 中に、以前と違うようにACE_wrappersが含みなって あるのが見られます。 
+HalfNetwork 0.60ではソースをダウンロード受けた後、HalfNetwork_vc9.sln(あるいは _vc8.sln)ソリューションをbuildするのであらゆるのが終りです。 
+Buildが成功的に終われば、HalfNetworkディレクトリー 中のBin32(あるいは Bin64)ディレクトリーに、HalfNetwork.x86.debug.lib(ディバッグモードでbuild)と HalfNetwork.x86.release.lib(リリースモードでbuild)ファイルが 生じます。 

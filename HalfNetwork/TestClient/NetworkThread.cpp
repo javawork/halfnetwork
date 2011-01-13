@@ -90,9 +90,9 @@ void NetworkThread::_OnConnect(unsigned int streamID, const char* ip)
 
 void NetworkThread::_OnRead(unsigned int streamID, char* buffer, size_t length)
 {
-	//ACE_DEBUG ((LM_DEBUG, "[%t] OnRead(%d, %d).\n", streamID, length));
-	//if (_DisconnectTest(streamID))
-	//	return;
+	ACE_DEBUG ((LM_DEBUG, "[%t] OnRead(%d, %d).\n", streamID, length));
+	if (_DisconnectTest(streamID))
+		return;
 
 	_EchoTest(streamID, buffer, length);
 	SendDummyData(streamID);

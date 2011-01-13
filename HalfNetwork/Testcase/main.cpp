@@ -319,7 +319,7 @@ protected:
 		unsigned int tick = HalfNetwork::GetTick();
 		ACE_TEST_ASSERT(false == container.Pop(elem0, waitTime));
 		unsigned int actualTerm = HalfNetwork::GetTick()-tick;
-		ACE_TEST_ASSERT( abs((int)(actualTerm-waitTime)) < 10 );
+		ACE_TEST_ASSERT( abs((int)(actualTerm-waitTime)) < 20 );
 		TestElement elem1;
 		elem1.serial = 99;
 		container.Push(elem1);

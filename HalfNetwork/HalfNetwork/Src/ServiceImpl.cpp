@@ -10,6 +10,8 @@
 namespace HalfNetwork
 {
 
+	const int MaxDifferenceTick = 1000*60*60*24; // a day
+
 	ServiceImpl::ServiceImpl() 
 		: _block_queue(new ACE_Message_Queue<ACE_MT_SYNCH>)
 		,	_closeFlag(new InterlockedValue((long)eCF_None))
@@ -43,11 +45,14 @@ namespace HalfNetwork
 		uint32 current_tick = GetTick();
 		ACE_Message_Block* block = NULL;
 		uint32 block_count = 0;
-		do 
+		while(true)
 		{
 			if (-1 == _block_queue->dequeue_prio(block, &noWait))
 				break;
-			if (block->msg_priority() > current_tick)
+
+			int difference = current_tick - block->msg_priority();
+			//if (difference < 0)
+			if (difference < 0 && difference > MaxDifferenceTick*-1 )
 			{
 				_block_queue->enqueue_prio(block, &noWait);
 				break;
@@ -67,8 +72,7 @@ namespace HalfNetwork
 			{
 				//break;
 			}
-
-		} while(true);
+		}
 
 		if (0 == block_count)
 			return false;

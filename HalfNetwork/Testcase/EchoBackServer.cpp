@@ -27,8 +27,9 @@ namespace HalfNetwork
 			memcpy(&postee, commandBlock->rd_ptr(), sizeof(MessagePostee));
 			commandBlock->rd_ptr(sizeof(MessagePostee));
 			ACE_Message_Block* payloadBlock = commandBlock->cont();
-			if ( eMH_Read == postee.command)
+			if (eMH_Read == postee.command)
 				_manager->SendRequest(postee.stream_id, payloadBlock, true);
+				//_manager->SendReserve(postee.stream_id, payloadBlock->rd_ptr(), payloadBlock->length(), 100);
 
 			commandBlock = payloadBlock->cont();
 		}

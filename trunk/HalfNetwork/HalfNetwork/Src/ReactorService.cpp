@@ -43,7 +43,7 @@ namespace HalfNetwork
 	int ReactorService::open()
 	{
 		ACE_INET_Addr peer_addr;
-		if (0 == this->_sock.get_remote_addr(peer_addr))
+		if (0 == this->peer().get_remote_addr(peer_addr))
 		{
 			peer_addr.get_host_addr(_peer_ip, IP_ADDR_LEN);
 		}
@@ -68,7 +68,7 @@ namespace HalfNetwork
 		ACE_ASSERT(NULL != block);
 
 		ssize_t recv_length = 0;
-		if ((recv_length = this->_sock.recv(block->wr_ptr(), block->space())) <= 0)
+		if ((recv_length = this->peer().recv(block->wr_ptr(), block->space())) <= 0)
 		{
 			//_NotifyClose();
 			//ACE_DEBUG ((LM_DEBUG,
@@ -91,7 +91,7 @@ namespace HalfNetwork
 			return 0;
 
 		_NotifyClose();
-		//this->_wait_queue.flush();
+		//_Close();
 		delete this;
 		return 0;
 	}
@@ -103,7 +103,14 @@ namespace HalfNetwork
 			return 0;
 
 		if (false == _IsCloseFlagActivate())
+		{
 			_SendQueuedBlock();
+		}
+		else
+		{
+			_serviceImpl->ReleaseTimerLock();
+			return -1;
+		}
 
 		_serviceImpl->ReleaseTimerLock();
 		_CheckZombieConnection();
@@ -112,18 +119,18 @@ namespace HalfNetwork
 
 	ACE_HANDLE	ReactorService::get_handle() const 
 	{ 
-		return this->_sock.get_handle(); 
+		return this->peer().get_handle(); 
 	}
 
 	void ReactorService::set_handle(ACE_HANDLE handle) 
 	{
-		return this->_sock.set_handle(handle);
+		return this->peer().set_handle(handle);
 	}
 
-	ACE_SOCK_Stream& ReactorService::peer() 
-	{ 
-		return this->_sock; 
-	}
+	//ACE_SOCK_Stream& ReactorService::peer() 
+	//{ 
+	//	return this->_sock; 
+	//}
 
 	void ReactorService::_Register()
 	{
@@ -144,7 +151,7 @@ namespace HalfNetwork
 		if (ACE_INVALID_HANDLE == get_handle())
 			return;
 
-		_sock.close();
+		this->peer().close();
 	}
 
 	void ReactorService::_RemoveHandler()
@@ -162,6 +169,14 @@ namespace HalfNetwork
 		_UnRegister();
 	}
 
+	void ReactorService::_Close()
+	{
+		_NotifyClose();
+		_CloseHandle();
+		//ACE_Time_Value intervalTime(5, 0);
+		//this->reactor()->schedule_timer(_deleteHandler, 0, intervalTime, intervalTime);
+	}
+
 	void ReactorService::_RegisterTimer()
 	{
 		ACE_Time_Value intervalTime;
@@ -174,7 +189,7 @@ namespace HalfNetwork
 		if (ACE_INVALID_HANDLE == get_handle())
 			return;
 
-		_sock.close_writer();
+		this->peer().close_writer();
 	}
 
 	void ReactorService::QueueID(uint8 id)
@@ -257,7 +272,7 @@ namespace HalfNetwork
 		{
 			return _PushQueue(block, 0);
 		}
-		ssize_t send_length = _sock.send(block->rd_ptr(), block->length());
+		ssize_t send_length = this->peer().send(block->rd_ptr(), block->length());
 		_serviceImpl->ReleaseSendLock();
 		if (send_length >= (ssize_t)block->length())
 		{
@@ -304,6 +319,7 @@ namespace HalfNetwork
 		if (eCF_Passive == closeFlag)
 		{
 			_NotifyClose();
+			//_Close();
 			return true;
 		}
 		else if (eCF_Active == closeFlag)
@@ -320,7 +336,7 @@ namespace HalfNetwork
 		if (false == _serviceImpl->IsZombieConnection())
 			return;
 
-		//ActiveClose();
+		ActiveClose();
 		ReserveClose();
 	}
 } // namespace HalfNetwork

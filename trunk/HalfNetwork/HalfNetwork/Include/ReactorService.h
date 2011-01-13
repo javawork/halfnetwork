@@ -63,7 +63,7 @@ namespace HalfNetwork
 		ACE_HANDLE	get_handle() const;
 		void		set_handle(ACE_HANDLE handle);
 
-		ACE_SOCK_Stream& peer();
+		//ACE_SOCK_Stream& peer();
 
 	protected:
 		bool	_SmartSend(ACE_Message_Block* block);
@@ -89,6 +89,7 @@ namespace HalfNetwork
 		void	_UnRegister();
 		void	_CleanUp();
 		void	_RegisterTimer();
+		void	_Close();
 
 		///////////////////////////////
 		// Description:
@@ -116,7 +117,7 @@ namespace HalfNetwork
 		void _CheckZombieConnection();
 
 	private:
-		ACE_SOCK_Stream											_sock;
+		//ACE_SOCK_Stream											_sock;
 		ACE_Message_Queue<ACE_NULL_SYNCH>		_wait_queue;
 		InterlockedValue*			_closeLock;
 

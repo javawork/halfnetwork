@@ -7,7 +7,6 @@ namespace HalfNetwork
 {
 
 	typedef	unsigned char		uint8;
-	typedef	unsigned char		BYTE;
 	typedef	signed char			int8;
 	typedef	unsigned short		uint16;
 	typedef	signed short		int16;

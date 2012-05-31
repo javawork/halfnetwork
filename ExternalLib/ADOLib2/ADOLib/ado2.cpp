@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ado - New.h"
+#include "ado2.h"
 
 namespace adodblib
 {

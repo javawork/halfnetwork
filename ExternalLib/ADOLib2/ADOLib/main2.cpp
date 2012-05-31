@@ -2,7 +2,7 @@
 //
 #include "stdafx.h"
 #include <iostream>
-#include "AdoManager - New.h"
+#include "AdoManager2.h"
 
 
 void SetDBSetting(adodblib::DBConfig& config )

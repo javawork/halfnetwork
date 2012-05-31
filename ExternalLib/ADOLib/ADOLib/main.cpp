@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include "AdoManager.h"
-
+/*
 
 void SetDBSetting(SAdoConfig& adoconfig )
 {
@@ -120,3 +120,4 @@ int _tmain(int argc, _TCHAR* argv[])
 //	getchar();
 //	return 0;
 //}
+*/

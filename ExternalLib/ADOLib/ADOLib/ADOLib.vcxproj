@@ -76,15 +76,21 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ado - New.h" />
     <ClInclude Include="ado.h" />
+    <ClInclude Include="AdoManager - New.h" />
     <ClInclude Include="AdoManager.h" />
+    <ClInclude Include="DBConfig.h" />
+    <ClInclude Include="Lock - New.h" />
     <ClInclude Include="Lock.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Unidef.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ado - New.cpp" />
     <ClCompile Include="ado.cpp" />
+    <ClCompile Include="main - New.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

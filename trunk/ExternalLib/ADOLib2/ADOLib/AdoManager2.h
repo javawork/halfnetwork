@@ -1,6 +1,6 @@
 #pragma once
-#include "ado - New.h"
-#include "Lock - New.h"
+#include "ado2.h"
+#include "Lock2.h"
 
 /** 
 \brief		커넥션풀 ADO객체를 생성하여 stack에 관리한다.

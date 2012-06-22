@@ -47,7 +47,7 @@ namespace asyncadodblib
 		*/
 		void Release();
 
-		inline void SetQuery( IN wchar_t* pszQuery ) { m_strQuery = pszQuery; }
+		void SetQuery( IN wchar_t* pszQuery ) { m_strQuery = pszQuery; }
 		void SetConnectionMode( ConnectModeEnum nMode ) { m_pConnection->PutMode(nMode); }
 
 		/**
@@ -57,7 +57,7 @@ namespace asyncadodblib
 		void SetAutoCommit( const bool bAutoCommit ) { m_bAutoCommit = bAutoCommit; }
 		bool GetAutoCommit() { return m_bAutoCommit; }
 
-		inline void BeginTransaction()
+		void BeginTransaction()
 		{
 			try
 			{
@@ -71,7 +71,7 @@ namespace asyncadodblib
 			}
 		}
 
-		inline void CommitTransaction()
+		void CommitTransaction()
 		{
 			try
 			{
@@ -85,7 +85,7 @@ namespace asyncadodblib
 			}
 		}
 
-		inline void RollbackTransaction()
+		void RollbackTransaction()
 		{
 			try
 			{
@@ -99,7 +99,7 @@ namespace asyncadodblib
 			}
 		}
 
-		inline bool IsSuccess()
+		bool IsSuccess()
 		{
 			if( m_IsSuccess == false )
 			{
@@ -113,9 +113,9 @@ namespace asyncadodblib
 			return m_IsSuccess;
 		}
 
-		inline void SetSuccess( bool bIsSuccess ) { m_IsSuccess = bIsSuccess; }
-		inline void SetCommit( bool bIsSuccess ) { SetSuccess(bIsSuccess); }
-		inline bool GetSuccess() { return m_IsSuccess; }
+		void SetSuccess( bool bIsSuccess ) { m_IsSuccess = bIsSuccess; }
+		void SetCommit( bool bIsSuccess ) { SetSuccess(bIsSuccess); }
+		bool GetSuccess() { return m_IsSuccess; }
 
 		void LOG(wchar_t*, ...);
 		void dump_com_error(_com_error&);

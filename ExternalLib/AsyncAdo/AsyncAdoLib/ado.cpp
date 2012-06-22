@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ado2.h"
+#include "ado.h"
 
 namespace asyncadodblib
 {

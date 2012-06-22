@@ -14,19 +14,28 @@ namespace asyncadodblib
 		{
 		}
 
-		void SetInitCatalog( const wchar_t* pszString ) { m_strInitialCatalog = pszString; }
-		
-		void SetUserID( const wchar_t* pszUserID ) { m_strUserID = pszUserID;}
-
-		void SetPassword(wchar_t* pszPassword)	{ m_strPassword = pszPassword; }
-
-		void SetIP( wchar_t* pszString )
-		{ 
+		void Setting( const std::wstring strDBAddress, 
+						const std::wstring strID, 
+						const std::wstring strPassWord, 
+						const std::wstring strDBName, 
+						const int nConnectionTimeOut, 
+						const bool bIsRetryConnection, 
+						const int nMaxConnectionPool
+					)
+		{
 			m_strDataSource = L";Data Source="; 
-			m_strDataSource += pszString; 
+			m_strDataSource += strDBAddress; 
 			SetProvider();
-		}
 
+			m_strUserID = strID;
+			m_strPassword = strPassWord;
+			m_strInitialCatalog = strDBName;
+
+			m_nConnectionTimeout = nConnectionTimeOut;
+			m_bRetryConnection = bIsRetryConnection;
+			m_nMaxConnectionPool = nMaxConnectionPool;
+		}
+				
 		void SetDSN( wchar_t* pszString ) 
 		{ 
 			m_strDSN = L";DSN="; 
@@ -34,12 +43,6 @@ namespace asyncadodblib
 		}
 
 		void SetCommandTimeout( int nCommendTimeout ) { m_nCommandTimeout = nCommendTimeout; }
-
-		void SetConnectionTimeout( int nConnectionTimeout ) { m_nConnectionTimeout = nConnectionTimeout; }
-
-		void SetRetryConnection( bool bRetryConnection ) { m_bRetryConnection = bRetryConnection; }
-
-		void SetMaxConnectionPool( int nMaxConnectionPool ) { m_nMaxConnectionPool = nMaxConnectionPool; }
 
 		std::wstring GetConnectionString()
 		{
@@ -65,13 +68,15 @@ namespace asyncadodblib
 		
 		std::wstring& GetDSN()			{ return m_strDSN; }
 		
-		int GetConnectionTimeout(){return m_nConnectionTimeout;}
+		int GetConnectionTimeout()		{ return m_nConnectionTimeout; }
 		
-		int GetCommandTimeout(){return m_nCommandTimeout;};
+		int GetCommandTimeout()			{ return m_nCommandTimeout; }
 		
-		bool GetRetryConnection(){return m_bRetryConnection;};
+		bool GetRetryConnection()		{ return m_bRetryConnection; }
 		
-		int GetMaxConnectionPool(){return m_nMaxConnectionPool;};
+		int GetMaxConnectionPool()		{ return m_nMaxConnectionPool; }
+
+
 
 	private:
 		std::wstring m_strConnectingString;

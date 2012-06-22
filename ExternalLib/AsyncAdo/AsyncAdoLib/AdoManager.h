@@ -1,6 +1,6 @@
 #pragma once
-#include "ado2.h"
-#include "Lock2.h"
+#include "ado.h"
+#include "Lock.h"
 
 /** 
 \brief		커넥션풀 ADO객체를 생성하여 stack에 관리한다.
@@ -62,7 +62,7 @@ namespace asyncadodblib
 		bool m_bSuccessConnection;	 // 연결 성공 여부
 	
 		AdoDB* m_pAdoStack[MAX_ARRAY_SIZE];
-		CriticalSection m_Lock;
+		CSSpinLockWin32 m_Lock;
 	};
 
 	/** 

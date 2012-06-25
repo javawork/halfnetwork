@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <mutex>
 
@@ -13,6 +13,7 @@ namespace asyncadodblib
 		virtual void UnLock() = 0;
 	};
 
+	// Win32 API의 스핀락 크리티컬섹션
 	class CSSpinLockWin32 : public ISynchronizeObj
 	{
 	public:
@@ -34,7 +35,7 @@ namespace asyncadodblib
 		CRITICAL_SECTION m_lock;
 	};
 
-
+	// C++11의 뮤텍스 사용(Windows 환경에서는 Win32 API 크리티컬섹션 사용)
 	class StandardLock : public ISynchronizeObj
 	{
 	public:
@@ -55,7 +56,7 @@ namespace asyncadodblib
 	};
 
 	
-	
+	// 락을 객체 생성과 해제에서 자동으로 락과 언락을 하도록 동작
 	class ScopedLock
 	{
 	public:

@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		asyncadodblib::AdoDB* pAdo = nullptr;
 		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, true );
 
-		pAdo->SetQuery( L"Insert Into Test_Temp Values( 'jacking8', 1111 )" );
+		pAdo->SetQuery( L"Insert Into Test_Temp2 Values( 'jacking1', 1111 , 1, 100)" );
 		pAdo->Execute(adCmdText);
 		
 		if( !pAdo->IsSuccess() ) 
@@ -52,7 +52,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		asyncadodblib::AdoDB* pAdo = nullptr;
 		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, false );
 
-		pAdo->SetQuery( L"Insert Into Test_Temp Values( 'jacking9', 1111 )" );
+		pAdo->SetQuery( L"Insert Into Test_Temp2 Values( 'jacking2', 1112, 1, 100 )" );
 		pAdo->Execute(adCmdText);
 		
 		if( !pAdo->IsSuccess() ) 
@@ -73,7 +73,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		asyncadodblib::AdoDB* pAdo = nullptr;
 		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, true );
 
-		pAdo->SetQuery(_T("SELECT ID, Code FROM Test_Temp WHERE ID='jacking3'"));
+		pAdo->SetQuery(_T("SELECT ID, Code FROM Test_Temp2 WHERE ID='jacking3'"));
 		pAdo->Execute(adCmdText);
 
 		if( !pAdo->IsSuccess() )
@@ -83,12 +83,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		WCHAR szID[16] = {0,};
-		int nCode = 0;
+		int nUserCode = 0;
 
 		if( !pAdo->GetEndOfFile() )
 		{
-			pAdo->GetFieldValue(_T("Code"), nCode);
 			pAdo->GetFieldValue(_T("ID"), szID, 16);
+			pAdo->GetFieldValue(_T("UserCode"), nUserCode);
 		}
 		else
 		{
@@ -97,7 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 
 		std::wcout << L"ID : " << szID << std::endl;
-		std::wcout << L"Code : " << nCode << std::endl;
+		std::wcout << L"UserCode : " << nUserCode << std::endl;
 	}
 
 	delete pDBmanager;

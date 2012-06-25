@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
@@ -72,7 +72,7 @@ namespace asyncadodblib
 		
 		int GetCommandTimeout()			{ return m_nCommandTimeout; }
 		
-		bool GetRetryConnection()		{ return m_bRetryConnection; }
+		bool IsCanRetryConnection()		{ return m_bRetryConnection; }
 		
 		int GetMaxConnectionPool()		{ return m_nMaxConnectionPool; }
 

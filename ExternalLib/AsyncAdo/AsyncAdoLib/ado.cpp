@@ -1,20 +1,11 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ado.h"
 
 namespace asyncadodblib
 {
 	AdoDB::AdoDB(DBConfig& adoconfig)
-		:m_strConnectingString(adoconfig.GetConnectionString()),
-		m_strUserID(adoconfig.GetUserID()),
-		m_strPassword(adoconfig.GetPassword()),
-		m_strInitCatalog(adoconfig.GetInitCatalog()),
-		m_strProvider(adoconfig.GetProvider()),
-		m_strDSN(adoconfig.GetDSN()),
-		m_nConnectionTimeout(adoconfig.GetConnectionTimeout()),
-		m_nCommandTimeout(adoconfig.GetCommandTimeout()),
-		m_bRetryConnection(adoconfig.GetRetryConnection()),
-		m_bAutoCommit(false),
-
+		:m_bAutoCommit(false),
+		m_Config(adoconfig),
 		m_pConnection(nullptr), 
 		m_pCommand(nullptr),
 		m_pRecordset(nullptr),
@@ -119,9 +110,9 @@ namespace asyncadodblib
 
 		try	
 		{
-			if( m_pConnection->GetState() == adStateClosed && m_bRetryConnection )
+			if( m_pConnection->GetState() == adStateClosed && m_Config.IsCanRetryConnection() )
 			{	
-				m_strCommand = L"RetryOpen()";  	//Àç¿¬°á ½Ãµµ
+				m_strCommand = L"RetryOpen()";  	//ìž¬ì—°ê²° ì‹œë„
 				
 				if( RetryOpen() == false ) 
 				{
@@ -138,8 +129,8 @@ namespace asyncadodblib
 			m_pCommand->CommandType = CommandType;
 			m_pCommand->CommandText = m_strQuery.c_str();
 
-			if( m_nConnectionTimeout != 0 ) {
-				m_pCommand->CommandTimeout = m_nConnectionTimeout;
+			if( m_Config.GetConnectionTimeout() != 0 ) {
+				m_pCommand->CommandTimeout = m_Config.GetConnectionTimeout();
 			}
 
 			m_pRecordset = m_pCommand->Execute( NULL,NULL,OptionType ); 	
@@ -379,7 +370,7 @@ namespace asyncadodblib
 			SAFEARRAY FAR *pArray = nullptr;
 			SAFEARRAYBOUND rarrayBound[1];
 
-			if(pValue == nullptr )		//¸í½ÃÀû nullÀÌ°Å³ª °ªÀÌ nullÀÌ¶ó¸é
+			if(pValue == nullptr )		//ëª…ì‹œì  nullì´ê±°ë‚˜ ê°’ì´ nullì´ë¼ë©´
 			{
 				vBinary.vt = VT_NULL;
 				pParametor->Value = vBinary;
@@ -626,21 +617,21 @@ namespace asyncadodblib
 
 		try
 		{
-			if( m_nConnectionTimeout != 0 ) { 
-				m_pConnection->PutConnectionTimeout( m_nConnectionTimeout );
+			if( m_Config.GetConnectionTimeout() != 0 ) { 
+				m_pConnection->PutConnectionTimeout( m_Config.GetConnectionTimeout() );
 			}
 
 			m_pConnection->CursorLocation = CursorLocation;
 
-			if( !m_strProvider.empty() ) { //ipÁ¢¼ÓÀÏ °æ¿ì Provider »ç¿ë
-				m_pConnection->put_Provider((_bstr_t)m_strProvider.c_str());
+			if( !m_Config.GetProvider().empty() ) { //ipì ‘ì†ì¼ ê²½ìš° Provider ì‚¬ìš©
+				m_pConnection->put_Provider((_bstr_t)m_Config.GetProvider().c_str());
 			}
 
-			m_pConnection->Open( (_bstr_t)m_strConnectingString.c_str(), (_bstr_t)m_strUserID.c_str(),
-				(_bstr_t)m_strPassword.c_str(), NULL );
+			m_pConnection->Open( (_bstr_t)m_Config.GetConnectionString().c_str(), (_bstr_t)m_Config.GetUserID().c_str(),
+				(_bstr_t)m_Config.GetPassword().c_str(), NULL );
 
 			if( m_pConnection->GetState() == adStateOpen ) { 
-				m_pConnection->DefaultDatabase = m_strInitCatalog.c_str();
+				m_pConnection->DefaultDatabase = m_Config.GetInitCatalog().c_str();
 			}
 
 			m_pCommand->ActiveConnection = m_pConnection;

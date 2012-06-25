@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <string>
 #include <atlcomtime.h>
@@ -19,31 +19,31 @@ namespace asyncadodblib
 		~AdoDB();
 
 		/**
-		\remarks	º¯¼ö ÃÊ±âÈ­
-		\par		¿¬°áÇ®¿¡¼­ Àç»ç¿ëÇÏ±â À§ÇØ ÀÌ°÷¿¡¼­ ÃÊ±âÈ­ ½ÃÄÑÁÜ
+		\remarks	ë³€ìˆ˜ ì´ˆê¸°í™”
+		\par		ì—°ê²°í’€ì—ì„œ ì¬ì‚¬ìš©í•˜ê¸° ìœ„í•´ ì´ê³³ì—ì„œ ì´ˆê¸°í™” ì‹œì¼œì¤Œ
 		*/
 		void Init();
 
 		/**
-		\remarks	¿¬°á ¼³Á¤
-		\par		IP ¹× DSN Á¢¼Ó
-		\param		¹èÄ¡ ÀÛ¾÷ÀÏ °æ¿ì adUseClientBatch ¿É¼Ç »ç¿ë
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	ì—°ê²° ì„¤ì •
+		\par		IP ë° DSN ì ‘ì†
+		\param		ë°°ì¹˜ ì‘ì—…ì¼ ê²½ìš° adUseClientBatch ì˜µì…˜ ì‚¬ìš©
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool Open( CursorLocationEnum CursorLocation=adUseClient );
 
 		/**
-		\remarks	Àç¿¬°á ¿É¼ÇÀÌ ÀÖÀ» °æ¿ì Àç¿¬°á ½Ãµµ
+		\remarks	ì¬ì—°ê²° ì˜µì…˜ì´ ìˆì„ ê²½ìš° ì¬ì—°ê²° ì‹œë„
 		*/
 		bool RetryOpen();
 
 		/**
-		\remarks	¿¬°á Á¾·á
+		\remarks	ì—°ê²° ì¢…ë£Œ
 		*/
 		void Close();
 
 		/**
-		\remarks	Ä¿³Ø¼ÇÇ®¿¡¼­ Àç»ç¿ëÇÏ±â À§ÇÑ Ä¿¸Çµå °´Ã¼ Àç»ı¼º
+		\remarks	ì»¤ë„¥ì…˜í’€ì—ì„œ ì¬ì‚¬ìš©í•˜ê¸° ìœ„í•œ ì»¤ë§¨ë“œ ê°ì²´ ì¬ìƒì„±
 		*/
 		void Release();
 
@@ -51,8 +51,8 @@ namespace asyncadodblib
 		void SetConnectionMode( ConnectModeEnum nMode ) { m_pConnection->PutMode(nMode); }
 
 		/**
-		\remarks	¸í½ÃÀû Æ®·£Àè¼Ç »ç¿ë
-		\par		CScopedAdo »ı¼º ¹× ¼Ò¸êÇÒ½Ã Æ®·£Àè¼Ç ¿É¼ÇÀÌ »ç¿ëµÈ´Ù. CScopedAdo Å¬·¡½º¸¦ ÂüÁ¶ÇÏÀÚ.
+		\remarks	ëª…ì‹œì  íŠ¸ëœì­ì…˜ ì‚¬ìš©
+		\par		CScopedAdo ìƒì„± ë° ì†Œë©¸í• ì‹œ íŠ¸ëœì­ì…˜ ì˜µì…˜ì´ ì‚¬ìš©ëœë‹¤. CScopedAdo í´ë˜ìŠ¤ë¥¼ ì°¸ì¡°í•˜ì.
 		*/
 		void SetAutoCommit( const bool bAutoCommit ) { m_bAutoCommit = bAutoCommit; }
 		bool GetAutoCommit() { return m_bAutoCommit; }
@@ -127,17 +127,17 @@ namespace asyncadodblib
 		bool NextRecordSet();
 
 		/**
-		\remarks	ÇÁ·Î½ÃÀú ¹× SQL TextÀ» ½ÇÇàÇÑ´Ù.
-		\par		ºÎ°¡±â´É adCmdStoreProc, adCmdTextÃ³¸® °¡´É
+		\remarks	í”„ë¡œì‹œì € ë° SQL Textì„ ì‹¤í–‰í•œë‹¤.
+		\par		ë¶€ê°€ê¸°ëŠ¥ adCmdStoreProc, adCmdTextì²˜ë¦¬ ê°€ëŠ¥
 		\param		CommandTypeEnum, ExecuteOptionEnum
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool Execute(CommandTypeEnum CommandType = adCmdStoredProc, ExecuteOptionEnum OptionType = adOptionUnspecified);
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ ÇÊµå°ªÀ» ÀĞ´Â´Ù.
-		\par		ÀĞÀº °ªÀÌ nullÀÌ¸é ½ÇÆĞ¸¦ ¸®ÅÏÇÑ´Ù.
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ í•„ë“œê°’ì„ ì½ëŠ”ë‹¤.
+		\par		ì½ì€ ê°’ì´ nullì´ë©´ ì‹¤íŒ¨ë¥¼ ë¦¬í„´í•œë‹¤.
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		template<typename T> bool GetFieldValue(IN TCHAR* tszName, OUT T& Value)
 		{
@@ -181,25 +181,25 @@ namespace asyncadodblib
 
 
 		/**
-		\remarks	¹®ÀÚÇü ÇÊµå°ªÀ» ÀĞ´Â´Ù.
-		\par		ÀĞÀº °ªÀÌ nullÀÌ°Å³ª ¹öÆÛ°¡ ÀÛ´Ù¸é ½ÇÆĞ¸¦ ¸®ÅÏÇÑ´Ù.
-		\param		ÀĞÀº ¹®ÀÚÀ» ´ãÀ» ¹öÆÛÀÇ Å©±â
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	ë¬¸ìí˜• í•„ë“œê°’ì„ ì½ëŠ”ë‹¤.
+		\par		ì½ì€ ê°’ì´ nullì´ê±°ë‚˜ ë²„í¼ê°€ ì‘ë‹¤ë©´ ì‹¤íŒ¨ë¥¼ ë¦¬í„´í•œë‹¤.
+		\param		ì½ì€ ë¬¸ìì„ ë‹´ì„ ë²„í¼ì˜ í¬ê¸°
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool GetFieldValue( IN wchar_t*, OUT wchar_t*, IN unsigned int );
 
 		/**
-		\remarks	binary ÇÊµå°ªÀ» ÀĞ´Â´Ù.
-		\par		ÀĞÀº °ªÀÌ nullÀÌ°Å³ª ¹öÆÛ°¡ ÀÛ´Ù¸é ½ÇÆĞ¸¦ ¸®ÅÏÇÑ´Ù.
-		\param		ÀĞÀº binaryÀ» ´ãÀ» ¹öÆÛÀÇ Å©±â, ÀĞÀº binary Å©±â
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	binary í•„ë“œê°’ì„ ì½ëŠ”ë‹¤.
+		\par		ì½ì€ ê°’ì´ nullì´ê±°ë‚˜ ë²„í¼ê°€ ì‘ë‹¤ë©´ ì‹¤íŒ¨ë¥¼ ë¦¬í„´í•œë‹¤.
+		\param		ì½ì€ binaryì„ ë‹´ì„ ë²„í¼ì˜ í¬ê¸°, ì½ì€ binary í¬ê¸°
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool GetFieldValue( IN wchar_t*, OUT BYTE*, IN int, OUT int& );
 	
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ Å¸ÀÔÀÇ ÆÄ¶ó¸ŞÅÍ »ı¼º
-		\par		null°ªÀÇ ÆÄ¶ó¸ŞÅÍ »ı¼ºÀº CreateNullParameterÀ» »ç¿ë
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ íƒ€ì…ì˜ íŒŒë¼ë©”í„° ìƒì„±
+		\par		nullê°’ì˜ íŒŒë¼ë©”í„° ìƒì„±ì€ CreateNullParameterì„ ì‚¬ìš©
 		*/
 		template<typename T> void CreateParameter(IN wchar_t* pszName,IN enum DataTypeEnum Type, IN enum ParameterDirectionEnum Direction, IN T rValue)
 		{
@@ -225,25 +225,25 @@ namespace asyncadodblib
 		}
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ Å¸ÀÔÀÇ null°ª ÆÄ¶ó¸ŞÅÍ »ı¼º
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ íƒ€ì…ì˜ nullê°’ íŒŒë¼ë©”í„° ìƒì„±
 		*/
 		void CreateNullParameter(IN wchar_t*, IN enum DataTypeEnum, IN enum ParameterDirectionEnum);
 
 		/**
-		\remarks	¹®ÀÚ¿­ Å¸ÀÔ ÆÄ¶ó¸ŞÅÍ »ı¼º, ±æÀÌ º¯¼ö´Â ÃÖ¼Ò 0º¸´Ù Ä¿¾ß ÇÑ´Ù. null°ª »ı¼ºÀº wchar_t*¿¡ NULL°ªÀ» ³Ñ±ä´Ù.
+		\remarks	ë¬¸ìì—´ íƒ€ì… íŒŒë¼ë©”í„° ìƒì„±, ê¸¸ì´ ë³€ìˆ˜ëŠ” ìµœì†Œ 0ë³´ë‹¤ ì»¤ì•¼ í•œë‹¤. nullê°’ ìƒì„±ì€ wchar_t*ì— NULLê°’ì„ ë„˜ê¸´ë‹¤.
 		*/
 		void CreateParameter(IN wchar_t*,IN enum DataTypeEnum, IN enum ParameterDirectionEnum,
 								IN wchar_t*, IN int);
 		/**
-		\remarks	binary Å¸ÀÔ ÆÄ¶ó¸ŞÅÍ »ı¼º, ±æÀÌ º¯¼ö´Â ÃÖ¼Ò 0º¸´Ù Ä¿¾ß ÇÑ´Ù. null°ª »ı¼ºÀº BYTE*¿¡ NULL°ªÀ» ³Ñ±ä´Ù.
+		\remarks	binary íƒ€ì… íŒŒë¼ë©”í„° ìƒì„±, ê¸¸ì´ ë³€ìˆ˜ëŠ” ìµœì†Œ 0ë³´ë‹¤ ì»¤ì•¼ í•œë‹¤. nullê°’ ìƒì„±ì€ BYTE*ì— NULLê°’ì„ ë„˜ê¸´ë‹¤.
 		*/
 		void CreateParameter(IN wchar_t*,IN enum DataTypeEnum, IN enum ParameterDirectionEnum,
 								IN BYTE*, IN int);
 
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ Å¸ÀÔÀÇ ÆÄ¶ó¸ŞÅÍ°ª º¯°æ
-		\par		null°ªÀÇ ÆÄ¶ó¸ŞÅÍ º¯°æÀº UpdateNullParameterÀ» »ç¿ë
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ íƒ€ì…ì˜ íŒŒë¼ë©”í„°ê°’ ë³€ê²½
+		\par		nullê°’ì˜ íŒŒë¼ë©”í„° ë³€ê²½ì€ UpdateNullParameterì„ ì‚¬ìš©
 		*/
 		template<typename T>
 			void UpdateParameter(IN wchar_t* pszName, IN T rValue)
@@ -268,22 +268,22 @@ namespace asyncadodblib
 		}
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ Å¸ÀÔÀÇ ÆÄ¶ó¸ŞÅÍ °ªÀ» null·Î º¯°æ
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ íƒ€ì…ì˜ íŒŒë¼ë©”í„° ê°’ì„ nullë¡œ ë³€ê²½
 		*/
 		void UpdateNullParameter(IN wchar_t*);
 
 		/**
-		\remarks	¹®ÀÚ¿­ Å¸ÀÔ ÆÄ¶ó¸ŞÅÍ º¯°æ, ±æÀÌ º¯¼ö´Â ÃÖ¼Ò 0º¸´Ù Ä¿¾ß ÇÑ´Ù. null°ª º¯°æ TCHAR*¿¡ NULL°ªÀ» ³Ñ±ä´Ù.
+		\remarks	ë¬¸ìì—´ íƒ€ì… íŒŒë¼ë©”í„° ë³€ê²½, ê¸¸ì´ ë³€ìˆ˜ëŠ” ìµœì†Œ 0ë³´ë‹¤ ì»¤ì•¼ í•œë‹¤. nullê°’ ë³€ê²½ TCHAR*ì— NULLê°’ì„ ë„˜ê¸´ë‹¤.
 		*/
 		void UpdateParameter(IN wchar_t*, IN wchar_t*, IN int);
 
 		/**
-		\remarks	binary Å¸ÀÔ ÆÄ¶ó¸ŞÅÍ º¯°æ, ±æÀÌ º¯¼ö´Â ÃÖ¼Ò 0º¸´Ù Ä¿¾ß ÇÑ´Ù. null°ª º¯°æ BYTE*¿¡ NULL°ªÀ» ³Ñ±ä´Ù.
+		\remarks	binary íƒ€ì… íŒŒë¼ë©”í„° ë³€ê²½, ê¸¸ì´ ë³€ìˆ˜ëŠ” ìµœì†Œ 0ë³´ë‹¤ ì»¤ì•¼ í•œë‹¤. nullê°’ ë³€ê²½ BYTE*ì— NULLê°’ì„ ë„˜ê¸´ë‹¤.
 		*/
 		void UpdateParameter(IN wchar_t*, IN BYTE*, IN int);
 
 		/**
-		\remarks	Á¤¼ö/½Ç¼ö/³¯Â¥½Ã°£ Å¸ÀÔÀÇ ÆÄ¶ó¸ŞÅÍ °ª ÀĞ±â
+		\remarks	ì •ìˆ˜/ì‹¤ìˆ˜/ë‚ ì§œì‹œê°„ íƒ€ì…ì˜ íŒŒë¼ë©”í„° ê°’ ì½ê¸°
 		*/
 		template<typename T>
 			bool GetParameter(wchar_t* pszName, OUT T& Value)
@@ -339,18 +339,18 @@ namespace asyncadodblib
 		}
 
 		/**
-		\remarks	¹®ÀÚÇü ÆÄ¶ó¸ŞÅÍ°ªÀ» ÀĞ´Â´Ù.
-		\par		ÀĞÀº °ªÀÌ nullÀÌ°Å³ª ¹öÆÛ°¡ ÀÛ´Ù¸é ½ÇÆĞ¸¦ ¸®ÅÏÇÑ´Ù.
-		\param		ÀĞÀº ¹®ÀÚÀ» ´ãÀ» ¹öÆÛÀÇ Å©±â
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	ë¬¸ìí˜• íŒŒë¼ë©”í„°ê°’ì„ ì½ëŠ”ë‹¤.
+		\par		ì½ì€ ê°’ì´ nullì´ê±°ë‚˜ ë²„í¼ê°€ ì‘ë‹¤ë©´ ì‹¤íŒ¨ë¥¼ ë¦¬í„´í•œë‹¤.
+		\param		ì½ì€ ë¬¸ìì„ ë‹´ì„ ë²„í¼ì˜ í¬ê¸°
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool GetParameter(IN wchar_t*, OUT wchar_t*, IN unsigned int);
 
 		/**
-		\remarks	¹ÙÀÌ³Ê¸®Çü ÆÄ¶ó¸ŞÅÍ°ªÀ» ÀĞ´Â´Ù.
-		\par		ÀĞÀº °ªÀÌ nullÀÌ°Å³ª ¹öÆÛ°¡ ÀÛ´Ù¸é ½ÇÆĞ¸¦ ¸®ÅÏÇÑ´Ù.
-		\param		ÀĞÀº ¹®ÀÚÀ» ´ãÀ» ¹öÆÛÀÇ Å©±â, ÀĞÀº ¹öÆÛÀÇ Å©±â
-		\return		¼º°ø(TRUE) ½ÇÆĞ(FLASE)
+		\remarks	ë°”ì´ë„ˆë¦¬í˜• íŒŒë¼ë©”í„°ê°’ì„ ì½ëŠ”ë‹¤.
+		\par		ì½ì€ ê°’ì´ nullì´ê±°ë‚˜ ë²„í¼ê°€ ì‘ë‹¤ë©´ ì‹¤íŒ¨ë¥¼ ë¦¬í„´í•œë‹¤.
+		\param		ì½ì€ ë¬¸ìì„ ë‹´ì„ ë²„í¼ì˜ í¬ê¸°, ì½ì€ ë²„í¼ì˜ í¬ê¸°
+		\return		ì„±ê³µ(TRUE) ì‹¤íŒ¨(FLASE)
 		*/
 		bool GetParameter(IN wchar_t*, OUT BYTE*, IN int, OUT int&);
 	
@@ -360,18 +360,8 @@ namespace asyncadodblib
 		_RecordsetPtr m_pRecordset;
 		_CommandPtr m_pCommand;
 
-		std::wstring m_strConnectingString;
-		std::wstring m_strUserID;
-		std::wstring m_strPassword;
-		std::wstring m_strInitCatalog;
-		std::wstring m_strProvider;
-		std::wstring m_strDSN;
-		
-		int m_nConnectionTimeout;
-		int m_nCommandTimeout;
-		bool m_bRetryConnection;
 		bool m_bAutoCommit;
-
+		DBConfig m_Config;
 
 		std::wstring m_strQuery;
 

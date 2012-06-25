@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "ado.h"
 #include "Lock.h"
 
 /** 
-\brief		Ä¿³Ø¼ÇÇ® ADO°´Ã¼¸¦ »ı¼ºÇÏ¿© stack¿¡ °ü¸®ÇÑ´Ù.
-\author		±è¿µÂù
+\brief		ì»¤ë„¥ì…˜í’€ ADOê°ì²´ë¥¼ ìƒì„±í•˜ì—¬ stackì— ê´€ë¦¬í•œë‹¤.
+\author		ê¹€ì˜ì°¬
 */
 
 namespace asyncadodblib
@@ -34,7 +34,7 @@ namespace asyncadodblib
 			m_nTopPos = m_nMaxAdo = MaxConnectionPoolCount - 1;
 		}
 
-		// ¿¬°á ¼º°ø ¿©ºÎ
+		// ì—°ê²° ì„±ê³µ ì—¬ë¶€
 		bool IsSuccessConnection() { return m_bSuccessConnection; }
 	
 		void PutDB( AdoDB* pAdo )
@@ -59,16 +59,16 @@ namespace asyncadodblib
 	private:
 		int m_nTopPos;
 		int m_nMaxAdo;
-		bool m_bSuccessConnection;	 // ¿¬°á ¼º°ø ¿©ºÎ
+		bool m_bSuccessConnection;	 // ì—°ê²° ì„±ê³µ ì—¬ë¶€
 	
 		AdoDB* m_pAdoStack[MAX_ARRAY_SIZE];
 		CSSpinLockWin32 m_Lock;
 	};
 
 	/** 
-	\brief		°´Ã¼ »ı¼º½Ã Ä¿³Ø¼ÇÇ®·ÎºÎÅÍ ADO°´Ã¼¸¦ ¾òÀº ÈÄ ¼Ò¸ê½Ã ADO°´Ã¼¸¦ Ä¿³Ø¼ÇÇ®·Î µ¹·ÁÁØ´Ù.
-	\par		ºÎ°¡±â´É ¸í½ÃÀû Æ®·£Àè¼Ç
-	\author		±è¿µÂù
+	\brief		ê°ì²´ ìƒì„±ì‹œ ì»¤ë„¥ì…˜í’€ë¡œë¶€í„° ADOê°ì²´ë¥¼ ì–»ì€ í›„ ì†Œë©¸ì‹œ ADOê°ì²´ë¥¼ ì»¤ë„¥ì…˜í’€ë¡œ ëŒë ¤ì¤€ë‹¤.
+	\par		ë¶€ê°€ê¸°ëŠ¥ ëª…ì‹œì  íŠ¸ëœì­ì…˜
+	\author		ê¹€ì˜ì°¬
 	*/
 	class CScopedAdo
 	{

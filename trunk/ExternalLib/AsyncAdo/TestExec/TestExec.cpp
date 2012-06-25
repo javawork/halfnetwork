@@ -1,4 +1,4 @@
-// TestExec.cpp : ÄÜ¼Ö ÀÀ¿ë ÇÁ·Î±×·¥¿¡ ´ëÇÑ ÁøÀÔÁ¡À» Á¤ÀÇÇÕ´Ï´Ù.
+ï»¿// TestExec.cpp : ì½˜ì†” ì‘ìš© í”„ë¡œê·¸ëž¨ì— ëŒ€í•œ ì§„ìž…ì ì„ ì •ì˜í•©ë‹ˆë‹¤.
 //
 
 #include "stdafx.h"
@@ -22,28 +22,82 @@ void SetDBSetting(asyncadodblib::DBConfig& config )
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "");
+	
 	asyncadodblib::DBConfig config;
 	SetDBSetting( config );
 
 	asyncadodblib::DBManager* pDBmanager = new asyncadodblib::DBManager( config );
-	asyncadodblib::AdoDB* pAdo = nullptr;
+		
+	// SQL Query - insert: auto commit
 	{
+		asyncadodblib::AdoDB* pAdo = nullptr;
 		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, true );
 
-		pAdo->SetQuery( L"Insert Into Test_Temp Values( 'jacking5', 1111 )" );
+		pAdo->SetQuery( L"Insert Into Test_Temp Values( 'jacking8', 1111 )" );
 		pAdo->Execute(adCmdText);
 		
 		if( !pAdo->IsSuccess() ) 
 		{
-			std::wcout << L"Äõ¸®¹® ½ÇÆÐ" << std::endl;
+			std::wcout << L"ì¿¼ë¦¬ë¬¸ ì‹¤íŒ¨" << std::endl;
 			return 0;
 		}
 		else
 		{
-			std::wcout << L"Äõ¸®¹® ¼º°ø" << std::endl;
+			std::wcout << L"ì¿¼ë¦¬ë¬¸ ì„±ê³µ" << std::endl;
+		}
+	}
+
+	// SQL Query - insert
+	{
+		asyncadodblib::AdoDB* pAdo = nullptr;
+		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, false );
+
+		pAdo->SetQuery( L"Insert Into Test_Temp Values( 'jacking9', 1111 )" );
+		pAdo->Execute(adCmdText);
+		
+		if( !pAdo->IsSuccess() ) 
+		{
+			std::wcout << L"ì¿¼ë¦¬ë¬¸ ì‹¤íŒ¨" << std::endl;
+			return 0;
+		}
+		else
+		{
+			std::wcout << L"ì¿¼ë¦¬ë¬¸ ì„±ê³µ" << std::endl;
 		}
 
-		pAdo->SetCommit(true);
+		pAdo->SetCommitTransaction();
+	}
+
+	// SQL Query - select
+	{
+		asyncadodblib::AdoDB* pAdo = nullptr;
+		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, true );
+
+		pAdo->SetQuery(_T("SELECT ID, Code FROM Test_Temp WHERE ID='jacking3'"));
+		pAdo->Execute(adCmdText);
+
+		if( !pAdo->IsSuccess() )
+		{
+			std::wcout << L"select ì¿¼ë¦¬ë¬¸ ì‹¤íŒ¨" << std::endl;
+			return 0;
+		}
+
+		WCHAR szID[16] = {0,};
+		int nCode = 0;
+
+		if( !pAdo->GetEndOfFile() )
+		{
+			pAdo->GetFieldValue(_T("Code"), nCode);
+			pAdo->GetFieldValue(_T("ID"), szID, 16);
+		}
+		else
+		{
+			std::wcout << L"jacking3ëŠ” ì—†ìŠµë‹ˆë‹¤" << std::endl;
+			return 0;
+		}
+
+		std::wcout << L"ID : " << szID << std::endl;
+		std::wcout << L"Code : " << nCode << std::endl;
 	}
 
 	delete pDBmanager;
@@ -52,78 +106,3 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	return 0;
 }
-
-/*
-// ÀÏ¹Ý Äõ¸®¹® - insert - 1
-//int _tmain(int argc, _TCHAR* argv[])
-//{  
-//	setlocale(LC_ALL, "");
-//	SAdoConfig adoconfig;
-//	SetDBSetting( adoconfig );
-//
-//	CAdoManager* pDBmanager = new CAdoManager(adoconfig);
-//	CAdo* pAdo = NULL;
-//	{
-//		CScopedAdo scopedado(pAdo, pDBmanager, false);
-//
-//		pAdo->SetQuery( _T("Insert Into Users Values( 'jacking2', '1111' )") );
-//		pAdo->Execute(adCmdText);
-//		if( !pAdo->IsSuccess() ) 
-//		{
-//			std::wcout << L"Äõ¸®¹® ½ÇÆÐ" << std::endl;
-//			return 0;
-//		}
-//		else
-//		{
-//			std::wcout << L"Äõ¸®¹® ¼º°ø" << std::endl;
-//		}
-//	}
-//	delete pDBmanager;
-//	
-//	getchar();
-//	return 0;
-//}
-
-// ÀÏ¹Ý Äõ¸®¹® - select
-//int _tmain(int argc, _TCHAR* argv[])
-//{  
-//	setlocale(LC_ALL, "");
-//	SAdoConfig adoconfig;
-//	SetDBSetting( adoconfig );
-//
-//	CAdoManager* pDBmanager = new CAdoManager(adoconfig);
-//	CAdo* pAdo = NULL;
-//	{
-//		CScopedAdo scopedado(pAdo, pDBmanager, false);
-//
-//		pAdo->SetQuery(_T("SELECT UID, PWD FROM Users WHERE ID='jacking'"));
-//		pAdo->Execute(adCmdText);
-//		if(!pAdo->IsSuccess())
-//		{
-//			std::wcout << L"Äõ¸®¹® ½ÇÆÐ" << std::endl;
-//			return 0;
-//		}
-//
-//		int nUID = 0;
-//		WCHAR szPWD[16];
-//
-//		if(!pAdo->GetEndOfFile() )
-//		{
-//			pAdo->GetFieldValue(_T("UID"), nUID);
-//			pAdo->GetFieldValue(_T("PWD"), szPWD, 16);
-//		}
-//		else
-//		{
-//			std::wcout << L"jackingÀº ¾ø½À´Ï´Ù" << std::endl;
-//			return 0;
-//		}
-//
-//		std::wcout << L"UID : " << nUID << std::endl;
-//		std::wcout << L"PWD : " << szPWD << std::endl;
-//	}
-//	delete pDBmanager;
-//	
-//	getchar();
-//	return 0;
-//}
-*/

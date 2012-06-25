@@ -7,6 +7,10 @@
 \author		김영찬
 */
 
+// 주석 참고 문헌
+// http://msdn.microsoft.com/ko-kr/library/5ast78ax(v=vs.80).aspx
+// http://msdn.microsoft.com/ko-kr/library/z04awywx(v=vs.80)
+
 namespace asyncadodblib
 {
 	class DBManager
@@ -80,16 +84,17 @@ namespace asyncadodblib
 			pAdo = m_pAdo;
 			pAdo->SetAutoCommit( bAutoCommit );
 
-			if( bAutoCommit ) { 
+			if( bAutoCommit == false ) 
+			{ 
 				pAdo->BeginTransaction(); 
 			}
 		}
 
 		~CScopedAdo()
 		{
-			if( m_pAdo->GetAutoCommit() )
+			if( m_pAdo->IsCanAutoCommit() == false )
 			{
-				if( m_pAdo->GetSuccess() )
+				if( m_pAdo->CanIsGetParamGetFiled() && m_pAdo->CanCommitTransaction() )
 				{
 					m_pAdo->CommitTransaction();
 				}

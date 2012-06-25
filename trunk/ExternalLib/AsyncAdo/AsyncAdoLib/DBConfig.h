@@ -4,6 +4,8 @@
 
 namespace asyncadodblib
 {
+	/// <summary>
+	/// DB 설정 정보 </summary>
 	class DBConfig
 	{
 	public:
@@ -14,6 +16,8 @@ namespace asyncadodblib
 		{
 		}
 
+		/// <summary>
+		/// 접속 정보 설정 </summary>
 		void Setting( const std::wstring strDBAddress, 
 						const std::wstring strID, 
 						const std::wstring strPassWord, 
@@ -36,12 +40,16 @@ namespace asyncadodblib
 			m_nMaxConnectionPool = nMaxConnectionPool;
 		}
 				
+		/// <summary>
+		/// DB DSN 주속 설정 </summary>
 		void SetDSN( wchar_t* pszString ) 
 		{ 
 			m_strDSN = L";DSN="; 
 			m_strDSN += pszString;
 		}
 
+		/// <summary> ???
+		/// 명령 대기 시간 설정. SQL 명령을 내린 후 지정한 시간까지만 처리를 기다림 </summary>
 		void SetCommandTimeout( int nCommendTimeout ) { m_nCommandTimeout = nCommendTimeout; }
 
 		std::wstring GetConnectionString()
@@ -66,11 +74,7 @@ namespace asyncadodblib
 		
 		std::wstring& GetProvider()		{return m_strProvider; }
 		
-		std::wstring& GetDSN()			{ return m_strDSN; }
-		
 		int GetConnectionTimeout()		{ return m_nConnectionTimeout; }
-		
-		int GetCommandTimeout()			{ return m_nCommandTimeout; }
 		
 		bool IsCanRetryConnection()		{ return m_bRetryConnection; }
 		
@@ -79,23 +83,45 @@ namespace asyncadodblib
 
 
 	private:
-		std::wstring m_strConnectingString;
-		std::wstring m_strInitialCatalog;
-		std::wstring m_strDataSource;
-		std::wstring m_strUserID;
-		std::wstring m_strPassword;
-		std::wstring m_strProvider;
-		std::wstring m_strDSN;
-		
-		int m_nConnectionTimeout;
-		int m_nCommandTimeout;
-		bool m_bRetryConnection;
-
-		int m_nMaxConnectionPool;
-
+		/// <summary> DB API 프로바이더 설정 </summary>
 		void SetProvider( wchar_t* pString = L"SQLOLEDB.1" )
 		{
 			m_strProvider = pString;
-		}	
+		}
+
+
+		/// <summary> 연결 문자열 </summary>
+		std::wstring m_strConnectingString;
+		
+		/// <summary> 사용할 데이터베이스 이름 </summary>
+		std::wstring m_strInitialCatalog;
+		
+		/// <summary> 데이터베이스 주속 </summary>
+		std::wstring m_strDataSource;
+
+		/// <summary> DB 접속 아이디 </summary>
+		std::wstring m_strUserID;
+
+		/// <summary> DB 접속 패스워드 </summary>
+		std::wstring m_strPassword;
+
+		/// <summary> DB API 프로바이더 </summary>
+		std::wstring m_strProvider;
+
+		/// <summary> DB의 DSN 주소 </summary>
+		std::wstring m_strDSN;
+		
+		/// <summary>  </summary>
+		int m_nConnectionTimeout;
+
+		/// <summary> ?? </summary>
+		int m_nCommandTimeout;
+
+		/// <summary> 재연결 여부 </summary>
+		bool m_bRetryConnection;
+
+		/// <summary> 연결 풀의 최대 개수 </summary>
+		int m_nMaxConnectionPool;
+					
 	};
 }

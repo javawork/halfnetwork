@@ -10,7 +10,8 @@ namespace asyncadodblib
 		m_pCommand(nullptr),
 		m_pRecordset(nullptr),
 
-		m_IsSuccess(TRUE),
+		m_bCanIsGetParamGetFiled(true),
+		m_bCanCommitTransaction(true),
 		m_strParameterName(),
 		m_strColumnName(),
 		m_strQuery(),
@@ -34,7 +35,7 @@ namespace asyncadodblib
 	void AdoDB::Init()
 	{
 		m_bAutoCommit = false;
-		m_IsSuccess = TRUE;
+		m_bCanIsGetParamGetFiled = true;
 		m_strParameterName.clear();
 		m_strColumnName.clear();
 		m_strQuery.clear();
@@ -43,7 +44,7 @@ namespace asyncadodblib
 
 	void AdoDB::dump_com_error(_com_error &e)
 	{
-		m_IsSuccess = FALSE;
+		m_bCanIsGetParamGetFiled = true;
 		
 		if( e.Error() == 0X80004005 ) { 
 			Close();
@@ -57,7 +58,7 @@ namespace asyncadodblib
 
 	void AdoDB::dump_user_error()
 	{
-		m_IsSuccess = FALSE;
+		m_bCanIsGetParamGetFiled = true;
 
 		if( !m_strQuery.empty() ) { 
 			LOG( L"SQLQuery[%s]", m_strQuery.c_str() );
@@ -104,7 +105,7 @@ namespace asyncadodblib
 
 	bool AdoDB::Execute(CommandTypeEnum CommandType /*= adCmdStoredProc*/, ExecuteOptionEnum OptionType /*= adOptionUnspecified*/)
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return false;
 		}
 
@@ -120,7 +121,7 @@ namespace asyncadodblib
 				} 
 				else 
 				{ 
-					m_IsSuccess = true;
+					m_bCanIsGetParamGetFiled = true;
 				}
 			}
 
@@ -288,7 +289,7 @@ namespace asyncadodblib
 
 	void AdoDB::CreateNullParameter(IN wchar_t* pszName, IN enum DataTypeEnum Type, IN enum ParameterDirectionEnum Direction)
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return;
 		}
 
@@ -315,7 +316,7 @@ namespace asyncadodblib
 	void AdoDB::CreateParameter(IN wchar_t* pszName, IN enum DataTypeEnum Type, IN enum ParameterDirectionEnum Direction,
 								  IN wchar_t* pValue, IN int nSize)
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return;
 		}
 
@@ -352,7 +353,7 @@ namespace asyncadodblib
 	void AdoDB::CreateParameter(IN wchar_t* pszName,IN enum DataTypeEnum Type, IN enum ParameterDirectionEnum Direction,
 								  IN BYTE* pValue, IN int nSize)
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return;
 		}
 
@@ -400,7 +401,7 @@ namespace asyncadodblib
 
 	void AdoDB::UpdateNullParameter(IN wchar_t* pszName)
 	{
-		if(!m_IsSuccess) return;
+		if(!m_bCanIsGetParamGetFiled) return;
 
 		m_strCommand = L"UpdateNullParameter(null)";
 		m_strParameterName = pszName;
@@ -419,7 +420,7 @@ namespace asyncadodblib
 
 	void AdoDB::UpdateParameter(IN wchar_t* pszName, IN wchar_t* pValue, IN int nSize)
 	{
-		if( !m_IsSuccess ) {
+		if( !m_bCanIsGetParamGetFiled ) {
 			return;
 		}
 
@@ -450,7 +451,7 @@ namespace asyncadodblib
 
 	void AdoDB::UpdateParameter(IN wchar_t* pszName, IN BYTE* pValue, IN int nSize)
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return;
 		}
 
@@ -501,11 +502,11 @@ namespace asyncadodblib
 
 	bool AdoDB::GetParameter( IN wchar_t* pszName, OUT wchar_t* pValue, IN unsigned int nSize )
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return false;
 		}
 
-		m_IsSuccess = false;
+		m_bCanIsGetParamGetFiled = false;
 
 		m_strCommand = L"GetParameter(wchar_t*)";
 		m_strParameterName = pszName;
@@ -538,17 +539,17 @@ namespace asyncadodblib
 			return false;
 		}
 		
-		m_IsSuccess = true;
-		return m_IsSuccess;
+		m_bCanIsGetParamGetFiled = true;
+		return m_bCanIsGetParamGetFiled;
 	}
 
 	bool AdoDB::GetParameter( IN wchar_t* pszName, OUT BYTE* pBuffer, IN int inSize, OUT int& outSize )
 	{
-		if( !m_IsSuccess ) { 
+		if( !m_bCanIsGetParamGetFiled ) { 
 			return false;
 		}
 
-		m_IsSuccess = false;
+		m_bCanIsGetParamGetFiled = false;
 
 		m_strCommand = L"GetParameter(binary)";
 		m_strParameterName = pszName;
@@ -588,8 +589,8 @@ namespace asyncadodblib
 			return false;
 		}
 		
-		m_IsSuccess = true;
-		return m_IsSuccess;
+		m_bCanIsGetParamGetFiled = true;
+		return m_bCanIsGetParamGetFiled;
 	}
 
 

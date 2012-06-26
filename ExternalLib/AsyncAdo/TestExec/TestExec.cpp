@@ -6,9 +6,20 @@
 #include "AdoManager.h"
 
 
+/*
+CREATE TABLE [dbo].[Test_Temp2](
+	[ID]		[nvarchar](50)	NOT NULL,
+	[UserCode]	[int]			NOT NULL,
+	[Lv]		[int]			NOT NULL,
+	[Money]		[bigint]		NOT NULL
+) ON [PRIMARY]
+*/
 
-void SetDBSetting(asyncadodblib::DBConfig& config )
+int _tmain(int argc, _TCHAR* argv[])
 {
+	setlocale(LC_ALL, "");
+	
+	asyncadodblib::DBConfig config;
 	config.Setting( L"gunz2db\\gunz2_db", 
 						L"dev", 
 						L"dev", 
@@ -17,14 +28,6 @@ void SetDBSetting(asyncadodblib::DBConfig& config )
 						true, 
 						3 
 					);
-}
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-	setlocale(LC_ALL, "");
-	
-	asyncadodblib::DBConfig config;
-	SetDBSetting( config );
 
 	asyncadodblib::DBManager* pDBmanager = new asyncadodblib::DBManager( config );
 		
@@ -73,7 +76,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		asyncadodblib::AdoDB* pAdo = nullptr;
 		asyncadodblib::CScopedAdo scopedado( pAdo, pDBmanager, true );
 
-		pAdo->SetQuery(_T("SELECT ID, Code FROM Test_Temp2 WHERE ID='jacking3'"));
+		pAdo->SetQuery(L"SELECT ID, Code FROM Test_Temp2 WHERE ID='jacking3'");
 		pAdo->Execute(adCmdText);
 
 		if( !pAdo->IsSuccess() )

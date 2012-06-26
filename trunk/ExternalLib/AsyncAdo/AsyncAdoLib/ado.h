@@ -346,7 +346,7 @@ namespace asyncadodblib
 				return;
 			}
 
-			m_trCommand = L"UpdateParameter(T)";
+			m_strCommand = L"Updatesarameter(T)";
 			m_strParameterName = pszName;
 			
 			try	
@@ -427,7 +427,7 @@ namespace asyncadodblib
 				default:
 					wchar_t sz[7]={0,};
 					m_strParameterName += L" type error(vt = ";
-					m_strParameterName += _itow( vFieldValue.vt, sz, 10 );
+					m_strParameterName += _itow_s( vFieldValue.vt, sz, 10 );
 					m_strParameterName += L" ) ";
 					m_bCanIsGetParamGetFiled = false;
 					return false;
@@ -439,7 +439,7 @@ namespace asyncadodblib
 				return false;
 			}
 
-			m_bCanIsGetParamGetFiled = false;
+			m_bCanIsGetParamGetFiled = true;
 
 			return m_bCanIsGetParamGetFiled;
 		}

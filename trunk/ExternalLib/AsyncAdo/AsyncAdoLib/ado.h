@@ -4,6 +4,7 @@
 #include <atlcomtime.h>
 #include "DBConfig.h"
 
+// MS가 제공하는 ado 라이브러리가 있는 위치
 #import "C:\Program Files\Common Files\System\ADO\msado15.dll" rename("EOF", "EndOfFile") no_namespace
 
 #define ISFAIL(a) if(!(a)) break
@@ -19,48 +20,38 @@ namespace asyncadodblib
 		~AdoDB();
 
 		/// <summary>
-		/// 초기화 - 연결풀에서 재사용하기 위해 이곳에서 초기화 시켜줌
-		/// </summary
+		/// 초기화 - 연결풀에서 재사용하기 위해 이곳에서 초기화 시켜줌 </summary>
 		void Init();
 
 		/// <summary>
 		/// 연결 설정 - IP 및 DSN 접속 
 		/// <param name="CursorLocation"> 배치 작업일 경우 adUseClientBatch 옵션 사용 </param>
 		/// <returns> 성공(TRUE) 실패(FLASE) </returns>
-		/// </summary
+		/// </summary>
 		bool Open( CursorLocationEnum CursorLocation=adUseClient );
 
-		/**
-		\remarks	재연결 옵션이 있을 경우 재연결 시도
-		*/
 		/// <summary>
-		/// 
-		/// </summary
+		/// 재연결 옵션이 있을 경우 재연결 시도 </summary>
 		bool RetryOpen();
 
-		/**
-		\remarks	연결 종료
-		*/
 		/// <summary>
-		/// 
-		/// </summary
+		/// 연결 종료 </summary>
 		void Close();
 
-		/**
-		\remarks	커넥션풀에서 재사용하기 위한 커맨드 객체 재생성
-		*/
+		/// <summary>
+		///  커넥션풀에서 재사용하기 위한 커맨드 객체 재생성 </summary>
 		void Release();
 
+		/// <summary>
+		/// DB 작업을 요청할 쿼리문 </summary>
 		void SetQuery( IN wchar_t* pszQuery ) { m_strQuery = pszQuery; }
+
+		/// <summary>
+		///  권한 지정 </summary>
 		void SetConnectionMode( ConnectModeEnum nMode ) { m_pConnection->PutMode(nMode); }
 
-		/**
-		\remarks	명시적 트랜잭션 사용
-		\par		CScopedAdo 생성 및 소멸할시 트랜잭션 옵션이 사용된다. CScopedAdo 클래스를 참조하자.
-		*/
 		/// <summary>
-		/// 
-		/// </summary
+		/// 명시적 트랜잭션 사용. bAutoCommit이 false인 경우 명시적으로 커밋이나 롤백을 해야한다. </summary>
 		void SetAutoCommit( const bool bAutoCommit ) 
 		{ 
 			m_bAutoCommit = bAutoCommit; 
@@ -71,13 +62,11 @@ namespace asyncadodblib
 		}
 		
 		/// <summary>
-		/// 
-		/// </summary
-		bool IsCanAutoCommit() { return m_bAutoCommit; }
+		/// 자동 커밋 가능 여부 </summary>
+		bool CanAutoCommit() { return m_bAutoCommit; }
 
 		/// <summary>
-		/// 
-		/// </summary
+		/// 트랜잭션을 건다 </summary>
 		void BeginTransaction()
 		{
 			try
@@ -93,8 +82,7 @@ namespace asyncadodblib
 		}
 
 		/// <summary>
-		/// 
-		/// </summary
+		/// 커밋. 트랜잭션을 걸었을 때 사용 </summary>
 		void CommitTransaction()
 		{
 			try
@@ -110,8 +98,7 @@ namespace asyncadodblib
 		}
 
 		/// <summary>
-		/// 
-		/// </summary
+		/// 롤백. 트랜잭션을 걸었을 때 사용 </summary>
 		void RollbackTransaction()
 		{
 			try
@@ -127,11 +114,10 @@ namespace asyncadodblib
 		}
 
 		/// <summary>
-		/// 
-		/// </summary
+		/// 쿼리 작업 성공 여부 </summary>
 		bool IsSuccess()
 		{
-			if( m_bCanIsGetParamGetFiled == false )
+			if( m_bCanGetParamGetFiled == false )
 			{
 				dump_user_error();
 				m_strQuery.erase();
@@ -140,13 +126,13 @@ namespace asyncadodblib
 				m_strParameterName.erase();
 			}
 
-			return m_bCanIsGetParamGetFiled;
+			return m_bCanGetParamGetFiled;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
-		bool CanIsGetParamGetFiled() { return m_bCanIsGetParamGetFiled; }
+		bool CanGetParamGetFiled() { return m_bCanGetParamGetFiled; }
 		
 		/// <summary>
 		/// 
@@ -242,7 +228,7 @@ namespace asyncadodblib
 					m_strColumnName += L" type error(vt = ";
 					m_strColumnName += _itow_s(vFieldValue.vt, sz, 10);
 					m_strColumnName += L" ) ";
-					m_bCanIsGetParamGetFiled = false;
+					m_bCanGetParamGetFiled = false;
 					return FALSE;
 				}
 			} catch (_com_error &e) {
@@ -398,7 +384,7 @@ namespace asyncadodblib
 				return false;
 			}
 
-			m_bCanIsGetParamGetFiled = false;
+			m_bCanGetParamGetFiled = false;
 
 			m_strCommand = L"GetParameter(T)";
 			m_strParameterName = pszName;
@@ -429,7 +415,7 @@ namespace asyncadodblib
 					m_strParameterName += L" type error(vt = ";
 					m_strParameterName += _itow_s( vFieldValue.vt, sz, 10 );
 					m_strParameterName += L" ) ";
-					m_bCanIsGetParamGetFiled = false;
+					m_bCanGetParamGetFiled = false;
 					return false;
 				}
 			} 
@@ -439,9 +425,9 @@ namespace asyncadodblib
 				return false;
 			}
 
-			m_bCanIsGetParamGetFiled = true;
+			m_bCanGetParamGetFiled = true;
 
-			return m_bCanIsGetParamGetFiled;
+			return m_bCanGetParamGetFiled;
 		}
 
 		/**
@@ -477,7 +463,7 @@ namespace asyncadodblib
 
 		std::wstring m_strQuery;
 
-		bool m_bCanIsGetParamGetFiled;
+		bool m_bCanGetParamGetFiled;
 		bool m_bCanCommitTransaction;
 		
 		std::wstring m_strCommand;

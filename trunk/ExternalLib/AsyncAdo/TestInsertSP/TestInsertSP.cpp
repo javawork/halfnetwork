@@ -92,9 +92,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	DWORD nParam = 1231415151, nRtnParam = 0;
-	TCHAR tszParam[30] = L"uuuuu";
-	BYTE pbyParam[10000] = {0XFF, 0XFE, 0X00, 0X01, 0X06, 0X07,};
-	BYTE pbyDATA[10000]={0XFF, 0XFE, 0X00, 0X01, 0X06, 0X07,};
+	WCHAR szParam[30] = L"uuuuu";
+	BYTE pbyParam[10000] = {0X01, 0X01, 0X00, 0X01, 0X06, 0X07,};
+	BYTE pbyDATA[10000]={0X01, 0X01, 0X00, 0X01, 0X06, 0X07,};
 	bool bBoolValue = 1;
 	char byByteValue = 100;
 	WORD wWordValue = 20000;
@@ -103,7 +103,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	COleDateTime oleTime;
 	float fValue = 74.234738123f;
 	int nSize = 0;
-	TCHAR tszdsjo[4]={0,};
+	WCHAR szdsjo[4]={0,};
 	_variant_t vValue(1000);
 	BYTE pValue[1000]={0,};
 	oleTime.SetDateTime(2008, 2, 28, 23, 59, 59);
@@ -137,7 +137,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			
 		if(!pAdo->IsSuccess()){ return 0;	}
 
-		pAdo->SetQuery(L"adotestproc");
+		pAdo->SetQuery(L"Test_Temp3_Insert");
 
 		pAdo->Execute();
 		if(!pAdo->IsSuccess()){ return 0;	}
@@ -146,7 +146,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"aaa", nParam));
-			//_tprintf(_T("%d\n"), nParam);
+			std::wcout << "aaa : " << nParam << std::endl;
 			pAdo->MoveNext();
 		}
 		if(!pAdo->IsSuccess()){ return 0;}
@@ -156,8 +156,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		while(!pAdo->GetEndOfFile())
 		{
-			ISFAIL(pAdo->GetFieldValue(L"bbb", tszParam, 30));
-			//_tprintf(_T("bbb%d\n"), nParam);
+			ISFAIL(pAdo->GetFieldValue(L"bbb", szParam, 30));
+			std::wcout << "bbb : " << szParam << std::endl;
 			pAdo->MoveNext();
 		}
 		if(!pAdo->IsSuccess()){return 0;}
@@ -170,13 +170,20 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			memset(pValue, 0x00, 50);
 			ISFAIL(pAdo->GetFieldValue(L"ccc", pValue, 10, nSize));
-			//_tprintf(L"Size(%u)", nSize);
-			for(int i = 0; i < nSize; ++i)
-				//_tprintf(L"%02X", pValue[i]);
-			//_tprintf(L"\n");
+			std::wcout << "Size : " << nSize;
+
+			for(int i = 0; i < nSize; ++i) { 
+				std::wcout << "bbb : " << pValue[i];
+			}
+			
+			std::wcout << std::endl;
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){return 0;}
+
+		if( !pAdo->IsSuccess() )
+		{
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
 		if(!pAdo->IsSuccess()){ return 0;}
@@ -184,81 +191,135 @@ int _tmain(int argc, _TCHAR* argv[])
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"ddd", bBoolValue));
-			//_tprintf(L"%d\n", bBoolValue);
+			std::wcout << "ddd : " << bBoolValue << std::endl;
+			
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
 
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"eee", byByteValue));
-			//_tprintf(L"%d\n", byByteValue);
+			std::wcout << "eee : " << byByteValue << std::endl;
+			
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
 
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"fff", wWordValue));
-			//_tprintf(L"%d\n", wWordValue);
+			std::wcout << "fff : " << wWordValue << std::endl;
+
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
 
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"ggg", i64BigIntValue));
-			//_tprintf(L"%I64d\n", i64BigIntValue);
+			std::wcout << "ggg : " << i64BigIntValue << std::endl;
+			
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
-		while(!pAdo->GetEndOfFile())
+		while( !pAdo->GetEndOfFile() )
 		{
 			ISFAIL(pAdo->GetFieldValue(L"hhh", oleTime));
-			//_tprintf(L"%s\n", oleTime.Format(L"%Y-%m-%d %H:%M:%S"));
+			std::wcout << "hhh : " << oleTime.Format(L"%Y-%m-%d %H:%M:%S") << std::endl;
+			
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
 
-		while(!pAdo->GetEndOfFile())
+		if( !pAdo->IsSuccess() ) 
+		{ 
+			return 0;
+		}
+
+		while( !pAdo->GetEndOfFile() )
 		{
 			ISFAIL(pAdo->GetFieldValue(L"iii", oleTime));
-			//_tprintf(L"%s\n", oleTime.Format(L"%Y-%m-%d %H:%M:%S"));
+			std::wcout << "iii : " << oleTime.Format(L"%Y-%m-%d %H:%M:%S") << std::endl;
+			
 			pAdo->MoveNext();
 		}
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
 		pAdo->NextRecordSet();
-		if(!pAdo->IsSuccess()){ return 0;}
+		
+		if( !pAdo->IsSuccess() )
+		{ 
+			return 0;
+		}
 
 		while(!pAdo->GetEndOfFile())
 		{
 			ISFAIL(pAdo->GetFieldValue(L"jjj", fValue));
-			//_tprintf(L"%.10lf\n", fValue);
+			std::wcout << "jjj : " << fValue << std::endl;
+			
 			pAdo->MoveNext();
 		}
 		if(!pAdo->IsSuccess()){ return 0;}
 
 		pAdo->GetParameter(L"return", nRtnParam);
 		pAdo->GetParameter(L"@v_aaa", nParam);
-		pAdo->GetParameter(L"@v_bbb", tszParam, 100);
+		pAdo->GetParameter(L"@v_bbb", szParam, 100);
 		pAdo->GetParameter(L"@v_ccc", pbyDATA, 10, nSize);
 		pAdo->GetParameter(L"@v_ddd", bBoolValue);
 		pAdo->GetParameter(L"@v_eee", byByteValue);
@@ -270,26 +331,25 @@ int _tmain(int argc, _TCHAR* argv[])
 		pAdo->GetParameter(L"@v_kkk", pbyDATA, 10, nSize);
 		if(!pAdo->IsSuccess()){return 0;}
 
-		//_tprintf(L"\nReturn value: %d\n", nRtnParam);
-		//_tprintf(L"param out1: %d\n", nParam); 
-		//_tprintf(L"param out2: %s\n", tszParam);
-		//_tprintf(L"param out4: %d\n", bBoolValue); 
-		//_tprintf(L"param out5: %d\n", byByteValue); 
-		//_tprintf(L"param out6: %d\n", wWordValue); 
-		//_tprintf(L"param out7: %I64d\n", i64BigIntValue);
-		//_tprintf(L"param out8: %s\n", oleTime.Format(L"%Y-%m-%d %H:%M:%S"));
-		//_tprintf(L"param out9: %.10lf\n", fValue);
-		//_tprintf(L"param out10: ", fValue);
+		std::wcout << "Return value : " << nRtnParam << std::endl;
+		std::wcout << "param out1 : " << nParam << std::endl;
+		std::wcout << "param out2 : " << szParam << std::endl;
+		std::wcout << "param out4 : " << bBoolValue << std::endl;
+		std::wcout << "param out5 : " << byByteValue << std::endl;
+		std::wcout << "param out6 : " << wWordValue << std::endl;
+		std::wcout << "param out7 : " << i64BigIntValue << std::endl;
+		std::wcout << "param out8 : " << oleTime.Format(L"%Y-%m-%d %H:%M:%S") << std::endl;
+		std::wcout << "param out9 : " << fValue << std::endl;
+		std::wcout << "param out10 : " << fValue;
 			
 		for(int k = 0; k < nSize; ++k)
 		{
-			//_tprintf(_T("%02X"), pbyDATA[i]);
+			std::wcout << pbyDATA[i];
 		}
 
-
-		//_tprintf(L"\n");
-
-		i--;
+		std::wcout << std::endl;
+		
+		--i;
 	}
 
 

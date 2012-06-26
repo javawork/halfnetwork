@@ -12,7 +12,8 @@ namespace asyncadodblib
 		DBConfig()
 			:m_nConnectionTimeout(0),
 			m_nCommandTimeout(0),
-			m_bRetryConnection(false)
+			m_bRetryConnection(false), 
+			m_bCanWriteErrorLog(false)
 		{
 		}
 
@@ -24,7 +25,8 @@ namespace asyncadodblib
 						const std::wstring strDBName, 
 						const int nConnectionTimeOut, 
 						const bool bIsRetryConnection, 
-						const int nMaxConnectionPool
+						const int nMaxConnectionPool, 
+						const bool bCanWriteErrorLog = true
 					)
 		{
 			m_strDataSource = L";Data Source="; 
@@ -38,6 +40,8 @@ namespace asyncadodblib
 			m_nConnectionTimeout = nConnectionTimeOut;
 			m_bRetryConnection = bIsRetryConnection;
 			m_nMaxConnectionPool = nMaxConnectionPool;
+
+			m_bCanWriteErrorLog = bCanWriteErrorLog;
 		}
 				
 		/// <summary>
@@ -80,6 +84,7 @@ namespace asyncadodblib
 		
 		int GetMaxConnectionPool()		{ return m_nMaxConnectionPool; }
 
+		bool CanWriteErrorLog()		{ return m_bCanWriteErrorLog; }
 
 
 	private:
@@ -123,5 +128,7 @@ namespace asyncadodblib
 		/// <summary> 연결 풀의 최대 개수 </summary>
 		int m_nMaxConnectionPool;
 					
+		/// <summary> 에러 로그 출력 가능 여부 </summary>
+		bool m_bCanWriteErrorLog;
 	};
 }

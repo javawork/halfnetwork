@@ -92,9 +92,9 @@ namespace asyncadodblib
 
 		~CScopedAdo()
 		{
-			if( m_pAdo->IsCanAutoCommit() == false )
+			if( m_pAdo->CanAutoCommit() == false )
 			{
-				if( m_pAdo->CanIsGetParamGetFiled() && m_pAdo->CanCommitTransaction() )
+				if( m_pAdo->CanGetParamGetFiled() && m_pAdo->CanCommitTransaction() )
 				{
 					m_pAdo->CommitTransaction();
 				}

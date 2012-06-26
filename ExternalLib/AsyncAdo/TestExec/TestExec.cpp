@@ -26,7 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						L"G2_GAMEDB", 
 						3, 
 						true, 
-						3 
+						3
 					);
 
 	asyncadodblib::DBManager* pDBmanager = new asyncadodblib::DBManager( config );

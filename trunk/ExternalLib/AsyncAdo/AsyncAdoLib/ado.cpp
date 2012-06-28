@@ -42,7 +42,7 @@ namespace asyncadodblib
 		m_strCommand.clear();
 	}
 
-	void AdoDB::dump_com_error(_com_error &e)
+	void AdoDB::dump_com_error(const _com_error &e)
 	{
 		m_bCanGetParamGetFiled = true;
 		
@@ -85,7 +85,7 @@ namespace asyncadodblib
 		}
 	}
 
-	bool AdoDB::GetFieldCount( int& nValue )
+	bool AdoDB::GetFieldCount( OUT INT32& nValue )
 	{
 		m_strCommand = L"GetFieldCount()";
 		
@@ -153,7 +153,7 @@ namespace asyncadodblib
 		return true;
 	}
 
-	void AdoDB::MoveNext()
+	bool AdoDB::MoveNext()
 	{
 		m_strCommand = L"MoveNext()";
 		
@@ -164,10 +164,10 @@ namespace asyncadodblib
 		catch (_com_error &e)	
 		{
 			dump_com_error(e);
-			return;
+			return false;
 		}
 		
-		return;
+		return true;
 	}
 
 	bool AdoDB::GetEndOfFile()
@@ -211,15 +211,15 @@ namespace asyncadodblib
 		return true;
 	}
 
-	bool AdoDB::GetFieldValue( IN wchar_t* tszName, OUT wchar_t* pszValue, IN unsigned int nSize )
+	bool AdoDB::GetFieldValue( const WCHAR* szName, OUT WCHAR* pszValue, const UINT32 nSize )
 	{
 		m_strCommand = L"GetFieldValue(string)";
 
-		m_strColumnName = tszName;
+		m_strColumnName = szName;
 		
 		try	
 		{
-			_variant_t vFieldValue = m_pRecordset->GetCollect(tszName);
+			_variant_t vFieldValue = m_pRecordset->GetCollect(szName);
 
 
 			if( vFieldValue.vt == VT_NULL || vFieldValue.vt == VT_EMPTY ) 
@@ -233,7 +233,7 @@ namespace asyncadodblib
 				return false;
 			} 
 
-			if( nSize < wcslen((wchar_t*)(_bstr_t(vFieldValue.bstrVal))) ) 
+			if( nSize < wcslen((WCHAR*)(_bstr_t(vFieldValue.bstrVal))) ) 
 			{
 				m_strColumnName += L" string size overflow";
 				return false;
@@ -250,7 +250,7 @@ namespace asyncadodblib
 		return true;
 	}
 
-	bool AdoDB::GetFieldValue( IN wchar_t* pszName, OUT BYTE* pbyBuffer, IN int inSize, OUT int& outSize )
+	bool AdoDB::GetFieldValue( const WCHAR* pszName, OUT BYTE* pbyBuffer, const INT32 nBufferSize, OUT INT32& nReadSize )
 	{
 		m_strCommand = L"GetFieldValue(binary)";
 		m_strColumnName = pszName;
@@ -272,14 +272,14 @@ namespace asyncadodblib
 
 			FieldPtr pField = m_pRecordset->Fields->GetItem(pszName);
 
-			if( inSize < pField->ActualSize || inSize > 8060 )
+			if( nBufferSize < pField->ActualSize || nBufferSize > 8060 )
 			{
 				m_strColumnName += L" binary size overflow";
 				dump_user_error();
 				return false;
 			}
 
-			outSize = static_cast<int>(pField->ActualSize);
+			nReadSize = static_cast<int>(pField->ActualSize);
 
 			BYTE * pData = nullptr;
 			SafeArrayAccessData( vFieldValue.parray, (void HUGEP* FAR*)&pData );
@@ -663,7 +663,7 @@ namespace asyncadodblib
 		}
 	}
 
-	void AdoDB::LOG(wchar_t* format, ...)
+	void AdoDB::LOG(WCHAR* format, ...)
 	{
 		wchar_t szBuffer[1024] = { 0, };
 		
